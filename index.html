@@ -430,6 +430,10 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 </head>
 <body>
 
+<div id="appLoader" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease">
+  <div style="font-family:var(--font-d);font-size:1.2rem;opacity:.3;letter-spacing:.02em">Blog</div>
+</div>
+
 <nav>
   <div class="n-logo" onclick="go('home')" id="nL">Blog</div>
   <button class="n-mob" onclick="document.querySelector('.n-links').classList.toggle('open')">☰</button>
@@ -1562,12 +1566,13 @@ function setAdmin(on){
 }
 
 function startApp(){
-  // Firebase 데이터가 있으면 무조건 우선 적용하고 로컬도 동기화
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbGal){galImgs=window._fbGal;localStorage.setItem('e_gal',JSON.stringify(galImgs));}
   applyAcc();
+  var loader=document.getElementById('appLoader');
+  if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
   if(localStorage.getItem('e_admin')==='1') setAdmin(true);
   var urlParams=new URLSearchParams(window.location.search);
   var postId=urlParams.get('post');
