@@ -437,11 +437,16 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     <button class="n-link on" data-p="home" onclick="go('home')">홈</button>
     <button class="n-link" data-p="series" onclick="go('series')">시리즈</button>
     <button class="n-link" data-p="gallery" onclick="go('gallery')">갤러리</button>
-    <button class="n-link" data-p="admin" onclick="go('admin')">관리</button>
+    <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
   </div>
   <div class="n-r">
     <button class="n-ic" onclick="toggleTheme()" id="tB">◐</button>
-    <div class="fab-wrap" id="fabWrap">
+    <button class="n-ic" onclick="isAdmin?logoutAdmin():openLoginModal()" id="loginBtn" title="관리자 로그인">
+      <svg id="loginIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+    </button>
+    <div class="fab-wrap" id="fabWrap" style="display:none">
       <button class="n-wr fab-main" onclick="toggleFab()" id="fabBtn">+</button>
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
@@ -513,8 +518,8 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <button class="dt-menu-btn" onclick="toggleDtMenu()" id="dtMenuBtn">···</button>
         <div class="dt-menu-drop" id="dtMenuDrop">
           <button onclick="closeDtMenu();sharePost()">공유</button>
-          <button onclick="closeDtMenu();editCur()">수정</button>
-          <button class="danger" onclick="closeDtMenu();delCur()">삭제</button>
+          <button class="admin-only" onclick="closeDtMenu();editCur()" style="display:none">수정</button>
+          <button class="admin-only danger" onclick="closeDtMenu();delCur()" style="display:none">삭제</button>
         </div>
       </div>
     </div>
@@ -815,6 +820,10 @@ function applyAcc(){
 applyAcc();
 
 function go(p){
+  // 관리자 전용 페이지 접근 차단
+  if(!isAdmin && (p==='admin'||p==='editor')){
+    openLoginModal();return;
+  }
   $$('.page').forEach(function(x){x.classList.remove('on')});
   var el=$('#pg-'+p);if(el)el.classList.add('on');
   $$('.n-link').forEach(function(l){l.classList.toggle('on',l.dataset.p===p)});
@@ -1450,13 +1459,92 @@ function showAlert(icon,msg,onOk){
 function closeModal(){$('#modalDim').classList.remove('on')}
 
 // Firebase 로드 완료 후 앱 시작 (최대 2초 대기)
+// ── 관리자 모드 ──
+var ADMIN_PW_HASH = null; // Firestore에서 불러옴
+var isAdmin = false;
+
+function hashPw(pw){
+  // 간단한 해시 (실제 운영 시 더 강력한 방식 권장)
+  var h=0;for(var i=0;i<pw.length;i++){h=((h<<5)-h)+pw.charCodeAt(i);h|=0;}
+  return 'h'+Math.abs(h).toString(36);
+}
+
+function openLoginModal(){
+  $('#loginModalDim').style.display='flex';
+  setTimeout(function(){$('#pwInput').focus()},100);
+  $('#pwErr').style.display='none';
+  $('#pwInput').value='';
+}
+function closeLoginModal(){
+  $('#loginModalDim').style.display='none';
+}
+
+async function tryLogin(){
+  var pw=$('#pwInput').value;
+  if(!pw)return;
+  // Firestore에서 비밀번호 해시 가져오기
+  if(!ADMIN_PW_HASH && window._db && window._firestoreFns){
+    try{
+      var snap=await window._firestoreFns.getDoc(window._firestoreFns.doc(window._db,'blog','admin'));
+      if(snap.exists())ADMIN_PW_HASH=snap.data().pwHash;
+    }catch(e){}
+  }
+  // 아직 비밀번호가 설정 안 된 경우 → 첫 로그인으로 설정
+  if(!ADMIN_PW_HASH){
+    var hash=hashPw(pw);
+    try{
+      await window._firestoreFns.setDoc(window._firestoreFns.doc(window._db,'blog','admin'),{pwHash:hash});
+      ADMIN_PW_HASH=hash;
+    }catch(e){toast('저장 실패');return;}
+  }
+  if(hashPw(pw)===ADMIN_PW_HASH){
+    setAdmin(true);
+    localStorage.setItem('e_admin','1');
+    closeLoginModal();
+    toast('관리자 모드');
+  }else{
+    $('#pwErr').style.display='block';
+    $('#pwInput').value='';
+    $('#pwInput').focus();
+  }
+}
+
+function logoutAdmin(){
+  showModal('👋','관리자 모드를 종료할까요?','종료',function(){
+    setAdmin(false);
+    localStorage.removeItem('e_admin');
+    toast('로그아웃');
+    go('home');
+  },{});
+}
+
+function setAdmin(on){
+  isAdmin=on;
+  // 관리 탭
+  var adminTab=$('#adminTab');
+  if(adminTab)adminTab.style.display=on?'':'none';
+  // + 버튼
+  var fabWrap=$('#fabWrap');
+  if(fabWrap)fabWrap.style.display=on?'':'none';
+  // 로그인 버튼 텍스트
+  var loginBtn=$('#loginBtn');
+  if(loginBtn){
+    loginBtn.title=on?'관리자 로그아웃':'관리자 로그인';
+    var icon=$('#loginIcon');
+    if(icon){icon.style.stroke=on?'var(--text)':'';icon.style.strokeWidth=on?'2.2':'1.8';}
+  }
+  // 글 상세 ... 메뉴 (수정/삭제 숨기기)
+  $$('.dt-menu-drop button.admin-only').forEach(function(b){b.style.display=on?'':'none'});
+}
+
 function startApp(){
-  // Firebase에서 받은 데이터로 덮어쓰기
   if(window._fbCfg) cfg=window._fbCfg;
   if(window._fbCats) cats=window._fbCats;
   if(window._fbPs) ps=window._fbPs;
   if(window._fbGal) galImgs=window._fbGal;
   applyAcc();
+  // 이전에 로그인했으면 자동으로 관리자 모드
+  if(localStorage.getItem('e_admin')==='1') setAdmin(true);
   // URL에 ?post=ID 가 있으면 해당 글 바로 열기
   var urlParams=new URLSearchParams(window.location.search);
   var postId=urlParams.get('post');
@@ -1475,5 +1563,20 @@ if(window._fbReady){
 }
 </script>
 
+<!-- 관리자 로그인 모달 -->
+<div id="loginModalDim" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center">
+  <div style="background:var(--card);border-radius:14px;padding:32px 30px;width:90%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fin .2s ease">
+    <div style="font-size:1.4rem;margin-bottom:12px;opacity:.6">🔐</div>
+    <div style="font-size:.9rem;font-weight:500;margin-bottom:6px">관리자 로그인</div>
+    <div style="font-size:.78rem;color:var(--text-sub);margin-bottom:20px;font-weight:300">비밀번호를 입력하세요</div>
+    <input type="password" id="pwInput" placeholder="비밀번호" onkeydown="if(event.key==='Enter')tryLogin()"
+      style="width:100%;padding:10px 14px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;margin-bottom:8px;font-family:inherit">
+    <div id="pwErr" style="font-size:.74rem;color:#D4564A;margin-bottom:12px;display:none">비밀번호가 틀렸어요</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeLoginModal()" style="padding:8px 20px;border-radius:7px;font-size:.82rem;cursor:pointer;border:none;background:var(--bg2);color:var(--text-sub);font-family:inherit">취소</button>
+      <button onclick="tryLogin()" style="padding:8px 20px;border-radius:7px;font-size:.82rem;cursor:pointer;border:none;background:var(--text);color:var(--bg);font-weight:500;font-family:inherit">로그인</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
