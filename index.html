@@ -1635,9 +1635,9 @@ function rdF(f,cb,opts){
   r.onload=function(e){
     var data=e.target.result;
     if(!f.type.startsWith('image/')){cb(data);return;}
-    // 이미지면 압축 (썸네일: 400px, 커버/본문: 1200px)
-    var maxW=(opts&&opts.thumb)?400:1200;
-    var quality=(opts&&opts.thumb)?0.7:0.75;
+    // 이미지 압축 (thumb:400/0.7, pair:600/0.6, 기본:1200/0.75)
+    var maxW=(opts&&opts.maxW)?opts.maxW:(opts&&opts.thumb)?400:1200;
+    var quality=(opts&&opts.quality)?opts.quality:(opts&&opts.thumb)?0.7:0.75;
     compressImg(data,maxW,quality,cb);
   };
   r.readAsDataURL(f);
@@ -1814,12 +1814,12 @@ function openPairDetail(id){
   // 이미지 업로드 input
   if(!document.getElementById('pairImgInputA')){
     var inA=document.createElement('input');inA.type='file';inA.accept='image/*';inA.id='pairImgInputA';inA.style.display='none';
-    inA.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgA=d;sv();openPairDetail(curPairId);}},{thumb:false});};
+    inA.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgA=d;sv();openPairDetail(curPairId);}},{maxW:600,quality:0.6});};
     document.body.appendChild(inA);
   }
   if(!document.getElementById('pairImgInputB')){
     var inB=document.createElement('input');inB.type='file';inB.accept='image/*';inB.id='pairImgInputB';inB.style.display='none';
-    inB.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgB=d;sv();openPairDetail(curPairId);}},{thumb:false});};
+    inB.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgB=d;sv();openPairDetail(curPairId);}},{maxW:600,quality:0.6});};
     document.body.appendChild(inB);
   }
   // 페이지 전환
@@ -1876,7 +1876,7 @@ function onPairThumb(e){
   rdF(f,function(d){
     pairThumbData=d;
     rPairThumbPreview();
-  });
+  },{maxW:400,quality:0.65});
 }
 function rPairThumbPreview(){
   var area=$('#pairThumbArea');
