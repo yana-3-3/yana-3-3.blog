@@ -712,7 +712,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   </div>
 </div>
 
-<footer>Built with HTML · CSS · JS</footer>
+
 <div class="toast" id="toast"></div>
 <div class="modal-dim" id="modalDim" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
@@ -1416,7 +1416,12 @@ function saveCatForm(){
 function delC(id){showModal('📂','이 시리즈를 삭제하시겠습니까?<div class="modal-sub">시리즈만 삭제되고 글은 유지돼요</div>','삭제',function(){cats=cats.filter(function(c){return c.id!==id});sv();rAdmin();toast('삭제됨')},{danger:true})}
 function uC(){cfg.name=$('#cN').value;cfg.desc=$('#cD').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value}
 function onBan(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.hbg=d;rAdmin()})}
-function onFavicon(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.favicon=d;rAdmin();applyFavicon();},{thumb:true})}
+function onFavicon(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){cfg.favicon=ev.target.result;rAdmin();applyFavicon();};
+  r.readAsDataURL(f);
+}
 function applyFavicon(){
   var link=document.getElementById('dynFavicon');
   if(!link){link=document.createElement('link');link.id='dynFavicon';link.rel='icon';document.head.appendChild(link);}
