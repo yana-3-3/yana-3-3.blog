@@ -668,6 +668,16 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <div class="bp" id="banPv">미리보기</div>
       </div>
       <div class="ef"><label>Accent Color</label><div class="cbar" id="acBar"></div></div>
+      <div class="ef"><label>Favicon</label>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div id="faviconPv" style="width:32px;height:32px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);overflow:hidden;flex-shrink:0">없음</div>
+          <div style="flex:1">
+            <div class="uz" onclick="document.getElementById('faviconIn').click()" style="padding:8px 12px">클릭하여 업로드 (32×32 권장)</div>
+            <input type="file" id="faviconIn" accept="image/*" onchange="onFavicon(event)" style="display:none">
+          </div>
+          <button onclick="cfg.favicon='';rAdmin();applyFavicon()" style="background:none;border:none;cursor:pointer;font-size:.8rem;color:var(--text-light)">✕</button>
+        </div>
+      </div>
       <div class="ed-b" style="margin-top:16px"><button class="btn-p" onclick="saveCfg()">Save</button></div>
     </div>
     <div class="ab"><h3>시리즈 관리</h3>
@@ -1321,6 +1331,8 @@ function rAdmin(){
   $('#cN').value=cfg.name;$('#cD').value=cfg.desc;$('#cHT').value=cfg.ht;$('#cHD').value=cfg.hd;
   var bp=$('#banPv');
   if(cfg.hbg)bp.innerHTML='<img src="'+cfg.hbg+'"><button onclick="cfg.hbg=\'\';rAdmin()">✕</button>';
+  var fpv=$('#faviconPv');
+  if(fpv){if(cfg.favicon){fpv.innerHTML='<img src="'+cfg.favicon+'" style="width:100%;height:100%;object-fit:cover">';}else{fpv.textContent='없음';}}
   else bp.innerHTML='미리보기';
   $('#acBar').innerHTML=AC.map(function(c){return '<div class="cb'+((cfg.accent||'#1A1A1A').toUpperCase()===c.toUpperCase()?' on':'')+'" style="background:'+c+'" onclick="cfg.accent=\''+c+'\';applyAcc();rAdmin()"></div>'}).join('');
   $('#cL').innerHTML=cats.map(function(c){
@@ -1404,7 +1416,17 @@ function saveCatForm(){
 function delC(id){showModal('📂','이 시리즈를 삭제하시겠습니까?<div class="modal-sub">시리즈만 삭제되고 글은 유지돼요</div>','삭제',function(){cats=cats.filter(function(c){return c.id!==id});sv();rAdmin();toast('삭제됨')},{danger:true})}
 function uC(){cfg.name=$('#cN').value;cfg.desc=$('#cD').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value}
 function onBan(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.hbg=d;rAdmin()})}
-function saveCfg(){sv();rHome();toast('저장됨')}
+function onFavicon(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.favicon=d;rAdmin();applyFavicon();},{thumb:true})}
+function applyFavicon(){
+  var link=document.getElementById('dynFavicon');
+  if(!link){link=document.createElement('link');link.id='dynFavicon';link.rel='icon';document.head.appendChild(link);}
+  link.href=cfg.favicon||'data:,';
+}
+function applyMeta(){
+  document.title=cfg.name||'Blog';
+  applyFavicon();
+}
+function saveCfg(){sv();rHome();applyMeta();toast('저장됨')}
 
 
 function expD(){
@@ -1571,7 +1593,7 @@ function startApp(){
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbGal){galImgs=window._fbGal;localStorage.setItem('e_gal',JSON.stringify(galImgs));}
-  applyAcc();
+  applyAcc();applyMeta();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
   if(localStorage.getItem('e_admin')==='1') setAdmin(true);
