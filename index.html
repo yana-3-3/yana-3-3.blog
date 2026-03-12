@@ -1273,9 +1273,7 @@ function saveP(){
 function sharePost(){
   if(!curId)return;
   var shareUrl=location.origin+location.pathname+'?post='+curId;
-  showModal('🔗','이 링크로 글을 공유할 수 있어요<div class="modal-sub" style="margin-top:8px;word-break:break-all;font-size:.75rem;background:var(--bg2);padding:8px 10px;border-radius:6px;user-select:all">'+shareUrl+'</div>','링크 복사',function(){
-    navigator.clipboard.writeText(shareUrl).then(function(){toast('링크 복사됨 🔗')}).catch(function(){toast('직접 복사해주세요')});
-  },{});
+  navigator.clipboard.writeText(shareUrl).then(function(){toast('링크 복사됨')}).catch(function(){toast('직접 복사해주세요')});
 }
 function toggleDtMenu(){var d=$('#dtMenuDrop');d.classList.toggle('open');if(d.classList.contains('open')){setTimeout(function(){document.addEventListener('click',closeDtMenuOutside,{once:true})},0)}}
 function closeDtMenu(){$('#dtMenuDrop').classList.remove('open')}
