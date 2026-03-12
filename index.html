@@ -137,6 +137,102 @@ nav{height:var(--nav-h);position:sticky;top:0;z-index:100;display:flex;align-ite
 .dt-body strong{font-weight:600}
 .dt-body code{background:var(--accent-soft);padding:2px 6px;border-radius:4px;font-size:.84em}
 .dt-body pre{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;overflow-x:auto;margin:16px 0;font-size:.8rem;line-height:1.8}
+.fold-block{border:1px solid var(--border);border-radius:8px;margin:12px 0;overflow:hidden}
+.fold-summary{padding:10px 16px;cursor:pointer;font-weight:500;font-size:.88rem;background:var(--bg2);user-select:none;list-style:none;display:flex;align-items:center;gap:8px}
+.fold-summary::-webkit-details-marker{display:none}
+.fold-summary::before{content:'▶';font-size:.65rem;transition:transform .2s;display:inline-block}
+details[open] .fold-summary::before{transform:rotate(90deg)}
+.fold-content{padding:14px 16px}
+
+/* ── Pair Tab ── */
+.pair-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px}
+.pair-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all var(--tr)}
+.pair-card:hover{box-shadow:var(--shadow-h);transform:translateY(-2px)}
+.pair-card-img{width:100%;aspect-ratio:1;background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.pair-card-img img{width:100%;height:100%;object-fit:cover}
+.pair-card-body{padding:14px 16px 16px}
+.pair-card-names{font-size:.92rem;font-weight:500;letter-spacing:.01em}
+.pair-card-names .x{font-style:italic;font-weight:300;opacity:.5;margin:0 4px}
+.pair-card-dday{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.pair-card-date{font-size:.68rem;color:var(--text-light);margin-top:3px}
+
+/* Pair Detail - redesigned */
+.pair-detail-wrap{max-width:860px;margin:0 auto;padding:0 0 80px}
+.pair-detail-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.pair-detail-layout{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:0;align-items:start}
+@media(max-width:720px){.pair-detail-layout{grid-template-columns:1fr;gap:20px}}
+/* Character columns */
+.pair-char-col{display:flex;flex-direction:column}
+.pair-char-col.col-a{align-items:flex-end}
+.pair-char-col.col-b{align-items:flex-start}
+.pair-char-name{font-size:1.05rem;font-weight:600;letter-spacing:-.01em;margin-bottom:3px}
+.pair-char-col.col-a .pair-char-name{text-align:right}
+.pair-char-col.col-b .pair-char-name{text-align:left}
+.pair-char-info{font-size:.74rem;color:var(--text-sub);margin-bottom:10px;font-weight:300}
+.pair-char-col.col-a .pair-char-info{text-align:right}
+.pair-char-col.col-b .pair-char-info{text-align:left}
+.pair-char-img{width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--bg2);border-radius:var(--radius);position:relative;box-shadow:var(--shadow)}
+.pair-char-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.pair-char-img:hover img{transform:scale(1.04)}
+.pair-char-img .pair-char-upload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);opacity:0;transition:opacity .2s;color:#fff;font-size:.78rem;cursor:pointer}
+.pair-char-img:hover .pair-char-upload{opacity:1}
+/* Center message column */
+.pair-msg-col{display:flex;flex-direction:column;padding:40px 16px 0;min-height:300px;justify-content:center}
+@media(max-width:720px){.pair-msg-col{padding:0 4px;order:3}}
+.pair-msg-list{display:flex;flex-direction:column;gap:8px}
+.pair-msg-bubble{max-width:88%;padding:10px 14px;border-radius:14px;font-size:.84rem;line-height:1.6;position:relative;word-break:break-word}
+.pair-msg-bubble.from-a{align-self:flex-start;border-top-left-radius:4px}
+.pair-msg-bubble.from-b{align-self:flex-end;border-top-right-radius:4px}
+.pair-msg-bubble .msg-from-label{font-size:.62rem;opacity:.6;margin-bottom:2px;font-weight:500}
+.pair-msg-del{position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;font-size:.68rem;color:inherit;opacity:0;transition:opacity .2s}
+.pair-msg-bubble:hover .pair-msg-del{opacity:.5}
+.pair-msg-del:hover{opacity:1!important}
+.pair-msg-empty{text-align:center;padding:40px 10px;color:var(--text-light);font-size:.8rem}
+/* Bottom area - under A column, left-aligned */
+.pair-detail-bottom{text-align:left;margin-top:16px;align-self:flex-start;width:100%}
+.pair-detail-dday-num{font-size:2.2rem;font-weight:700;letter-spacing:-.04em;line-height:1;display:inline}
+.pair-detail-dday-sub{font-size:.74rem;color:var(--text-light);margin-top:2px;display:inline;margin-left:8px}
+.pair-detail-tags{margin-top:8px;display:flex;gap:6px;justify-content:flex-start;flex-wrap:wrap}
+.pair-detail-tags span{font-size:.72rem;color:var(--text-sub);font-weight:300}
+/* Pair detail ... menu */
+.pair-dt-menu-wrap{position:relative}
+.pair-dt-menu-btn{width:34px;height:34px;border-radius:8px;border:none;background:transparent;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all var(--tr);letter-spacing:1px}
+.pair-dt-menu-btn:hover{background:var(--accent-soft);color:var(--text)}
+.pair-dt-menu-drop{position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:130px;z-index:50;overflow:hidden;display:none}
+.pair-dt-menu-drop.open{display:block;animation:fin .15s ease}
+.pair-dt-menu-drop button{display:block;width:100%;padding:10px 16px;border:none;background:none;color:var(--text);font-size:.82rem;text-align:left;cursor:pointer;transition:background var(--tr)}
+.pair-dt-menu-drop button:hover{background:var(--accent-soft)}
+.pair-dt-menu-drop button.danger{color:#D4564A}
+.pair-dt-menu-drop button.danger:hover{background:#D4564A10}
+/* Pair modal thumbnail preview */
+.pair-thumb-area{width:100%;aspect-ratio:16/9;border:1.5px dashed var(--border-h);border-radius:8px;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--text-light);background:var(--bg);position:relative;transition:all var(--tr)}
+.pair-thumb-area:hover{border-color:var(--text-light)}
+.pair-thumb-area img{width:100%;height:100%;object-fit:cover}
+.pair-thumb-area .xb{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center}
+.pair-color-row{display:flex;gap:12px;align-items:center}
+.pair-color-pick{display:flex;align-items:center;gap:6px;flex:1}
+.pair-color-pick label{font-size:.72rem;color:var(--text-sub);white-space:nowrap}
+.pair-color-pick input[type=color]{width:32px;height:28px;border:1px solid var(--border);border-radius:5px;cursor:pointer;padding:1px;background:var(--bg)}
+.pair-tags-input{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);min-height:38px;align-items:center;cursor:text}
+.pair-tags-input:focus-within{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
+.pair-tag-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;background:var(--accent-soft);font-size:.74rem;color:var(--text-sub)}
+.pair-tag-chip button{background:none;border:none;cursor:pointer;font-size:.66rem;color:var(--text-light);padding:0 1px}
+.pair-tags-input input{border:none;background:none;outline:none;font-size:.82rem;color:var(--text);flex:1;min-width:60px;font-family:inherit}
+.pair-add-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;border:1px dashed var(--border-h);background:none;cursor:pointer;font-size:.82rem;color:var(--text-sub);transition:all var(--tr);width:100%;justify-content:center}
+.pair-add-btn:hover{background:var(--bg2);border-color:var(--text-light)}
+.pair-empty{text-align:center;padding:80px 20px;color:var(--text-light)}
+.pair-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
+.pair-empty-txt{font-size:.85rem}
+.pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:500;justify-content:center;align-items:center}
+.pair-modal-dim.on{display:flex}
+.pair-modal{background:var(--card);border-radius:14px;padding:28px 26px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.pair-modal h3{font-size:1rem;font-weight:600;margin-bottom:20px}
+.pair-modal .ef{margin-bottom:14px}
+.pair-modal label{font-size:.75rem;color:var(--text-sub);font-weight:500;display:block;margin-bottom:5px}
+.pair-modal input[type=text],.pair-modal input[type=date],.pair-modal textarea{width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit}
+.pair-modal textarea{resize:vertical;min-height:80px}
+.pair-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.pair-modal-btns button{padding:9px 22px;border-radius:7px;font-size:.82rem;cursor:pointer;border:none;transition:all var(--tr);font-weight:500}
 .dt-body blockquote{border-left:2px solid var(--text-light);padding:10px 18px;margin:16px 0;color:var(--text-sub);background:var(--bg2);border-radius:0 var(--radius) var(--radius) 0;font-style:italic;font-weight:400}
 .dt-body ul,.dt-body ol{padding-left:22px;margin:12px 0}.dt-body li{margin-bottom:4px}
 .dt-body h1,.dt-body h2,.dt-body h3{margin:20px 0 8px;font-weight:600;line-height:1.4}
@@ -416,6 +512,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         if (data.cats) window._fbCats = data.cats;
         if (data.ps) window._fbPs = data.ps;
         if (data.gal) window._fbGal = data.gal;
+        if (data.pairs) window._fbPairs = data.pairs;
       }
     } catch(e) {
       console.warn('Firebase 로드 실패, 로컬 데이터 사용:', e);
@@ -441,6 +538,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     <button class="n-link on" data-p="home" onclick="go('home')">홈</button>
     <button class="n-link" data-p="series" onclick="go('series')">시리즈</button>
     <button class="n-link" data-p="gallery" onclick="go('gallery')">갤러리</button>
+    <button class="n-link" data-p="pair" onclick="go('pair')">페어</button>
     <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
   </div>
   <div class="n-r">
@@ -628,6 +726,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
               <div class="tb-sep"></div>
               <button class="tb-btn" onclick="insertLink()" title="링크">🔗</button>
               <button class="tb-btn" onclick="insertHtmlCode()" title="HTML 삽입" style="font-size:.64rem;font-weight:700;width:auto;padding:0 6px">&lt;/&gt;</button>
+              <button class="tb-btn" onclick="insertFold()" title="접기/펼치기 삽입" style="font-size:.7rem;font-weight:700;width:auto;padding:0 6px">▼접기</button>
               <button class="tb-btn" onclick="exec('removeFormat')" title="서식 제거">⊘</button>
             </div>
           </div>
@@ -650,6 +749,47 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <button class="btn-g" onclick="go(prev||'home')">취소</button>
         <button class="btn-p" onclick="saveP()">저장</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAIR -->
+<div class="page" id="pg-pair">
+  <div class="pw">
+    <div class="fr" style="align-items:center;margin-bottom:4px">
+      <h2 style="font-family:var(--font-d);font-size:1.4rem;font-weight:400">Pair</h2>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="n-wr admin-only" id="pairAddBtn" onclick="openPairModal()" style="display:none">+ 페어 추가</button>
+      </div>
+    </div>
+    <div id="pairListWrap">
+      <div id="pairGrid" class="pair-grid"></div>
+      <div id="pairEmpty" class="pair-empty" style="display:none">
+        <div class="pair-empty-icon">💞</div>
+        <div class="pair-empty-txt">아직 등록된 페어가 없어요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAIR DETAIL -->
+<div class="page" id="pg-pairdetail">
+  <div class="pw">
+    <div class="pair-detail-wrap" style="max-width:860px;margin:0 auto;padding:0 0 80px">
+      <!-- Top bar: back + ... menu -->
+      <div class="pair-detail-top">
+        <button class="dt-back" onclick="go('pair')" style="margin-bottom:0">← 페어 목록</button>
+        <div class="pair-dt-menu-wrap" id="pairDtMenuWrap" style="display:none">
+          <button class="pair-dt-menu-btn" onclick="togglePairDtMenu()">···</button>
+          <div class="pair-dt-menu-drop" id="pairDtMenuDrop">
+            <button onclick="closePairDtMenu();openMsgModal()">메시지 추가</button>
+            <button onclick="closePairDtMenu();editCurrentPair()">페어 수정</button>
+            <button class="danger" onclick="closePairDtMenu();deleteCurrentPair()">페어 삭제</button>
+          </div>
+        </div>
+      </div>
+      <!-- 3-column layout: A | Messages | B -->
+      <div class="pair-detail-layout" id="pairDetailLayout"></div>
     </div>
   </div>
 </div>
@@ -789,6 +929,8 @@ let cats=ld('e_cats')||[
 ];
 let ps=ld('e_ps')||defP();
 let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null;
+let pairs=ld('e_pairs')||[];
+let curPairId=null;
 let eCov='',eIL=[],eFI=[];
 let editCatId=null,catThumb='',catThumbOrig='';
 
@@ -815,10 +957,11 @@ function sv(){
   localStorage.setItem('e_cats',JSON.stringify(cats));
   localStorage.setItem('e_ps',JSON.stringify(ps));
   localStorage.setItem('e_gal',JSON.stringify(galImgs));
+  localStorage.setItem('e_pairs',JSON.stringify(pairs));
   if(window._db && window._firestoreFns){
     var db=window._db, docFn=window._firestoreFns.doc, setDocFn=window._firestoreFns.setDoc;
     setDocFn(docFn(db,'blog','data'),{
-      cfg:cfg,cats:cats,ps:ps,gal:galImgs,updatedAt:Date.now()
+      cfg:cfg,cats:cats,ps:ps,gal:galImgs,pairs:pairs,updatedAt:Date.now()
     }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e);toast('저장 실패 — 이미지가 너무 클 수 있어요');});
   }
 }
@@ -834,14 +977,13 @@ function applyAcc(){
 applyAcc();
 
 function go(p){
-  // 관리자 전용 페이지 접근 차단
   if(!isAdmin && (p==='admin'||p==='editor')){
     openLoginModal();return;
   }
   $$('.page').forEach(function(x){x.classList.remove('on')});
   var el=$('#pg-'+p);if(el)el.classList.add('on');
   $$('.n-link').forEach(function(l){l.classList.toggle('on',l.dataset.p===p)});
-  if(['detail','editor','catview'].indexOf(p)===-1)prev=p;
+  if(['detail','editor','catview'].indexOf(p)===-1){prev=p;history.replaceState(null,'','#'+p);}
   var nl=$('.n-links');if(nl)nl.classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
   if(p==='home')rHome();
@@ -850,6 +992,7 @@ function go(p){
   if(p==='admin'){rAdmin();resetCatForm()}
   if(p==='editor')initEd();
   if(p==='catview')rCatView();
+  if(p==='pair')rPair();
 }
 function goBack(){go(prev||'home')}
 
@@ -1053,6 +1196,15 @@ function hexToHSV(hex){
 }
 function execBlock(tag){if(!tag)return;document.execCommand('formatBlock',false,tag);$('#eBod').focus()}
 function insertLink(){var url=prompt('URL','https://');if(url)document.execCommand('createLink',false,url);$('#eBod').focus()}
+function insertFold(){
+  var label=prompt('접기 제목 (예: 더보기)','더보기');
+  if(label===null)return;
+  if(!label)label='더보기';
+  var uid='fold_'+Date.now();
+  var html='<details class="fold-block"><summary class="fold-summary">'+label+'</summary><div class="fold-content"><p>여기에 내용을 작성하세요</p></div></details><p><br></p>';
+  document.execCommand('insertHTML',false,html);
+  $('#eBod').focus();
+}
 
 function insertHtmlCode(){$('#htmlInput').value='';$('#htmlModalDim').classList.add('on')}
 function closeHtmlModal(){$('#htmlModalDim').classList.remove('on')}
@@ -1563,6 +1715,307 @@ async function tryLogin(){
   }
 }
 
+
+/* ═══════════════ PAIR ═══════════════ */
+var editingPairId=null;
+var pairThumbData='';
+var pairTags=[];
+var editingMsgIdx=null;
+
+function rPair(){
+  if(!pairs.length){
+    $('#pairGrid').innerHTML='';
+    $('#pairEmpty').style.display='';
+    return;
+  }
+  $('#pairEmpty').style.display='none';
+  $('#pairGrid').innerHTML=pairs.map(function(p){
+    var dday=calcDday(p.date);
+    var html='<div class="pair-card" onclick="openPairDetail(\'' + p.id + '\')">';
+    html+='<div class="pair-card-img">';
+    if(p.thumb){
+      html+='<img src="'+p.thumb+'" style="width:100%;height:100%;object-fit:cover">';
+    }else if(p.imgA||p.imgB){
+      html+='<div style="display:flex;width:100%;height:100%">';
+      html+='<div style="flex:1;overflow:hidden"><img src="'+(p.imgA||'')+'" style="width:100%;height:100%;object-fit:cover"></div>';
+      html+='<div style="flex:1;overflow:hidden"><img src="'+(p.imgB||'')+'" style="width:100%;height:100%;object-fit:cover"></div>';
+      html+='</div>';
+    }else{
+      html+='<div style="font-size:2rem;opacity:.2">💞</div>';
+    }
+    html+='</div>';
+    html+='<div class="pair-card-body">';
+    html+='<div class="pair-card-names">'+esc(p.nameA)+'<span class="x">×</span>'+esc(p.nameB)+'</div>';
+    html+='<div class="pair-card-dday">'+dday.label+'</div>';
+    html+='<div class="pair-card-date">'+p.date+'</div>';
+    html+='</div></div>';
+    return html;
+  }).join('');
+}
+
+function calcDday(dateStr){
+  var today=new Date();today.setHours(0,0,0,0);
+  var start=new Date(dateStr);start.setHours(0,0,0,0);
+  var diff=Math.floor((today-start)/(1000*60*60*24));
+  if(diff===0)return{label:'D-Day',diff:0};
+  if(diff>0)return{label:'D+'+diff,diff:diff};
+  return{label:'D'+diff,diff:diff};
+}
+
+function openPairDetail(id){
+  var p=pairs.find(function(x){return x.id===id});
+  if(!p)return;
+  curPairId=id;
+  var colorA=p.colorA||'#E8D5F5';
+  var colorB=p.colorB||'#D5D5D5';
+  // D-Day
+  var dday=calcDday(p.date);
+  // Tags
+  var tags=p.tags||[];
+  // ... menu visibility
+  var menuWrap=$('#pairDtMenuWrap');
+  if(menuWrap)menuWrap.style.display=isAdmin?'':'none';
+  // Build 3-column layout
+  var html='';
+  // ── Left: Character A ──
+  html+='<div class="pair-char-col col-a">';
+  html+='<div class="pair-char-name">'+esc(p.nameA)+'</div>';
+  html+='<div class="pair-char-info">'+esc(p.infoA||'')+'</div>';
+  html+='<div class="pair-char-img" id="pairCharImgA">';
+  if(p.imgA){html+='<img src="'+p.imgA+'">';}
+  else{html+='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:.15;font-size:2.5rem">👤</div>';}
+  if(isAdmin)html+='<div class="pair-char-upload" onclick="uploadPairImg(\'A\')">이미지 변경</div>';
+  html+='</div>';
+  // D-Day + date + tags under A image
+  html+='<div class="pair-detail-bottom">';
+  html+='<div><span class="pair-detail-dday-num">'+dday.label+'</span><span class="pair-detail-dday-sub">'+esc(p.date)+'</span></div>';
+  if(tags.length){
+    html+='<div class="pair-detail-tags">'+tags.map(function(t){return '<span>#'+esc(t)+'</span>'}).join('')+'</div>';
+  }
+  html+='</div>';
+  html+='</div>';
+  // ── Center: Messages ──
+  html+='<div class="pair-msg-col">';
+  html+='<div class="pair-msg-list" id="pairMsgList"></div>';
+  html+='</div>';
+  // ── Right: Character B ──
+  html+='<div class="pair-char-col col-b">';
+  html+='<div class="pair-char-name">'+esc(p.nameB)+'</div>';
+  html+='<div class="pair-char-info">'+esc(p.infoB||'')+'</div>';
+  html+='<div class="pair-char-img" id="pairCharImgB">';
+  if(p.imgB){html+='<img src="'+p.imgB+'">';}
+  else{html+='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:.15;font-size:2.5rem">👤</div>';}
+  if(isAdmin)html+='<div class="pair-char-upload" onclick="uploadPairImg(\'B\')">이미지 변경</div>';
+  html+='</div>';
+  html+='</div>';
+  $('#pairDetailLayout').innerHTML=html;
+  // Render messages
+  renderMsgList(p);
+  // 이미지 업로드 input
+  if(!document.getElementById('pairImgInputA')){
+    var inA=document.createElement('input');inA.type='file';inA.accept='image/*';inA.id='pairImgInputA';inA.style.display='none';
+    inA.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgA=d;sv();openPairDetail(curPairId);}},{thumb:false});};
+    document.body.appendChild(inA);
+  }
+  if(!document.getElementById('pairImgInputB')){
+    var inB=document.createElement('input');inB.type='file';inB.accept='image/*';inB.id='pairImgInputB';inB.style.display='none';
+    inB.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgB=d;sv();openPairDetail(curPairId);}},{thumb:false});};
+    document.body.appendChild(inB);
+  }
+  // 페이지 전환
+  $$('.page').forEach(function(x){x.classList.remove('on')});
+  $('#pg-pairdetail').classList.add('on');
+  $$('.n-link').forEach(function(l){l.classList.toggle('on',l.dataset.p==='pair')});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function uploadPairImg(side){
+  document.getElementById('pairImgInput'+side).click();
+}
+
+function renderMsgList(p){
+  var msgs=p.messages||[];
+  var colorA=p.colorA||'#E8D5F5';
+  var colorB=p.colorB||'#D5D5D5';
+  // Determine text colors based on brightness
+  function textColorFor(bg){
+    var r=parseInt(bg.slice(1,3),16),g=parseInt(bg.slice(3,5),16),b=parseInt(bg.slice(5,7),16);
+    var lum=(r*299+g*587+b*114)/1000;
+    return lum>150?'#1A1A1A':'#FFFFFF';
+  }
+  var textA=textColorFor(colorA);
+  var textB=textColorFor(colorB);
+  if(!msgs.length){
+    $('#pairMsgList').innerHTML='<div class="pair-msg-empty">아직 메시지가 없어요</div>';
+    return;
+  }
+  $('#pairMsgList').innerHTML=msgs.map(function(m,i){
+    var isA=m.sender==='A';
+    var bg=isA?colorA:colorB;
+    var tc=isA?textA:textB;
+    var cls=isA?'from-a':'from-b';
+    var html='<div class="pair-msg-bubble '+cls+'" style="background:'+bg+';color:'+tc+'">';
+    html+='<div>'+esc(m.text)+'</div>';
+    if(isAdmin)html+='<button class="pair-msg-del" style="color:'+tc+'" onclick="event.stopPropagation();deleteMsg('+i+')">✕</button>';
+    html+='</div>';
+    return html;
+  }).join('');
+}
+
+/* ── Pair ... menu ── */
+function togglePairDtMenu(){
+  var d=$('#pairDtMenuDrop');d.classList.toggle('open');
+  if(d.classList.contains('open')){setTimeout(function(){document.addEventListener('click',closePairDtMenuOutside,{once:true})},0)}
+}
+function closePairDtMenu(){$('#pairDtMenuDrop').classList.remove('open')}
+function closePairDtMenuOutside(e){if(!$('#pairDtMenuWrap').contains(e.target))closePairDtMenu()}
+
+/* ── Pair Modal (add/edit) ── */
+function onPairThumb(e){
+  var f=e.target.files[0];if(!f)return;
+  rdF(f,function(d){
+    pairThumbData=d;
+    rPairThumbPreview();
+  });
+}
+function rPairThumbPreview(){
+  var area=$('#pairThumbArea');
+  if(pairThumbData){
+    area.innerHTML='<img src="'+pairThumbData+'"><button class="xb" onclick="event.stopPropagation();pairThumbData=\'\';rPairThumbPreview()">✕</button><input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">';
+  }else{
+    area.innerHTML='클릭하여 업로드<input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">';
+  }
+}
+function renderPairTags(){
+  var wrap=$('#pairTagsWrap');
+  var chips=pairTags.map(function(t,i){return '<span class="pair-tag-chip">#'+esc(t)+'<button onclick="pairTags.splice('+i+',1);renderPairTags()">✕</button></span>'}).join('');
+  wrap.innerHTML=chips+'<input type="text" id="pairTagInput" placeholder="#태그 입력 후 Enter" onkeydown="onPairTagKey(event)">';
+}
+function onPairTagKey(e){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    var v=e.target.value.trim().replace(/^#/,'');
+    if(v&&pairTags.indexOf(v)===-1){pairTags.push(v);renderPairTags();}
+    else{e.target.value='';}
+  }
+}
+
+function openPairModal(editId){
+  editingPairId=editId||null;
+  pairTags=[];
+  pairThumbData='';
+  if(editId){
+    var p=pairs.find(function(x){return x.id===editId});
+    if(!p)return;
+    $('#pairModalTitle').textContent='페어 수정';
+    $('#pairNameA').value=p.nameA;
+    $('#pairNameB').value=p.nameB;
+    $('#pairInfoA').value=p.infoA||'';
+    $('#pairInfoB').value=p.infoB||'';
+    $('#pairColorA').value=p.colorA||'#E8D5F5';
+    $('#pairColorB').value=p.colorB||'#D5D5D5';
+    $('#pairDate').value=p.date;
+    pairThumbData=p.thumb||'';
+    pairTags=(p.tags||[]).slice();
+  }else{
+    $('#pairModalTitle').textContent='페어 추가';
+    $('#pairNameA').value='';
+    $('#pairNameB').value='';
+    $('#pairInfoA').value='';
+    $('#pairInfoB').value='';
+    $('#pairColorA').value='#E8D5F5';
+    $('#pairColorB').value='#D5D5D5';
+    $('#pairDate').value=new Date().toISOString().slice(0,10);
+  }
+  rPairThumbPreview();
+  renderPairTags();
+  $('#pairModalDim').classList.add('on');
+}
+function closePairModal(){$('#pairModalDim').classList.remove('on');}
+
+function savePair(){
+  if(!isAdmin)return;
+  var nA=$('#pairNameA').value.trim();
+  var nB=$('#pairNameB').value.trim();
+  var dt=$('#pairDate').value;
+  if(!nA||!nB||!dt){toast('이름과 날짜를 입력해주세요');return;}
+  var iA=$('#pairInfoA').value.trim();
+  var iB=$('#pairInfoB').value.trim();
+  var cA=$('#pairColorA').value;
+  var cB=$('#pairColorB').value;
+  if(editingPairId){
+    var p=pairs.find(function(x){return x.id===editingPairId});
+    if(p){p.nameA=nA;p.nameB=nB;p.date=dt;p.infoA=iA;p.infoB=iB;p.colorA=cA;p.colorB=cB;p.thumb=pairThumbData;p.tags=pairTags.slice();}
+  }else{
+    pairs.push({id:'p'+Date.now(),nameA:nA,nameB:nB,date:dt,infoA:iA,infoB:iB,colorA:cA,colorB:cB,thumb:pairThumbData,tags:pairTags.slice(),imgA:'',imgB:'',messages:[]});
+  }
+  sv();rPair();closePairModal();
+  if(curPairId&&editingPairId===curPairId)openPairDetail(curPairId);
+  toast(editingPairId?'수정됨':'페어 추가됨');
+}
+
+function editCurrentPair(){
+  if(!isAdmin||!curPairId)return;
+  openPairModal(curPairId);
+}
+
+function deleteCurrentPair(){
+  if(!isAdmin||!curPairId)return;
+  showModal('🗑️','이 페어를 삭제할까요?','삭제',function(){
+    pairs=pairs.filter(function(p){return p.id!==curPairId});
+    sv();go('pair');toast('삭제됨');
+  },{danger:true});
+}
+
+/* ── Message Modal ── */
+function openMsgModal(editIdx){
+  editingMsgIdx=(editIdx!==undefined)?editIdx:null;
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p)return;
+  // Set sender option labels
+  $('#msgSenderA').textContent=p.nameA||'A';
+  $('#msgSenderB').textContent=p.nameB||'B';
+  if(editingMsgIdx!==null&&p.messages&&p.messages[editingMsgIdx]){
+    var m=p.messages[editingMsgIdx];
+    $('#msgModalTitle').textContent='메시지 수정';
+    $('#msgInput').value=m.text;
+    $('#msgSender').value=m.sender||'A';
+    $('#msgSaveBtn').textContent='수정';
+  }else{
+    $('#msgModalTitle').textContent='메시지 추가';
+    $('#msgInput').value='';
+    $('#msgSender').value='A';
+    $('#msgSaveBtn').textContent='추가';
+  }
+  $('#msgModalDim').classList.add('on');
+}
+function closeMsgModal(){$('#msgModalDim').classList.remove('on');editingMsgIdx=null;}
+
+function saveMsg(){
+  if(!isAdmin||!curPairId)return;
+  var txt=$('#msgInput').value.trim();
+  if(!txt){toast('메시지를 입력해주세요');return;}
+  var sender=$('#msgSender').value;
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p)return;
+  if(!p.messages)p.messages=[];
+  if(editingMsgIdx!==null&&p.messages[editingMsgIdx]){
+    p.messages[editingMsgIdx].text=txt;
+    p.messages[editingMsgIdx].sender=sender;
+  }else{
+    p.messages.push({text:txt,sender:sender,ts:Date.now()});
+  }
+  sv();renderMsgList(p);closeMsgModal();toast(editingMsgIdx!==null?'수정됨':'메시지 추가됨');
+}
+function deleteMsg(i){
+  if(!isAdmin||!curPairId)return;
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p)return;
+  p.messages.splice(i,1);
+  sv();renderMsgList(p);toast('삭제됨');
+}
+/* ═══════════════ END PAIR ═══════════════ */
+
 function logoutAdmin(){
   showModal('👋','관리자 모드를 종료할까요?','종료',function(){
     setAdmin(false);
@@ -1574,12 +2027,14 @@ function logoutAdmin(){
 
 function setAdmin(on){
   isAdmin=on;
-  // 관리 탭
   var adminTab=$('#adminTab');
   if(adminTab)adminTab.style.display=on?'':'none';
-  // + 버튼
   var fabWrap=$('#fabWrap');
   if(fabWrap)fabWrap.style.display=on?'':'none';
+  var pairAddBtn=$('#pairAddBtn');
+  if(pairAddBtn)pairAddBtn.style.display=on?'':'none';
+  var pairDtMenu=$('#pairDtMenuWrap');
+  if(pairDtMenu)pairDtMenu.style.display=on?'':'none';
   // 로그인 버튼 텍스트
   var loginBtn=$('#loginBtn');
   if(loginBtn){
@@ -1596,6 +2051,7 @@ function startApp(){
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbGal){galImgs=window._fbGal;localStorage.setItem('e_gal',JSON.stringify(galImgs));}
+  if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
   applyAcc();applyMeta();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
@@ -1606,7 +2062,11 @@ function startApp(){
     var found=ps.find(function(p){return String(p.id)===String(postId)});
     if(found){openD(found.id);return;}
   }
-  rHome();
+  // URL hash로 페이지 복원
+  var hash=window.location.hash.replace('#','');
+  var validPages=['home','series','gallery','pair'];
+  if(hash && validPages.indexOf(hash)!==-1){go(hash);}
+  else{rHome();}
 }
 
 if(window._fbReady){
@@ -1616,6 +2076,89 @@ if(window._fbReady){
   setTimeout(function(){if(!window._fbReady){window._fbReady=true;startApp();}},2500);
 }
 </script>
+
+<!-- 페어 추가/수정 모달 -->
+<div class="pair-modal-dim" id="pairModalDim">
+  <div class="pair-modal" style="max-width:440px">
+    <h3 id="pairModalTitle">페어 추가</h3>
+    <div class="ef">
+      <label>썸네일 이미지</label>
+      <div class="pair-thumb-area" id="pairThumbArea" onclick="document.getElementById('pairThumbIn').click()">
+        클릭하여 업로드
+        <input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="ef" style="flex:1">
+        <label>캐릭터 A 이름</label>
+        <input type="text" id="pairNameA" placeholder="이름 입력">
+      </div>
+      <div class="ef" style="flex:1">
+        <label>캐릭터 B 이름</label>
+        <input type="text" id="pairNameB" placeholder="이름 입력">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="ef" style="flex:1">
+        <label>A 캐릭터 정보 (한 줄)</label>
+        <input type="text" id="pairInfoA" placeholder="정보 입력">
+      </div>
+      <div class="ef" style="flex:1">
+        <label>B 캐릭터 정보 (한 줄)</label>
+        <input type="text" id="pairInfoB" placeholder="정보 입력">
+      </div>
+    </div>
+    <div class="ef">
+      <label>말풍선 색상</label>
+      <div class="pair-color-row">
+        <div class="pair-color-pick">
+          <label>A</label>
+          <input type="color" id="pairColorA" value="#E8D5F5">
+        </div>
+        <div class="pair-color-pick">
+          <label>B</label>
+          <input type="color" id="pairColorB" value="#D5D5D5">
+        </div>
+      </div>
+    </div>
+    <div class="ef">
+      <label>시작일 (D-Day 기준)</label>
+      <input type="date" id="pairDate">
+    </div>
+    <div class="ef">
+      <label>해시태그</label>
+      <div class="pair-tags-input" id="pairTagsWrap" onclick="document.getElementById('pairTagInput').focus()">
+        <input type="text" id="pairTagInput" placeholder="#태그 입력 후 Enter" onkeydown="onPairTagKey(event)">
+      </div>
+    </div>
+    <div class="pair-modal-btns">
+      <button class="btn-g" onclick="closePairModal()">취소</button>
+      <button class="btn-p" onclick="savePair()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 메시지 추가 모달 -->
+<div class="pair-modal-dim" id="msgModalDim">
+  <div class="pair-modal">
+    <h3 id="msgModalTitle">메시지 추가</h3>
+    <div class="ef">
+      <label>보낸 사람</label>
+      <select id="msgSender" style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit">
+        <option value="A" id="msgSenderA">A</option>
+        <option value="B" id="msgSenderB">B</option>
+      </select>
+    </div>
+    <div class="ef">
+      <label>메시지 내용</label>
+      <textarea id="msgInput" placeholder="메시지를 입력하세요" rows="4"></textarea>
+    </div>
+    <div class="pair-modal-btns">
+      <button class="btn-g" onclick="closeMsgModal()">취소</button>
+      <button class="btn-p" id="msgSaveBtn" onclick="saveMsg()">추가</button>
+    </div>
+  </div>
+</div>
 
 <!-- 관리자 로그인 모달 -->
 <div id="loginModalDim" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center">
