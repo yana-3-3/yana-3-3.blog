@@ -578,7 +578,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
               <div class="tb-sep"></div>
               <!-- 글자색 picker -->
               <div class="tb-color-wrap" id="fgWrap">
-                <button class="tb-color-btn" onclick="toggleCP('fg',event)" title="글자 색상">
+                <button class="tb-color-btn" onmousedown="event.preventDefault();toggleCP('fg',event)" title="글자 색상">
                   <span class="cbi" id="fgIcon">A</span>
                   <span class="cbu" id="fgBar" style="background:#1A1A1A"></span>
                 </button>
@@ -591,7 +591,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
               </div>
               <!-- 배경색 picker -->
               <div class="tb-color-wrap" style="margin-left:3px" id="bgWrap">
-                <button class="tb-color-btn" onclick="toggleCP('bg',event)" title="배경 색상">
+                <button class="tb-color-btn" onmousedown="event.preventDefault();toggleCP('bg',event)" title="배경 색상">
                   <span class="cbi" style="font-size:.6rem">▲</span>
                   <span class="cbu" id="bgBar" style="background:#FFFF00"></span>
                 </button>
@@ -751,7 +751,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     </div>
     <div class="ccp-btns">
       <button class="btn-g" onclick="closeCCP()">취소</button>
-      <button class="btn-p" onclick="applyCCP()">확인</button>
+      <button class="btn-p" onmousedown="event.preventDefault();applyCCP()">확인</button>
     </div>
   </div>
 </div>
@@ -870,7 +870,7 @@ var CP_PALETTE=[
 function buildPalette(containerId,type){
   var el=$('#'+containerId);if(!el)return;
   el.innerHTML=CP_PALETTE.map(function(c){
-    return '<div class="cp-swatch" style="background:'+c+'" title="'+c+'" onclick="pickColor(\''+type+'\',\''+c+'\')"></div>';
+    return '<div class="cp-swatch" style="background:'+c+'" title="'+c+'" onmousedown="event.preventDefault();pickColor(\''+type+'\',\''+c+'\')"></div>';
   }).join('');
 }
 
@@ -920,10 +920,10 @@ function rCPRecent(type){
   var el=$('#'+(type==='fg'?'fgRecent':'bgRecent'));
   if(!el)return;
   var html=arr.map(function(c){
-    return '<div class="cp-recent-swatch" style="background:'+c+'" title="'+c+'" onclick="pickColor(\''+type+'\',\''+c+'\')"></div>';
+    return '<div class="cp-recent-swatch" style="background:'+c+'" title="'+c+'" onmousedown="event.preventDefault();pickColor(\''+type+'\',\''+c+'\')"></div>';
   }).join('');
   // Add + button
-  html+='<button class="cp-add-btn" title="커스텀 색상" onclick="openCCP(\''+type+'\')">+</button>';
+  html+='<button class="cp-add-btn" title="커스텀 색상" onmousedown="event.preventDefault();openCCP(\''+type+'\')">+</button>';
   el.innerHTML=html;
 }
 
