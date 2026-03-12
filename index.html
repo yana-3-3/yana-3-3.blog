@@ -1579,6 +1579,7 @@ function applyFavicon(){
 }
 function applyMeta(){
   document.title=cfg.name||'Blog';
+  var nL=$('#nL');if(nL)nL.textContent=cfg.name||'Blog';
   applyFavicon();
 }
 function saveCfg(){sv();rHome();applyMeta();toast('저장됨')}
