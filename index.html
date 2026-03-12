@@ -764,16 +764,16 @@ let selC=CL[0];
 let recentFgColors=ld('e_recentFg')||[];
 let recentBgColors=ld('e_recentBg')||[];
 
-// Firebase 데이터 우선, 없으면 로컬스토리지, 그것도 없으면 기본값
-let cfg=(window._fbCfg)||ld('e_cfg')||{name:'Blog',desc:'나만의 기록 공간',ht:'Blog',hd:'나만의 기록 공간',hbg:'',layout:'grid',accent:'#1A1A1A'};
-let galImgs=(window._fbGal)||ld('e_gal')||[];
-let cats=(window._fbCats)||ld('e_cats')||[
+// 일단 로컬/기본값으로만 초기화 — Firebase 데이터는 startApp()에서 덮어씀
+let cfg=ld('e_cfg')||{name:'Blog',desc:'나만의 기록 공간',ht:'Blog',hd:'나만의 기록 공간',hbg:'',layout:'grid',accent:'#1A1A1A'};
+let galImgs=ld('e_gal')||[];
+let cats=ld('e_cats')||[
   {id:'dev',name:'개발 노트',desc:'코딩하면서 배운 것들',thumb:'',color:'#3A85B5'},
   {id:'daily',name:'일상 기록',desc:'소소한 하루의 기록',thumb:'',color:'#3D8B5E'},
   {id:'read',name:'독서 로그',desc:'읽은 책에 대한 감상',thumb:'',color:'#D99A2B'},
   {id:'review',name:'감상문',desc:'영화, 음악, 전시 리뷰',thumb:'',color:'#7B61C4'}
 ];
-let ps=(window._fbPs)||ld('e_ps')||defP();
+let ps=ld('e_ps')||defP();
 let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null;
 let eCov='',eIL=[],eFI=[];
 let editCatId=null,catThumb='',catThumbOrig='';
@@ -1538,14 +1538,13 @@ function setAdmin(on){
 }
 
 function startApp(){
-  if(window._fbCfg) cfg=window._fbCfg;
-  if(window._fbCats) cats=window._fbCats;
-  if(window._fbPs) ps=window._fbPs;
-  if(window._fbGal) galImgs=window._fbGal;
+  // Firebase 데이터가 있으면 무조건 우선 적용하고 로컬도 동기화
+  if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
+  if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
+  if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
+  if(window._fbGal){galImgs=window._fbGal;localStorage.setItem('e_gal',JSON.stringify(galImgs));}
   applyAcc();
-  // 이전에 로그인했으면 자동으로 관리자 모드
   if(localStorage.getItem('e_admin')==='1') setAdmin(true);
-  // URL에 ?post=ID 가 있으면 해당 글 바로 열기
   var urlParams=new URLSearchParams(window.location.search);
   var postId=urlParams.get('post');
   if(postId){
