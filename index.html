@@ -805,7 +805,7 @@ function sv(){
     var db=window._db, docFn=window._firestoreFns.doc, setDocFn=window._firestoreFns.setDoc;
     setDocFn(docFn(db,'blog','data'),{
       cfg:cfg,cats:cats,ps:ps,gal:galImgs,updatedAt:Date.now()
-    }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e)});
+    }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e);toast('저장 실패 — 이미지가 너무 클 수 있어요');});
   }
 }
 
@@ -1355,12 +1355,12 @@ function onCatThumbClick(){
   }
 }
 function onCatThumb(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){
-  catThumbOrig=d;  // 원본 보존
+  catThumbOrig=d;
   openCropModal(d,function(cropped){
     catThumb=cropped;
     $('#catFormThumb').innerHTML=thumbHTML(cropped);
   });
-})}
+},{thumb:true})}
 
 function startEditCat(id){
   var c=cats.find(function(x){return x.id===id});if(!c)return;
@@ -1435,7 +1435,31 @@ function fDT(d){
 }
 function fSz(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB'}
 function fIc(n){var e=n.split('.').pop().toLowerCase();var m={pdf:'📄',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',zip:'🗜️',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',mp3:'🎵',mp4:'🎬'};return m[e]||'📎'}
-function rdF(f,cb){if(f.size>5242880){showAlert('⚠️','5MB 이하 파일만 업로드할 수 있어요');return}var r=new FileReader();r.onload=function(e){cb(e.target.result)};r.readAsDataURL(f)}
+function compressImg(dataUrl, maxW, quality, cb){
+  var img=new Image();
+  img.onload=function(){
+    var w=img.width,h=img.height;
+    if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+    var canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    cb(canvas.toDataURL('image/jpeg',quality));
+  };
+  img.src=dataUrl;
+}
+function rdF(f,cb,opts){
+  if(f.size>5242880){showAlert('⚠️','5MB 이하 파일만 업로드할 수 있어요');return}
+  var r=new FileReader();
+  r.onload=function(e){
+    var data=e.target.result;
+    if(!f.type.startsWith('image/')){cb(data);return;}
+    // 이미지면 압축 (썸네일: 400px, 커버/본문: 1200px)
+    var maxW=(opts&&opts.thumb)?400:1200;
+    var quality=(opts&&opts.thumb)?0.7:0.75;
+    compressImg(data,maxW,quality,cb);
+  };
+  r.readAsDataURL(f);
+}
 function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},2000)}
 
 function showModal(icon,msg,okText,onOk,opts){
