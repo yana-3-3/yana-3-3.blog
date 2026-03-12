@@ -1155,7 +1155,7 @@ function rGal(){
   $('#gA').innerHTML=galImgs.map(function(img,i){
     return '<div class="gi" onclick="openGalLightbox('+i+')">'
       +'<img src="'+img.data+'" loading="lazy">'
-      +'<button class="gi-del" onclick="event.stopPropagation();delGalImg('+i+')">✕</button>'
+      +(isAdmin?'<button class="gi-del" onclick="event.stopPropagation();delGalImg('+i+')">✕</button>':'')
       +'</div>';
   }).join('');
 }
@@ -1172,6 +1172,7 @@ function onGalUpload(e){
   e.target.value='';
 }
 function delGalImg(i){
+  if(!isAdmin){return;}
   showModal('🗑️','이 이미지를 삭제하시겠습니까?','삭제',function(){
     galImgs.splice(i,1);sv();rGal();
   },{danger:true});
