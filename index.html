@@ -1488,7 +1488,8 @@ function closeCropModal(){
 function applyCrop(){
   if(!cropperInst)return;
   var canvas=cropperInst.getCroppedCanvas({width:400,height:400,imageSmoothingEnabled:true,imageSmoothingQuality:'high'});
-  var result=canvas.toDataURL('image/jpeg',0.92);
+  var result=canvas.toDataURL('image/webp',0.88);
+  if(result.indexOf('data:image/webp')!==0)result=canvas.toDataURL('image/jpeg',0.88);
   var cb=cropCallback;
   closeCropModal();
   if(cb)cb(result);
@@ -1643,6 +1644,9 @@ function compressImg(dataUrl, maxW, quality, cb){
     var canvas=document.createElement('canvas');
     canvas.width=w;canvas.height=h;
     canvas.getContext('2d').drawImage(img,0,0,w,h);
+    // WebP 우선 시도 (용량 작고 화질 좋음), 미지원 시 JPEG fallback
+    var result=canvas.toDataURL('image/webp',quality);
+    if(result.indexOf('data:image/webp')===0){cb(result);return;}
     cb(canvas.toDataURL('image/jpeg',quality));
   };
   img.src=dataUrl;
@@ -1655,7 +1659,7 @@ function rdF(f,cb,opts){
     if(!f.type.startsWith('image/')){cb(data);return;}
     // 이미지 압축 (thumb:400/0.7, pair:600/0.6, 기본:1200/0.75)
     var maxW=(opts&&opts.maxW)?opts.maxW:(opts&&opts.thumb)?400:1200;
-    var quality=(opts&&opts.quality)?opts.quality:(opts&&opts.thumb)?0.7:0.75;
+    var quality=(opts&&opts.quality)?opts.quality:(opts&&opts.thumb)?0.82:0.88;
     compressImg(data,maxW,quality,cb);
   };
   r.readAsDataURL(f);
@@ -1880,12 +1884,12 @@ function openPairDetail(id){
   // 이미지 업로드 input
   if(!document.getElementById('pairImgInputA')){
     var inA=document.createElement('input');inA.type='file';inA.accept='image/*';inA.id='pairImgInputA';inA.style.display='none';
-    inA.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgA=d;sv();openPairDetail(curPairId);}},{maxW:600,quality:0.6});};
+    inA.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgA=d;sv();openPairDetail(curPairId);}},{maxW:800,quality:0.82});};
     document.body.appendChild(inA);
   }
   if(!document.getElementById('pairImgInputB')){
     var inB=document.createElement('input');inB.type='file';inB.accept='image/*';inB.id='pairImgInputB';inB.style.display='none';
-    inB.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgB=d;sv();openPairDetail(curPairId);}},{maxW:600,quality:0.6});};
+    inB.onchange=function(e){if(e.target.files[0])rdF(e.target.files[0],function(d){var p2=pairs.find(function(x){return x.id===curPairId});if(p2){p2.imgB=d;sv();openPairDetail(curPairId);}},{maxW:800,quality:0.82});};
     document.body.appendChild(inB);
   }
   // 페이지 전환
@@ -1945,7 +1949,7 @@ function onPairThumb(e){
       pairThumbData=cropped;
       rPairThumbPreview();
     });
-  },{maxW:600,quality:0.75});
+  },{maxW:500,quality:0.82});
 }
 function rPairThumbPreview(){
   var area=$('#pairThumbArea');
