@@ -62,13 +62,7 @@ nav{height:var(--nav-h);position:sticky;top:0;z-index:100;background:var(--bg);t
 .fab-menu.open{display:block;animation:fin .15s ease}
 .fab-menu button{display:block;width:100%;padding:10px 16px;border:none;background:none;color:var(--text);font-size:.82rem;text-align:left;cursor:pointer;transition:background var(--tr);font-family:inherit;white-space:nowrap}
 .fab-menu button:hover{background:var(--accent-soft)}
-/* Gallery grid item */
-.gi{position:relative;aspect-ratio:1;border-radius:var(--radius);overflow:hidden;cursor:pointer;box-shadow:var(--shadow);background:var(--bg2)}
-.gi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.gi:hover img{transform:scale(1.05)}
-.gi-del{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:2}
-.gi:hover .gi-del{opacity:1}
-.gi-del:hover{background:rgba(212,86,74,.85)}
+
 .n-mob{display:none;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text)}
 @media(max-width:640px){.n-links{display:none}.n-links.open{display:flex;position:absolute;top:var(--nav-h);left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;flex-wrap:wrap;z-index:99;gap:4px}.n-mob{display:block}.n-inner{padding:0 16px}}
 
@@ -521,7 +515,6 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         if (data.cfg) window._fbCfg = data.cfg;
         if (data.cats) window._fbCats = data.cats;
         if (data.ps) window._fbPs = data.ps;
-        if (data.gal) window._fbGal = data.gal;
         if (data.pairs) window._fbPairs = data.pairs;
       }
     } catch(e) {
@@ -548,7 +541,6 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   <div class="n-links">
     <button class="n-link on" data-p="home" onclick="go('home')">홈</button>
     <button class="n-link" data-p="series" onclick="go('series')">시리즈</button>
-    <button class="n-link" data-p="gallery" onclick="go('gallery')">갤러리</button>
     <button class="n-link" data-p="pair" onclick="go('pair')">페어</button>
     <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
   </div>
@@ -563,10 +555,9 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <button class="n-wr fab-main" onclick="toggleFab()" id="fabBtn">+</button>
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
-        <button onclick="closeFab();document.getElementById('galUpIn').click()">🖼 이미지</button>
       </div>
     </div>
-    <input type="file" id="galUpIn" accept="image/*" multiple style="display:none" onchange="onGalUpload(event)">
+
   </div>
   </div>
 </nav>
@@ -612,21 +603,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   </div>
 </div>
 
-<div class="page" id="pg-gallery">
-  <div class="pw">
-    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Gallery</span>
-      <span id="galCount" style="font-size:.74rem;color:var(--text-light)"></span>
-    </div>
-    <div id="gA" class="grid g3" style="gap:8px"></div>
-    <div class="empty" id="gE" style="display:none"><div>🖼</div><h3>이미지가 없어요</h3><p>+ 버튼을 눌러 이미지를 추가해보세요</p></div>
-  </div>
-</div>
 
-<!-- Gallery Lightbox -->
-<div id="galLightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:900;justify-content:center;align-items:center;cursor:zoom-out" onclick="closeGalLightbox()">
-  <img id="galLbImg" style="max-width:92vw;max-height:92vh;border-radius:10px;object-fit:contain;pointer-events:none">
-</div>
 
 <div class="page" id="pg-detail">
   <div class="pw" style="max-width:700px">
@@ -936,7 +913,6 @@ let recentBgColors=ld('e_recentBg')||[];
 
 // 일단 로컬/기본값으로만 초기화 — Firebase 데이터는 startApp()에서 덮어씀
 let cfg=ld('e_cfg')||{name:'Blog',desc:'나만의 기록 공간',ht:'Blog',hd:'나만의 기록 공간',hbg:'',layout:'grid',accent:'#1A1A1A'};
-let galImgs=ld('e_gal')||[];
 let cats=ld('e_cats')||[
   {id:'dev',name:'개발 노트',desc:'코딩하면서 배운 것들',thumb:'',color:'#3A85B5'},
   {id:'daily',name:'일상 기록',desc:'소소한 하루의 기록',thumb:'',color:'#3D8B5E'},
@@ -972,12 +948,11 @@ function sv(){
   localStorage.setItem('e_cfg',JSON.stringify(cfg));
   localStorage.setItem('e_cats',JSON.stringify(cats));
   localStorage.setItem('e_ps',JSON.stringify(ps));
-  localStorage.setItem('e_gal',JSON.stringify(galImgs));
   localStorage.setItem('e_pairs',JSON.stringify(pairs));
   if(window._db && window._firestoreFns){
     var db=window._db, docFn=window._firestoreFns.doc, setDocFn=window._firestoreFns.setDoc;
     setDocFn(docFn(db,'blog','data'),{
-      cfg:cfg,cats:cats,ps:ps,gal:galImgs,pairs:pairs,updatedAt:Date.now()
+      cfg:cfg,cats:cats,ps:ps,pairs:pairs,updatedAt:Date.now()
     }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e);toast('저장 실패 — 이미지가 너무 클 수 있어요');});
   }
 }
@@ -1004,7 +979,6 @@ function go(p){
   window.scrollTo({top:0,behavior:'smooth'});
   if(p==='home')rHome();
   if(p==='series')rSeries();
-  if(p==='gallery')rGal();
   if(p==='admin'){rAdmin();resetCatForm()}
   if(p==='editor')initEd();
   if(p==='catview')rCatView();
@@ -1334,42 +1308,6 @@ function fltP(){
   else $('#pA').innerHTML='<div class="grid g1">'+fp.map(function(p){return lcC(p)}).join('')+'</div>';
 }
 
-function rGal(){
-  var cnt=galImgs.length;
-  $('#galCount').textContent=cnt?cnt+'장':'';
-  if(!cnt){$('#gA').innerHTML='';$('#gE').style.display='';return}
-  $('#gE').style.display='none';
-  $('#gA').innerHTML=galImgs.map(function(img,i){
-    return '<div class="gi" onclick="openGalLightbox('+i+')">'
-      +'<img src="'+img.data+'" loading="lazy">'
-      +(isAdmin?'<button class="gi-del" onclick="event.stopPropagation();delGalImg('+i+')">✕</button>':'')
-      +'</div>';
-  }).join('');
-}
-function onGalUpload(e){
-  var files=Array.from(e.target.files);if(!files.length)return;
-  var done=0;
-  files.forEach(function(f){
-    rdF(f,function(d){
-      galImgs.unshift({data:d,name:f.name,date:new Date().toISOString()});
-      done++;
-      if(done===files.length){sv();rGal();}
-    });
-  });
-  e.target.value='';
-}
-function delGalImg(i){
-  if(!isAdmin){return;}
-  showModal('🗑️','이 이미지를 삭제하시겠습니까?','삭제',function(){
-    galImgs.splice(i,1);sv();rGal();
-  },{danger:true});
-}
-function openGalLightbox(i){
-  $('#galLbImg').src=galImgs[i].data;
-  var lb=$('#galLightbox');
-  lb.style.display='flex';
-}
-function closeGalLightbox(){$('#galLightbox').style.display='none';}
 
 function openD(id){
   curId=id;
@@ -2144,7 +2082,6 @@ function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
-  if(window._fbGal){galImgs=window._fbGal;localStorage.setItem('e_gal',JSON.stringify(galImgs));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
   applyAcc();applyMeta();
   var loader=document.getElementById('appLoader');
@@ -2158,7 +2095,7 @@ function startApp(){
   }
   // URL hash로 페이지 복원
   var hash=window.location.hash.replace('#','');
-  var validPages=['home','series','gallery','pair'];
+  var validPages=['home','series','pair'];
   if(hash && validPages.indexOf(hash)!==-1){go(hash);}
   else{rHome();}
 }
