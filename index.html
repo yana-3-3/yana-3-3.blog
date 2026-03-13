@@ -457,8 +457,13 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .cat-form-thumb:hover{border-color:var(--text-light)}
 .cat-form-thumb img{width:100%;height:100%;object-fit:cover}
 .cat-form-thumb input{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
-.cat-form-thumb .thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:.62rem;color:#fff;font-weight:500;text-align:center;line-height:1.4}
+.cat-form-thumb .thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:.58rem;color:#fff;font-weight:500;text-align:center;line-height:1.4;gap:4px}
+.cat-form-thumb .thumb-overlay span{cursor:pointer;padding:2px 6px;border-radius:3px;transition:background .15s}
+.cat-form-thumb .thumb-overlay span:hover{background:rgba(255,255,255,.2)}
 .cat-form-thumb:hover .thumb-overlay{opacity:1}
+.cat-form-thumb .thumb-remove{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:.58rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:2;padding:0}
+.cat-form-thumb:hover .thumb-remove{opacity:1}
+.cat-form-thumb .thumb-remove:hover{background:rgba(212,86,74,.85)}
 
 .empty{text-align:center;padding:80px 20px;color:var(--text-light)}
 .empty div:first-child{font-size:2rem;opacity:.2;margin-bottom:12px}
@@ -1523,14 +1528,13 @@ function rCcBar(){
 }
 
 function thumbHTML(src){
-  return '<img src="'+src+'"><div class="thumb-overlay">✂ 재편집<br>이미지 변경</div><input type="file" id="catThIn" accept="image/*" onchange="onCatThumb(event)">';
+  return '<img src="'+src+'"><div class="thumb-overlay"><span onclick="event.stopPropagation();onCatThumbClick()">✂ 재편집</span><br><span onclick="event.stopPropagation();document.getElementById(\'catThIn\').click()">🔄 새 이미지</span></div><button class="thumb-remove" onclick="event.stopPropagation();catThumb=\'\';catThumbOrig=\'\';$(\'#catFormThumb\').innerHTML=thumbEmpty()">✕</button><input type="file" id="catThIn" accept="image/*" onchange="onCatThumb(event)">';
 }
 function thumbEmpty(){
   return '썸네일<input type="file" id="catThIn" accept="image/*" onchange="onCatThumb(event)">';
 }
 function onCatThumbClick(){
   if(catThumb){
-    // 원본이 있으면 원본으로, 없으면 현재 크롭본으로 재편집
     openCropModal(catThumbOrig||catThumb,function(cropped){
       catThumb=cropped;
       $('#catFormThumb').innerHTML=thumbHTML(cropped);
