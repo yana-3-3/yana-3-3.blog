@@ -146,8 +146,12 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 
 /* ── Pair Tab ── */
 .pair-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px}
-.pair-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all var(--tr)}
+.pair-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all var(--tr);position:relative}
 .pair-card:hover{box-shadow:var(--shadow-h);transform:translateY(-2px)}
+.pair-card.dragging{opacity:.4;transform:scale(.95)}
+.pair-card .pair-drag-handle{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:6px;background:rgba(0,0,0,.45);color:#fff;border:none;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:.7rem;opacity:0;transition:opacity .2s;z-index:2;line-height:1;letter-spacing:1px}
+.pair-card:hover .pair-drag-handle{opacity:1}
+.pair-card .pair-drag-handle:active{cursor:grabbing}
 .pair-card-img{width:100%;aspect-ratio:1;background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
 .pair-card-img img{width:100%;height:100%;object-fit:cover}
 .pair-card-body{padding:14px 16px 16px}
@@ -591,7 +595,11 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <span class="cat-hero-count" id="catHeroCount"></span>
       </div>
     </div>
-    <div id="catPosts" class="grid g1" style="margin-top:24px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;margin-bottom:12px">
+      <span id="catSortLabel" style="font-size:.72rem;color:var(--text-light)"></span>
+      <button class="vb" onclick="catSortAsc=!catSortAsc;rCatView()" id="catSortBtn" title="정렬 순서 변경" style="font-size:.72rem">↕</button>
+    </div>
+    <div id="catPosts" class="grid g1"></div>
     <div class="empty" id="catPostsE" style="display:none"><div>✎</div><h3>이 시리즈에 글이 없어요</h3></div>
   </div>
 </div>
@@ -928,7 +936,7 @@ let cats=ld('e_cats')||[
   {id:'review',name:'감상문',desc:'영화, 음악, 전시 리뷰',thumb:'',color:'#7B61C4'}
 ];
 let ps=ld('e_ps')||defP();
-let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null;
+let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null,catSortAsc=false;
 let pairs=ld('e_pairs')||[];
 let curPairId=null;
 let eCov='',eIL=[],eFI=[];
@@ -1282,8 +1290,14 @@ function rCatView(){
   else imgEl.innerHTML='<div class="ch-placeholder" style="color:'+c.color+'">■</div>';
   $('#catHeroName').textContent=c.name;
   $('#catHeroDesc').textContent=c.desc||'';
-  var cp=ps.filter(function(p){return p.cid===c.id}).sort(function(a,b){return new Date(b.d)-new Date(a.d)});
+  var cp=ps.filter(function(p){return p.cid===c.id});
+  cp.sort(function(a,b){
+    var ta=a.ts||new Date(a.d).getTime(),tb=b.ts||new Date(b.d).getTime();
+    return catSortAsc?(ta-tb):(tb-ta);
+  });
   $('#catHeroCount').textContent=cp.length+'개의 글';
+  var sortLabel=$('#catSortLabel');
+  if(sortLabel)sortLabel.textContent=catSortAsc?'오래된 순':'최신순';
   if(!cp.length){$('#catPosts').innerHTML='';$('#catPostsE').style.display='';return}
   $('#catPostsE').style.display='none';
   $('#catPosts').innerHTML=cp.map(function(p){return lcC(p)}).join('');
@@ -1302,7 +1316,10 @@ function fltP(){
   if(sIn)q=sIn.value.toLowerCase();
   var fp=ps.slice();
   if(q)fp=fp.filter(function(p){return p.t.toLowerCase().indexOf(q)!==-1||stripHtml(p.b).toLowerCase().indexOf(q)!==-1});
-  fp.sort(function(a,b){return new Date(b.d)-new Date(a.d)});
+  fp.sort(function(a,b){
+    var ta=a.ts||new Date(a.d).getTime(),tb=b.ts||new Date(b.d).getTime();
+    return tb-ta;
+  });
   if(!fp.length){$('#pA').innerHTML='';$('#pE').style.display='';return}
   $('#pE').style.display='none';
   if(vm==='grid')$('#pA').innerHTML='<div class="grid g2">'+fp.map(function(p){return pcC(p)}).join('')+'</div>';
@@ -1352,7 +1369,7 @@ function openD(id){
   if(!p)return;
   var c=cats.find(function(x){return x.id===p.cid});
   if(p.cov){$('#dtH').src=p.cov;$('#dtH').style.display=''}else{$('#dtH').style.display='none'}
-  $('#dtBg').innerHTML=c?'<span class="pc-badge" style="background:'+c.color+'10;color:'+c.color+'">'+c.name+'</span>':'';
+  $('#dtBg').innerHTML=c?'<span class="pc-badge" style="background:'+c.color+'10;color:'+c.color+';cursor:pointer" onclick="viewCatId=\''+c.id+'\';go(\'catview\')">'+c.name+'</span>':'';
   $('#dtT').textContent=p.t;
   var metaParts=[];
   metaParts.push(fD(p.d));
@@ -1731,9 +1748,10 @@ function rPair(){
     return;
   }
   $('#pairEmpty').style.display='none';
-  $('#pairGrid').innerHTML=pairs.map(function(p){
+  $('#pairGrid').innerHTML=pairs.map(function(p,idx){
     var dday=calcDday(p.date);
-    var html='<div class="pair-card" onclick="openPairDetail(\'' + p.id + '\')">';
+    var html='<div class="pair-card" data-pair-idx="'+idx+'" '+(isAdmin?'draggable="true" ':'')+'onclick="openPairDetailSafe(\'' + p.id + '\')">';
+    if(isAdmin)html+='<div class="pair-drag-handle" onmousedown="event.stopPropagation()" title="드래그하여 순서 변경">⋮⋮</div>';
     html+='<div class="pair-card-img">';
     if(p.thumb){
       html+='<img src="'+p.thumb+'" style="width:100%;height:100%;object-fit:cover">';
@@ -1753,6 +1771,52 @@ function rPair(){
     html+='</div></div>';
     return html;
   }).join('');
+  // Bind drag events for admin
+  if(isAdmin)initPairDrag();
+}
+
+/* ── Pair drag-to-reorder ── */
+var pairDragIdx=null;
+var pairDragged=false;
+function initPairDrag(){
+  var grid=$('#pairGrid');if(!grid)return;
+  var cards=grid.querySelectorAll('.pair-card[draggable]');
+  cards.forEach(function(card){
+    card.addEventListener('dragstart',function(e){
+      pairDragIdx=parseInt(card.dataset.pairIdx);
+      pairDragged=true;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',function(){
+      card.classList.remove('dragging');
+      pairDragIdx=null;
+      setTimeout(function(){pairDragged=false},50);
+      grid.querySelectorAll('.pair-card').forEach(function(c){c.style.borderTop='';c.style.borderLeft='';});
+    });
+    card.addEventListener('dragover',function(e){
+      e.preventDefault();e.dataTransfer.dropEffect='move';
+      var overIdx=parseInt(card.dataset.pairIdx);
+      if(pairDragIdx===null||overIdx===pairDragIdx)return;
+      grid.querySelectorAll('.pair-card').forEach(function(c){c.style.borderTop='';c.style.borderLeft='';});
+      card.style.borderLeft='2px solid var(--accent)';
+    });
+    card.addEventListener('dragleave',function(){
+      card.style.borderTop='';card.style.borderLeft='';
+    });
+    card.addEventListener('drop',function(e){
+      e.preventDefault();
+      var toIdx=parseInt(card.dataset.pairIdx);
+      if(pairDragIdx===null||pairDragIdx===toIdx)return;
+      var item=pairs.splice(pairDragIdx,1)[0];
+      pairs.splice(toIdx,0,item);
+      sv();rPair();toast('순서 변경됨');
+    });
+  });
+}
+function openPairDetailSafe(id){
+  if(pairDragged)return;
+  openPairDetail(id);
 }
 
 function calcDday(dateStr){
