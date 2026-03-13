@@ -35,13 +35,13 @@
   --shadow:0 0 0 1px var(--border);--shadow-h:0 0 0 1px var(--border-h),0 4px 20px rgba(0,0,0,.3);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;transition:background .3s,color .3s}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;transition:background .3s,color .3s;overflow-y:scroll}
 ::selection{background:var(--accent);color:var(--bg)}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:5px}
 button,input,select,textarea{font-family:inherit;letter-spacing:inherit}
 
 nav{height:var(--nav-h);position:sticky;top:0;z-index:100;background:var(--bg);transition:background .3s;border-bottom:1px solid var(--border)}
-.n-inner{max-width:var(--page-w);margin:0 auto;padding:0 28px;height:100%;display:flex;align-items:center}
+.n-inner{max-width:var(--page-w);width:100%;margin:0 auto;padding:0 28px;height:100%;display:flex;align-items:center}
 .n-logo{font-family:var(--font-d);font-size:1.15rem;cursor:pointer;margin-right:32px;transition:opacity var(--tr)}
 .n-logo:hover{opacity:.6}
 .n-links{display:flex;gap:1px;flex:1}
