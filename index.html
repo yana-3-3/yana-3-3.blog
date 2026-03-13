@@ -1720,6 +1720,7 @@ async function tryLogin(){
 /* ═══════════════ PAIR ═══════════════ */
 var editingPairId=null;
 var pairThumbData='';
+var pairThumbOrig='';
 var pairTags=[];
 var editingMsgIdx=null;
 
@@ -1875,16 +1876,31 @@ function closePairDtMenuOutside(e){if(!$('#pairDtMenuWrap').contains(e.target))c
 function onPairThumb(e){
   var f=e.target.files[0];if(!f)return;
   rdF(f,function(d){
-    pairThumbData=d;
-    rPairThumbPreview();
-  },{maxW:400,quality:0.65});
+    pairThumbOrig=d;
+    openCropModal(d,function(cropped){
+      pairThumbData=cropped;
+      rPairThumbPreview();
+    });
+  },{maxW:600,quality:0.75});
 }
 function rPairThumbPreview(){
   var area=$('#pairThumbArea');
   if(pairThumbData){
-    area.innerHTML='<img src="'+pairThumbData+'"><button class="xb" onclick="event.stopPropagation();pairThumbData=\'\';rPairThumbPreview()">✕</button><input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">';
+    area.innerHTML='<img src="'+pairThumbData+'"><div class="thumb-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:.72rem;color:#fff;font-weight:500;cursor:pointer">✂ 재편집 / 변경</div><button class="xb" onclick="event.stopPropagation();pairThumbData=\'\';pairThumbOrig=\'\';rPairThumbPreview()">✕</button><input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">';
+    area.onmouseenter=function(){area.querySelector('.thumb-overlay').style.opacity='1'};
+    area.onmouseleave=function(){area.querySelector('.thumb-overlay').style.opacity='0'};
+    area.onclick=function(e){
+      if(e.target.classList.contains('xb'))return;
+      if(pairThumbOrig){
+        openCropModal(pairThumbOrig,function(cropped){pairThumbData=cropped;rPairThumbPreview();});
+      }else{
+        document.getElementById('pairThumbIn').click();
+      }
+    };
   }else{
     area.innerHTML='클릭하여 업로드<input type="file" id="pairThumbIn" accept="image/*" onchange="onPairThumb(event)" style="display:none">';
+    area.onmouseenter=null;area.onmouseleave=null;
+    area.onclick=function(){document.getElementById('pairThumbIn').click();};
   }
 }
 function renderPairTags(){
@@ -1905,6 +1921,7 @@ function openPairModal(editId){
   editingPairId=editId||null;
   pairTags=[];
   pairThumbData='';
+  pairThumbOrig='';
   if(editId){
     var p=pairs.find(function(x){return x.id===editId});
     if(!p)return;
@@ -1917,6 +1934,7 @@ function openPairModal(editId){
     $('#pairColorB').value=p.colorB||'#D5D5D5';
     $('#pairDate').value=p.date;
     pairThumbData=p.thumb||'';
+    pairThumbOrig=p.thumbOrig||p.thumb||'';
     pairTags=(p.tags||[]).slice();
   }else{
     $('#pairModalTitle').textContent='페어 추가';
