@@ -538,6 +538,30 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:var(--bg);padding:10px 24px;border-radius:50px;font-size:.8rem;z-index:999;transition:transform .3s cubic-bezier(.4,0,.2,1);font-weight:400}
 .toast.on{transform:translateX(-50%) translateY(0)}
 
+/* ── Mini Music Player ── */
+.bgm-player{position:fixed;bottom:20px;right:20px;z-index:90;display:flex;align-items:center;gap:0;transition:all .35s cubic-bezier(.4,0,.2,1);opacity:0;transform:translateY(12px);pointer-events:none}
+.bgm-player.on{opacity:1;transform:translateY(0);pointer-events:auto}
+.bgm-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border-h);border-radius:50px;padding:6px 6px 6px 14px;box-shadow:0 4px 20px rgba(0,0,0,.08);cursor:default;max-width:220px;transition:all .3s}
+.bgm-pill:hover{box-shadow:0 6px 28px rgba(0,0,0,.12)}
+.bgm-info{display:flex;flex-direction:column;min-width:0;flex:1}
+.bgm-title{font-size:.7rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.bgm-time{font-size:.6rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace;line-height:1.3}
+.bgm-eq{display:flex;align-items:flex-end;gap:1.5px;height:12px;margin-right:2px}
+.bgm-eq span{display:block;width:2.5px;background:var(--accent);border-radius:1px;animation:bgmEq .8s ease-in-out infinite alternate}
+.bgm-eq span:nth-child(1){height:4px;animation-delay:0s}
+.bgm-eq span:nth-child(2){height:8px;animation-delay:.15s}
+.bgm-eq span:nth-child(3){height:5px;animation-delay:.3s}
+.bgm-eq span:nth-child(4){height:10px;animation-delay:.1s}
+.bgm-eq.paused span{animation:none;height:3px}
+@keyframes bgmEq{0%{height:3px}100%{height:12px}}
+.bgm-btn{width:30px;height:30px;border-radius:50%;border:none;background:var(--accent);color:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:all .2s}
+.bgm-btn:hover{opacity:.8}
+.bgm-vol{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--border-h);border-radius:10px;padding:12px 10px;box-shadow:0 4px 20px rgba(0,0,0,.1);display:none;flex-direction:column;align-items:center;gap:6px;min-height:120px}
+.bgm-vol.on{display:flex}
+.bgm-vol input[type=range]{writing-mode:vertical-lr;direction:rtl;height:80px;width:20px;accent-color:var(--accent)}
+.bgm-vol-label{font-size:.6rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace}
+@media(max-width:640px){.bgm-player{bottom:14px;right:14px}.bgm-pill{padding:5px 5px 5px 10px}}
+
 /* ── Modal ── */
 .modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center}
 .modal-dim.on{display:flex}
@@ -915,6 +939,24 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         </div>
         <input id="cImgKey" placeholder="API Key 입력 (선택)" style="font-family:'IBM Plex Mono',monospace;font-size:.8rem" oninput="uC()">
       </div>
+      <div class="ef"><label>배경음악</label>
+        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;font-weight:300;line-height:1.5">
+          오디오 파일의 직접 링크(mp3, ogg 등)를 넣으면 블로그에 미니 플레이어가 나타나요.<br>
+          <a href="https://github.com/" target="_blank" style="color:var(--text-sub);text-decoration:underline">GitHub</a>에 mp3를 업로드하고 raw 링크를 복사해서 사용하세요.
+        </div>
+        <input id="cBgmUrl" placeholder="https://files.catbox.moe/example.mp3" style="font-family:'IBM Plex Mono',monospace;font-size:.8rem" oninput="uC()">
+        <div style="margin-top:8px">
+          <input id="cBgmTitle" placeholder="곡 제목 (선택)" style="font-size:.82rem" oninput="uC()">
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" id="cBgmAuto" onchange="uC()" style="accent-color:var(--accent)"> 자동 재생
+          </label>
+          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" id="cBgmLoop" onchange="uC()" style="accent-color:var(--accent)"> 반복 재생
+          </label>
+        </div>
+      </div>
       <div class="ed-b" style="margin-top:16px"><button class="btn-p" onclick="saveCfg()">Save</button></div>
     </div>
     <div class="ab"><h3>시리즈 관리</h3>
@@ -951,6 +993,23 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 
 
 <div class="toast" id="toast"></div>
+
+<!-- BGM Mini Player -->
+<div class="bgm-player" id="bgmPlayer">
+  <div class="bgm-pill">
+    <div class="bgm-eq" id="bgmEq"><span></span><span></span><span></span><span></span></div>
+    <div class="bgm-info">
+      <div class="bgm-title" id="bgmTitle">♪ Music</div>
+      <div class="bgm-time" id="bgmTime">0:00</div>
+    </div>
+    <button class="bgm-btn" id="bgmPlayBtn" onclick="toggleBgm()" title="재생/일시정지">▶</button>
+    <button class="bgm-btn" id="bgmVolBtn" onclick="toggleBgmVol()" title="볼륨" style="background:var(--accent-soft);color:var(--text);font-size:.65rem;width:26px;height:26px;margin-left:-2px">♪</button>
+  </div>
+  <div class="bgm-vol" id="bgmVol">
+    <input type="range" id="bgmVolRange" min="0" max="100" value="60" oninput="setBgmVol(this.value)">
+    <div class="bgm-vol-label" id="bgmVolLabel">60%</div>
+  </div>
+</div>
 <div class="modal-dim" id="modalDim" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-icon" id="modalIcon"></div>
@@ -1775,6 +1834,10 @@ function applyCrop(){
 function rAdmin(){
   $('#cN').value=cfg.name;$('#cD').value=cfg.desc;$('#cHT').value=cfg.ht;$('#cHD').value=cfg.hd;
   if($('#cImgKey'))$('#cImgKey').value=cfg.imgbbKey||'';
+  if($('#cBgmUrl'))$('#cBgmUrl').value=cfg.bgmUrl||'';
+  if($('#cBgmTitle'))$('#cBgmTitle').value=cfg.bgmTitle||'';
+  if($('#cBgmAuto'))$('#cBgmAuto').checked=!!cfg.bgmAuto;
+  if($('#cBgmLoop'))$('#cBgmLoop').checked=!!cfg.bgmLoop;
   var bp=$('#banPv');
   if(cfg.hbg)bp.innerHTML='<img src="'+cfg.hbg+'"><button onclick="cfg.hbg=\'\';rAdmin()">✕</button>';
   var fpv=$('#faviconPv');
@@ -1859,7 +1922,7 @@ function saveCatForm(){
 }
 
 function delC(id){showModal('📂','이 시리즈를 삭제하시겠습니까?<div class="modal-sub">시리즈만 삭제되고 글은 유지돼요</div>','삭제',function(){cats=cats.filter(function(c){return c.id!==id});sv();rAdmin();toast('삭제됨')},{danger:true})}
-function uC(){cfg.name=$('#cN').value;cfg.desc=$('#cD').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value;if($('#cImgKey'))cfg.imgbbKey=$('#cImgKey').value.trim()}
+function uC(){cfg.name=$('#cN').value;cfg.desc=$('#cD').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value;if($('#cImgKey'))cfg.imgbbKey=$('#cImgKey').value.trim();if($('#cBgmUrl'))cfg.bgmUrl=$('#cBgmUrl').value.trim();if($('#cBgmTitle'))cfg.bgmTitle=$('#cBgmTitle').value.trim();if($('#cBgmAuto'))cfg.bgmAuto=$('#cBgmAuto').checked;if($('#cBgmLoop'))cfg.bgmLoop=$('#cBgmLoop').checked}
 function onBan(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.hbg=d;rAdmin()})}
 function onFavicon(e){
   var f=e.target.files[0];if(!f)return;
@@ -1877,7 +1940,7 @@ function applyMeta(){
   var nL=$('#nL');if(nL)nL.textContent=cfg.name||'Blog';
   applyFavicon();
 }
-function saveCfg(){sv();rHome();applyMeta();toast('저장됨')}
+function saveCfg(){sv();rHome();applyMeta();initBgm();toast('저장됨')}
 
 
 function expD(){
@@ -2481,12 +2544,157 @@ function setAdmin(on){
   $$('.dt-menu-drop button.admin-only').forEach(function(b){b.style.display=on?'':'none'});
 }
 
+/* ── BGM Player ── */
+var bgmAudio=null,bgmPlaying=false,bgmRetries=0;
+function initBgm(){
+  var player=$('#bgmPlayer');
+  if(!cfg.bgmUrl){
+    player.classList.remove('on');
+    if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
+    bgmPlaying=false;
+    return;
+  }
+  $('#bgmTitle').textContent=cfg.bgmTitle||'♪ Music';
+  $('#bgmTime').textContent='로딩 중...';
+  player.classList.add('on');
+  var vol=localStorage.getItem('e_bgmVol');
+  var volVal=(vol!==null?parseInt(vol):60)/100;
+  if($('#bgmVolRange'))$('#bgmVolRange').value=Math.round(volVal*100);
+  if($('#bgmVolLabel'))$('#bgmVolLabel').textContent=Math.round(volVal*100)+'%';
+
+  // 이전 오디오 정리 & 새로 생성 (깨끗한 상태)
+  if(bgmAudio&&bgmAudio._bgmSrc===cfg.bgmUrl){
+    // 같은 URL이면 재사용
+    player.classList.add('on');
+    updateBgmUI();
+    return;
+  }
+  if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
+  bgmPlaying=false;bgmRetries=0;
+  loadBgmAudio(volVal);
+}
+function loadBgmAudio(vol){
+  var a=new Audio();
+  a._bgmSrc=cfg.bgmUrl;
+  a.preload='auto';
+  a.loop=!!cfg.bgmLoop;
+  a.volume=vol||0.6;
+
+  a.addEventListener('canplay',function(){
+    $('#bgmTime').textContent='준비 완료';
+    if(cfg.bgmAuto&&!bgmPlaying)playBgm();
+  });
+  a.addEventListener('timeupdate',function(){
+    var c=a.currentTime,d=a.duration;
+    if(isNaN(d))return;
+    var cm=Math.floor(c/60),cs=Math.floor(c%60);
+    var dm=Math.floor(d/60),ds=Math.floor(d%60);
+    $('#bgmTime').textContent=cm+':'+String(cs).padStart(2,'0')+' / '+dm+':'+String(ds).padStart(2,'0');
+  });
+  a.addEventListener('ended',function(){
+    if(!a.loop){bgmPlaying=false;updateBgmUI();}
+  });
+  a.addEventListener('error',function(){
+    bgmPlaying=false;updateBgmUI();
+    var code=a.error?a.error.code:0;
+    console.warn('BGM 에러 code:',code,a.error);
+    // 자동 재시도 (최대 2회)
+    if(bgmRetries<2){
+      bgmRetries++;
+      $('#bgmTime').textContent='재시도 중... ('+bgmRetries+'/2)';
+      setTimeout(function(){
+        if(bgmAudio===a){
+          a.load(); // 다시 로드
+        }
+      },1500);
+      return;
+    }
+    // 재시도 소진
+    if(code===2||code===4){
+      $('#bgmTime').textContent='로딩 실패 — ▶ 눌러서 재시도';
+    } else if(code===3){
+      $('#bgmTime').textContent='디코딩 오류';
+    } else {
+      $('#bgmTime').textContent='로딩 실패 — ▶ 눌러서 재시도';
+    }
+  });
+
+  bgmAudio=a;
+  a.src=cfg.bgmUrl;
+  // load()는 src 설정 후 자동 시작되지만 명시적 호출
+  a.load();
+  updateBgmUI();
+}
+function playBgm(){
+  if(!bgmAudio){initBgm();return;}
+  // 에러 상태면 새로 로드
+  if(bgmAudio.error){
+    bgmRetries=0;
+    var vol=bgmAudio.volume;
+    bgmAudio.pause();bgmAudio=null;bgmPlaying=false;
+    $('#bgmTime').textContent='로딩 중...';
+    loadBgmAudio(vol);
+    return;
+  }
+  var p=bgmAudio.play();
+  if(p&&p.then){
+    p.then(function(){bgmPlaying=true;updateBgmUI();})
+     .catch(function(err){
+       console.warn('BGM play:',err.name,err.message);
+       if(err.name==='NotAllowedError'){
+         bgmPlaying=false;updateBgmUI();
+         waitForInteraction();
+       } else if(err.name==='AbortError'){
+         // 아직 로딩 중 — 로드 완료 후 자동 재생
+         $('#bgmTime').textContent='로딩 중...';
+         bgmAudio.addEventListener('canplay',function _r(){
+           bgmAudio.removeEventListener('canplay',_r);
+           bgmAudio.play().then(function(){bgmPlaying=true;updateBgmUI();}).catch(function(e2){
+             if(e2.name==='NotAllowedError')waitForInteraction();
+           });
+         });
+       }
+     });
+  }
+}
+function waitForInteraction(){
+  $('#bgmTime').textContent='▶ 클릭하여 재생';
+  var handler=function(){
+    if(bgmAudio){
+      bgmAudio.play().then(function(){bgmPlaying=true;updateBgmUI();}).catch(function(){});
+    }
+    document.removeEventListener('click',handler);
+    document.removeEventListener('touchstart',handler);
+  };
+  document.addEventListener('click',handler);
+  document.addEventListener('touchstart',handler);
+}
+function toggleBgm(){
+  if(bgmPlaying&&bgmAudio){bgmAudio.pause();bgmPlaying=false;updateBgmUI();}
+  else{playBgm();}
+}
+function updateBgmUI(){
+  var eq=$('#bgmEq'),btn=$('#bgmPlayBtn');
+  if(bgmPlaying){eq.classList.remove('paused');btn.textContent='❚❚';}
+  else{eq.classList.add('paused');btn.textContent='▶';}
+}
+function toggleBgmVol(){$('#bgmVol').classList.toggle('on')}
+function setBgmVol(v){
+  if(bgmAudio)bgmAudio.volume=v/100;
+  $('#bgmVolLabel').textContent=v+'%';
+  localStorage.setItem('e_bgmVol',v);
+}
+document.addEventListener('click',function(e){
+  var vol=$('#bgmVol'),btn=$('#bgmVolBtn');
+  if(vol&&vol.classList.contains('on')&&!vol.contains(e.target)&&e.target!==btn){vol.classList.remove('on');}
+});
+
 function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
-  applyAcc();applyMeta();
+  applyAcc();applyMeta();initBgm();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
   if(localStorage.getItem('e_admin')==='1') setAdmin(true);
