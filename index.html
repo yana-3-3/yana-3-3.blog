@@ -40,7 +40,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:5px}
 button,input,select,textarea{font-family:inherit;letter-spacing:inherit}
 
-nav{height:var(--nav-h);position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 28px;background:var(--bg);transition:background .3s;border-bottom:1px solid var(--border)}
+nav{height:var(--nav-h);position:sticky;top:0;z-index:100;background:var(--bg);transition:background .3s;border-bottom:1px solid var(--border)}
+.n-inner{max-width:var(--page-w);margin:0 auto;padding:0 28px;height:100%;display:flex;align-items:center}
 .n-logo{font-family:var(--font-d);font-size:1.15rem;cursor:pointer;margin-right:32px;transition:opacity var(--tr)}
 .n-logo:hover{opacity:.6}
 .n-links{display:flex;gap:1px;flex:1}
@@ -69,7 +70,7 @@ nav{height:var(--nav-h);position:sticky;top:0;z-index:100;display:flex;align-ite
 .gi:hover .gi-del{opacity:1}
 .gi-del:hover{background:rgba(212,86,74,.85)}
 .n-mob{display:none;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text)}
-@media(max-width:640px){.n-links{display:none}.n-links.open{display:flex;position:absolute;top:var(--nav-h);left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;flex-wrap:wrap;z-index:99;gap:4px}.n-mob{display:block}nav{padding:0 16px}}
+@media(max-width:640px){.n-links{display:none}.n-links.open{display:flex;position:absolute;top:var(--nav-h);left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;flex-wrap:wrap;z-index:99;gap:4px}.n-mob{display:block}.n-inner{padding:0 16px}}
 
 .page{display:none}.page.on{display:block;animation:fin .35s ease}
 @keyframes fin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -541,6 +542,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 </div>
 
 <nav>
+  <div class="n-inner">
   <div class="n-logo" onclick="go('home')" id="nL">Blog</div>
   <button class="n-mob" onclick="document.querySelector('.n-links').classList.toggle('open')">☰</button>
   <div class="n-links">
@@ -565,6 +567,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       </div>
     </div>
     <input type="file" id="galUpIn" accept="image/*" multiple style="display:none" onchange="onGalUpload(event)">
+  </div>
   </div>
 </nav>
 
