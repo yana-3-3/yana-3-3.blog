@@ -209,7 +209,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-card-date{font-size:.68rem;color:var(--text-light);margin-top:3px}
 
 /* Pair Detail - redesigned */
-.pair-detail-wrap{max-width:860px;margin:0 auto;padding:0 0 80px}
+.pair-detail-wrap{max-width:860px;margin:0 auto;padding:0 0 80px;position:relative;overflow:visible}
 .pair-detail-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .pair-detail-layout{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:0;align-items:start}
 @media(max-width:720px){.pair-detail-layout{grid-template-columns:1fr;gap:20px}}
@@ -275,6 +275,29 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-empty{text-align:center;padding:80px 20px;color:var(--text-light)}
 .pair-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
 .pair-empty-txt{font-size:.85rem}
+/* ── Pair Stickers ── */
+.sticker-layer{position:absolute;top:0;bottom:0;left:-120px;right:-120px;pointer-events:none;z-index:10;overflow:visible}
+@media(max-width:1100px){.sticker-layer{left:-40px;right:-40px}}
+@media(max-width:720px){.sticker-layer{left:-16px;right:-16px}}
+.sticker{position:absolute;pointer-events:auto;cursor:default;user-select:none;transition:filter .2s}
+.sticker img{width:100%;height:auto;display:block;-webkit-user-drag:none;pointer-events:none}
+.sticker.editing{cursor:move;z-index:20}
+.sticker.editing:hover{filter:brightness(1.05)}
+.sticker .stk-del{display:none;position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:rgba(212,86,74,.9);color:#fff;border:none;cursor:pointer;font-size:.6rem;align-items:center;justify-content:center;z-index:2;line-height:1}
+.sticker.editing .stk-del{display:flex}
+.sticker .stk-resize{display:none;position:absolute;bottom:-4px;right:-4px;width:14px;height:14px;border-radius:2px;background:var(--accent);cursor:nwse-resize;z-index:2}
+.sticker.editing .stk-resize{display:block}
+.sticker .stk-rotate{display:none;position:absolute;top:-24px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:grab;z-index:2;border:2px solid var(--card)}
+.sticker.editing .stk-rotate{display:flex;align-items:center;justify-content:center}
+.sticker .stk-rotate::after{content:'';display:block;width:6px;height:6px;border:1.5px solid var(--bg);border-radius:50%}
+/* Lock button */
+.pair-dt-lock-btn{width:34px;height:34px;border-radius:8px;border:none;background:transparent;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
+.pair-dt-lock-btn:hover{background:var(--accent-soft);color:var(--text)}
+.pair-dt-lock-btn.locked{background:var(--accent);color:var(--bg)}
+/* Image lightbox */
+.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:999;justify-content:center;align-items:center;cursor:zoom-out}
+.img-lightbox.on{display:flex}
+.img-lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:500;justify-content:center;align-items:center}
 .pair-modal-dim.on{display:flex}
 .pair-modal{background:var(--card);border-radius:14px;padding:28px 26px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
@@ -916,9 +939,13 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div class="pair-detail-top">
         <button class="dt-back" onclick="go('pair')" style="margin-bottom:0">← 페어 목록</button>
         <div class="pair-dt-menu-wrap" id="pairDtMenuWrap" style="display:none">
+          <button class="pair-dt-lock-btn" id="pairLockBtn" onclick="togglePairLock()" title="편집 잠금">
+            <svg id="pairLockIcon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </button>
           <button class="pair-dt-menu-btn" onclick="togglePairDtMenu()">···</button>
           <div class="pair-dt-menu-drop" id="pairDtMenuDrop">
             <button onclick="closePairDtMenu();openMsgModal()">메시지 추가</button>
+            <button onclick="closePairDtMenu();addSticker()">스티커 추가</button>
             <button onclick="closePairDtMenu();editCurrentPair()">페어 수정</button>
             <button class="danger" onclick="closePairDtMenu();deleteCurrentPair()">페어 삭제</button>
           </div>
@@ -2390,6 +2417,8 @@ function openPairDetail(id){
   html+='</div>';
   html+='</div>';
   $('#pairDetailLayout').innerHTML=html;
+  // Sticker layer
+  renderStickers();
   // Render messages
   renderMsgList(p);
   // 이미지 업로드 input
@@ -2950,6 +2979,182 @@ function removeHeartLink(i){
   toast('삭제됨');
 }
 
+/* ── Pair Stickers ── */
+var pairLocked=false;
+function renderStickers(){
+  var wrap=document.querySelector('.pair-detail-wrap');
+  if(!wrap)return;
+  var old=wrap.querySelector('.sticker-layer');
+  if(old)old.remove();
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p||!p.stickers||!p.stickers.length)return;
+  var layer=document.createElement('div');
+  layer.className='sticker-layer';
+  var canEdit=isAdmin&&!pairLocked;
+  p.stickers.forEach(function(s,i){
+    var el=document.createElement('div');
+    el.className='sticker'+(canEdit?' editing':'');
+    el.style.left=s.x+'%';
+    el.style.top=s.y+'px';
+    el.style.width=s.w+'px';
+    if(s.r)el.style.transform='rotate('+s.r+'deg)';
+    el.dataset.idx=i;
+    el.innerHTML='<img src="'+s.img+'">'
+      +'<button class="stk-del" onclick="delSticker('+i+')">✕</button>'
+      +'<div class="stk-resize"></div>'
+      +'<div class="stk-rotate"></div>';
+    if(canEdit){
+      initStickerDrag(el,i);
+      initStickerResize(el,i);
+      initStickerRotate(el,i);
+    }
+    layer.appendChild(el);
+  });
+  wrap.appendChild(layer);
+}
+function addSticker(){
+  if(pairLocked)return;
+  if(!document.getElementById('stickerFileIn')){
+    var inp=document.createElement('input');
+    inp.type='file';inp.accept='image/*';inp.id='stickerFileIn';inp.style.display='none';
+    inp.onchange=function(e){
+      var f=e.target.files[0];if(!f)return;
+      toast('스티커 업로드 중...');
+      rdF(f,function(d){
+        var p=pairs.find(function(x){return x.id===curPairId});
+        if(!p)return;
+        if(!p.stickers)p.stickers=[];
+        p.stickers.push({img:d,x:30,y:100,w:80,r:0});
+        sv();renderStickers();
+        toast('스티커 추가됨 — 드래그로 이동하세요');
+      },{maxW:400,quality:0.9,maxBytes:150000});
+      inp.value='';
+    };
+    document.body.appendChild(inp);
+  }
+  document.getElementById('stickerFileIn').click();
+}
+function delSticker(i){
+  if(pairLocked)return;
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p||!p.stickers)return;
+  p.stickers.splice(i,1);
+  sv();renderStickers();
+  toast('스티커 삭제됨');
+}
+function initStickerDrag(el,idx){
+  var startX,startY,origLeft,origTop,dragging=false;
+  function onDown(cx,cy){
+    dragging=true;
+    var wrap=document.querySelector('.pair-detail-wrap');
+    var layer=wrap.querySelector('.sticker-layer');
+    var lr=layer.getBoundingClientRect();
+    startX=cx;startY=cy;
+    origLeft=el.getBoundingClientRect().left-lr.left;
+    origTop=parseInt(el.style.top);
+    return lr;
+  }
+  el.addEventListener('mousedown',function(e){
+    if(e.target.classList.contains('stk-resize')||e.target.classList.contains('stk-del')||e.target.classList.contains('stk-rotate'))return;
+    e.preventDefault();
+    var lr=onDown(e.clientX,e.clientY);
+    var onMove=function(e2){if(!dragging)return;el.style.left=((origLeft+(e2.clientX-startX))/lr.width*100)+'%';el.style.top=(origTop+(e2.clientY-startY))+'px';};
+    var onUp=function(){dragging=false;document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+  });
+  el.addEventListener('touchstart',function(e){
+    if(e.target.classList.contains('stk-resize')||e.target.classList.contains('stk-del')||e.target.classList.contains('stk-rotate'))return;
+    var t=e.touches[0];var lr=onDown(t.clientX,t.clientY);
+    var onMove=function(e2){if(!dragging)return;e2.preventDefault();var t2=e2.touches[0];el.style.left=((origLeft+(t2.clientX-startX))/lr.width*100)+'%';el.style.top=(origTop+(t2.clientY-startY))+'px';};
+    var onUp=function(){dragging=false;document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
+  },{passive:false});
+}
+function initStickerResize(el,idx){
+  var handle=el.querySelector('.stk-resize');if(!handle)return;
+  handle.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();var sX=e.clientX,oW=el.offsetWidth;
+    var onMove=function(e2){el.style.width=Math.max(30,oW+(e2.clientX-sX))+'px';};
+    var onUp=function(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+  });
+  handle.addEventListener('touchstart',function(e){e.preventDefault();e.stopPropagation();var sX=e.touches[0].clientX,oW=el.offsetWidth;
+    var onMove=function(e2){e2.preventDefault();el.style.width=Math.max(30,oW+(e2.touches[0].clientX-sX))+'px';};
+    var onUp=function(){document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
+  },{passive:false});
+}
+function initStickerRotate(el,idx){
+  var handle=el.querySelector('.stk-rotate');if(!handle)return;
+  function getAngle(cx,cy){
+    var r=el.getBoundingClientRect();
+    return Math.atan2(cy-(r.top+r.height/2),cx-(r.left+r.width/2))*180/Math.PI+90;
+  }
+  handle.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();
+    var p=pairs.find(function(x){return x.id===curPairId});var origR=p.stickers[idx].r||0;var startA=getAngle(e.clientX,e.clientY);
+    var onMove=function(e2){el.style.transform='rotate('+Math.round(origR+(getAngle(e2.clientX,e2.clientY)-startA))+'deg)';};
+    var onUp=function(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+  });
+  handle.addEventListener('touchstart',function(e){e.preventDefault();e.stopPropagation();
+    var p=pairs.find(function(x){return x.id===curPairId});var origR=p.stickers[idx].r||0;var startA=getAngle(e.touches[0].clientX,e.touches[0].clientY);
+    var onMove=function(e2){e2.preventDefault();el.style.transform='rotate('+Math.round(origR+(getAngle(e2.touches[0].clientX,e2.touches[0].clientY)-startA))+'deg)';};
+    var onUp=function(){document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);saveStickerPos(idx,el);};
+    document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
+  },{passive:false});
+}
+function saveStickerPos(idx,el){
+  var p=pairs.find(function(x){return x.id===curPairId});
+  if(!p||!p.stickers||!p.stickers[idx])return;
+  var wrap=document.querySelector('.pair-detail-wrap');
+  var layer=wrap.querySelector('.sticker-layer');
+  if(!layer)return;
+  var lr=layer.getBoundingClientRect();
+  var er=el.getBoundingClientRect();
+  p.stickers[idx].x=Math.round((er.left-lr.left)/lr.width*10000)/100;
+  p.stickers[idx].y=parseInt(el.style.top);
+  p.stickers[idx].w=el.offsetWidth;
+  var tr=el.style.transform||'';
+  var m=tr.match(/rotate\((-?\d+)deg\)/);
+  p.stickers[idx].r=m?parseInt(m[1]):0;
+  sv();
+}
+
+/* ── Pair Lock ── */
+function togglePairLock(){
+  pairLocked=!pairLocked;
+  var btn=$('#pairLockBtn');
+  if(pairLocked){
+    btn.classList.add('locked');
+    btn.title='편집 잠금 해제';
+    $('#pairLockIcon').innerHTML='<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="18"/>';
+  }else{
+    btn.classList.remove('locked');
+    btn.title='편집 잠금';
+    $('#pairLockIcon').innerHTML='<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+  }
+  renderStickers();
+  $$('.pair-msg-del').forEach(function(b){b.style.display=pairLocked?'none':'';});
+  $$('.pair-char-upload').forEach(function(b){b.style.display=pairLocked?'none':'';});
+  $$('.pair-char-img img').forEach(function(img){
+    if(pairLocked){
+      img.style.cursor='zoom-in';
+      img.onclick=function(){openLightbox(img.src);};
+    }else{
+      img.style.cursor='';
+      img.onclick=null;
+    }
+  });
+  toast(pairLocked?'편집 잠금됨':'편집 잠금 해제');
+}
+
+/* ── Image Lightbox ── */
+function openLightbox(src){
+  $('#lightboxImg').src=src;
+  $('#imgLightbox').classList.add('on');
+}
+function closeLightbox(){
+  $('#imgLightbox').classList.remove('on');
+}
 function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
@@ -3074,6 +3279,11 @@ if(window._fbReady){
 </div>
 
 <!-- 관리자 로그인 모달 -->
+<!-- Image Lightbox -->
+<div class="img-lightbox" id="imgLightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="">
+</div>
+
 <div id="loginModalDim" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center">
   <div style="background:var(--card);border-radius:14px;padding:32px 30px;width:90%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fin .2s ease">
     <div style="font-size:1.4rem;margin-bottom:12px;opacity:.6">🔐</div>
