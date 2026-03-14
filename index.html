@@ -562,6 +562,28 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .bgm-vol-label{font-size:.6rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace}
 @media(max-width:640px){.bgm-player{bottom:14px;right:14px}.bgm-pill{padding:5px 5px 5px 10px}}
 
+/* ── Heart Link Panel ── */
+.heart-wrap{position:fixed;bottom:20px;left:20px;z-index:90}
+.heart-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border-h);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.08);transition:all .25s cubic-bezier(.4,0,.2,1)}
+.heart-btn:hover{box-shadow:0 6px 28px rgba(0,0,0,.12);transform:scale(1.08)}
+.heart-btn.open{background:var(--accent)}
+.heart-btn svg{width:18px;height:18px;fill:none;stroke:var(--text);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:all .25s}
+.heart-btn.open svg{stroke:var(--bg);fill:var(--bg);fill-opacity:.3}
+.heart-panel{position:absolute;bottom:calc(100% + 10px);left:0;background:var(--card);border:1px solid var(--border-h);border-radius:14px;box-shadow:0 8px 36px rgba(0,0,0,.1);padding:16px;display:none;width:280px;max-height:400px;overflow-y:auto}
+.heart-panel.open{display:block;animation:fin .2s ease}
+.heart-panel::-webkit-scrollbar{width:3px}.heart-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.heart-panel-title{font-size:.7rem;font-weight:600;color:var(--text-light);letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px}
+.heart-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.heart-item{cursor:pointer;transition:all .2s;position:relative;border-radius:0}
+.heart-item:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.heart-item-img{overflow:hidden;border:1px solid var(--border);aspect-ratio:5/1}
+.heart-item-img img{width:100%;height:100%;object-fit:cover;display:block}
+.heart-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);padding:5px 12px;border-radius:6px;font-size:.68rem;font-weight:500;color:#fff;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:2}
+.heart-tooltip .ht-arrow{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #1A1A1A}
+.heart-item:hover .heart-tooltip{opacity:1}
+.heart-empty{font-size:.75rem;color:var(--text-light);text-align:center;padding:20px 0;font-weight:300}
+@media(max-width:640px){.heart-wrap{bottom:14px;left:14px}.heart-panel{width:250px}}
+
 /* ── Modal ── */
 .modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center}
 .modal-dim.on{display:flex}
@@ -980,6 +1002,37 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         </div>
       </div>
     </div>
+    <div class="ab"><h3>배너 패널</h3>
+      <div style="font-size:.72rem;color:var(--text-light);margin-bottom:14px;font-weight:300;line-height:1.5">
+        좌측 하단 ♥ 버튼을 누르면 표시될 배너를 관리해요.
+      </div>
+      <div id="heartLinkList"></div>
+      <div id="hlFormWrap" style="margin-top:10px">
+        <div style="font-size:.75rem;font-weight:500;margin-bottom:10px;color:var(--text-sub)">배너 추가</div>
+        <div id="hlPreview" style="display:none;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);aspect-ratio:5/1">
+          <img id="hlPreviewImg" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+        <div class="ef" style="margin-bottom:10px">
+          <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">이미지 URL</label>
+          <input id="hlImg" placeholder="https://example.com/banner.png" style="font-family:'IBM Plex Mono',monospace;font-size:.78rem" oninput="previewBannerImg()">
+        </div>
+        <div class="ef" style="margin-bottom:10px">
+          <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">클릭 시 이동할 URL</label>
+          <input id="hlUrl" placeholder="https://example.com" style="font-family:'IBM Plex Mono',monospace;font-size:.78rem">
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div class="ef" style="flex:1;margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">라벨 <span style="font-weight:300;color:var(--text-light)">(선택)</span></label>
+            <input id="hlLabel" placeholder="배너 이름" style="font-size:.82rem">
+          </div>
+          <div style="margin-bottom:0;flex-shrink:0">
+            <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">말풍선 색</label>
+            <input type="color" id="hlColor" value="#1A1A1A" style="width:36px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;background:var(--bg)">
+          </div>
+          <button class="btn-p" style="padding:8px 20px;font-size:.78rem;white-space:nowrap;height:36px" onclick="addHeartLink()">추가</button>
+        </div>
+      </div>
+    </div>
     <div class="ab"><h3>Data</h3>
       <div class="ad-btns">
         <button onclick="expD()">내보내기</button>
@@ -1010,6 +1063,18 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     <div class="bgm-vol-label" id="bgmVolLabel">60%</div>
   </div>
 </div>
+
+<!-- Heart Link Panel -->
+<div class="heart-wrap" id="heartWrap" style="display:none">
+  <div class="heart-panel" id="heartPanel">
+    <div class="heart-panel-title">BANNER</div>
+    <div id="heartGrid" class="heart-grid"></div>
+  </div>
+  <button class="heart-btn" id="heartBtn" onclick="toggleHeartPanel()">
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+  </button>
+</div>
+
 <div class="modal-dim" id="modalDim" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-icon" id="modalIcon"></div>
@@ -1857,6 +1922,7 @@ function rAdmin(){
     return html;
   }).join('');
   rCcBar();
+  rHeartLinkList();
 }
 
 function rCcBar(){
@@ -1940,7 +2006,7 @@ function applyMeta(){
   var nL=$('#nL');if(nL)nL.textContent=cfg.name||'Blog';
   applyFavicon();
 }
-function saveCfg(){sv();rHome();applyMeta();initBgm();toast('저장됨')}
+function saveCfg(){sv();rHome();applyMeta();initBgm();initHeartPanel();toast('저장됨')}
 
 
 function expD(){
@@ -2689,12 +2755,108 @@ document.addEventListener('click',function(e){
   if(vol&&vol.classList.contains('on')&&!vol.contains(e.target)&&e.target!==btn){vol.classList.remove('on');}
 });
 
+/* ── Heart Link Panel ── */
+function initHeartPanel(){
+  var links=cfg.heartLinks||[];
+  var wrap=$('#heartWrap');
+  if(!links.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  rHeartGrid();
+}
+function rHeartGrid(){
+  var links=cfg.heartLinks||[];
+  var grid=$('#heartGrid');
+  if(!links.length){
+    grid.innerHTML='<div class="heart-empty" style="grid-column:1/-1">등록된 배너가 없어요</div>';
+    return;
+  }
+  grid.innerHTML=links.map(function(l){
+    var c=l.color||'#1A1A1A';
+    return '<div class="heart-item" onclick="window.open(\''+l.url.replace(/'/g,"\\'")+'\',\'_blank\')">'
+      +'<div class="heart-item-img"><img src="'+l.img+'" loading="lazy"></div>'
+      +(l.label?'<div class="heart-tooltip" style="background:'+c+'">'+esc(l.label)+'<span class="ht-arrow" style="border-top-color:'+c+'"></span></div>':'')
+      +'</div>';
+  }).join('');
+}
+function toggleHeartPanel(){
+  var panel=$('#heartPanel'),btn=$('#heartBtn');
+  var isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.classList.toggle('open');
+  if(!isOpen)rHeartGrid();
+}
+// 패널 바깥 클릭 시 닫기
+document.addEventListener('click',function(e){
+  var wrap=$('#heartWrap');
+  if(wrap&&!wrap.contains(e.target)){
+    $('#heartPanel').classList.remove('open');
+    $('#heartBtn').classList.remove('open');
+  }
+});
+
+/* Admin: Heart Link 관리 */
+function rHeartLinkList(){
+  var links=cfg.heartLinks||[];
+  var el=$('#heartLinkList');
+  if(!el)return;
+  if(!links.length){el.innerHTML='<div style="font-size:.78rem;color:var(--text-light);padding:12px 0;text-align:center">등록된 배너가 없어요</div>';return;}
+  el.innerHTML=links.map(function(l,i){
+    return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);background:var(--bg2);margin-bottom:6px">'
+      +'<div style="width:120px;flex-shrink:0;overflow:hidden;border:1px solid var(--border);aspect-ratio:5/1">'
+      +'<img src="'+l.img+'" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display=\'none\'">'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px">'+(l.label?'<span style="width:8px;height:8px;border-radius:50%;background:'+(l.color||'#1A1A1A')+';flex-shrink:0;display:inline-block"></span>'+esc(l.label):'<span style="color:var(--text-light);font-weight:300">라벨 없음</span>')+'</div>'
+      +'<div style="font-size:.62rem;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-family:\'IBM Plex Mono\',monospace">'+esc(l.url)+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:2px;flex-shrink:0">'
+      +(i>0?'<button onclick="moveBanner('+i+',-1)" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.7rem;padding:4px 5px;border-radius:4px;transition:all .15s" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'none\'">▲</button>':'')
+      +(i<links.length-1?'<button onclick="moveBanner('+i+',1)" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.7rem;padding:4px 5px;border-radius:4px;transition:all .15s" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'none\'">▼</button>':'')
+      +'<button onclick="removeHeartLink('+i+')" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.72rem;padding:4px 6px;border-radius:4px;transition:all .15s" onmouseover="this.style.background=\'rgba(212,86,74,.1)\';this.style.color=\'#D4564A\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--text-light)\'">✕</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+function previewBannerImg(){
+  var url=$('#hlImg').value.trim();
+  var pv=$('#hlPreview'),img=$('#hlPreviewImg');
+  if(!url){pv.style.display='none';return;}
+  img.src=url;
+  img.onload=function(){pv.style.display='';};
+  img.onerror=function(){pv.style.display='none';};
+}
+function moveBanner(i,dir){
+  var links=cfg.heartLinks;if(!links)return;
+  var j=i+dir;if(j<0||j>=links.length)return;
+  var tmp=links[i];links[i]=links[j];links[j]=tmp;
+  sv();rHeartLinkList();initHeartPanel();
+}
+function addHeartLink(){
+  var img=$('#hlImg').value.trim();
+  var url=$('#hlUrl').value.trim();
+  var label=$('#hlLabel').value.trim();
+  var color=$('#hlColor').value||'#1A1A1A';
+  if(!img||!url){showAlert('⚠️','이미지 URL과 이동할 URL을 모두 입력해주세요');return;}
+  if(!cfg.heartLinks)cfg.heartLinks=[];
+  cfg.heartLinks.push({img:img,url:url,label:label,color:color});
+  sv();rHeartLinkList();initHeartPanel();
+  $('#hlImg').value='';$('#hlUrl').value='';$('#hlLabel').value='';$('#hlColor').value='#1A1A1A';
+  $('#hlPreview').style.display='none';
+  toast('배너 추가됨');
+}
+function removeHeartLink(i){
+  if(!cfg.heartLinks)return;
+  cfg.heartLinks.splice(i,1);
+  sv();rHeartLinkList();initHeartPanel();
+  toast('삭제됨');
+}
+
 function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
-  applyAcc();applyMeta();initBgm();
+  applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
   if(localStorage.getItem('e_admin')==='1') setAdmin(true);
