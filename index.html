@@ -1005,6 +1005,40 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div style="font-size:.72rem;color:var(--text-light);margin-bottom:14px;font-weight:300;line-height:1.5">
         좌측 하단 ♥ 버튼을 누르면 표시될 배너를 관리해요.
       </div>
+
+      <!-- 내 배너 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:.75rem;font-weight:600;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent)"></span>내 배너 <span style="font-weight:300;font-size:.68rem;color:var(--text-light)">— 항상 맨 위에 고정</span>
+        </div>
+        <div id="myBannerPreview" style="display:none;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);aspect-ratio:5/1">
+          <img id="myBannerPreviewImg" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+        <div class="ef" style="margin-bottom:8px">
+          <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">이미지 URL</label>
+          <input id="mbImg" placeholder="https://example.com/my-banner.png" style="font-family:'IBM Plex Mono',monospace;font-size:.78rem" oninput="previewMyBanner()">
+        </div>
+        <div class="ef" style="margin-bottom:8px">
+          <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">클릭 시 이동할 URL</label>
+          <input id="mbUrl" placeholder="https://example.com" style="font-family:'IBM Plex Mono',monospace;font-size:.78rem">
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div class="ef" style="flex:1;margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">라벨 <span style="font-weight:300;color:var(--text-light)">(선택)</span></label>
+            <input id="mbLabel" placeholder="내 블로그" style="font-size:.82rem">
+          </div>
+          <div style="margin-bottom:0;flex-shrink:0">
+            <label style="font-size:.72rem;font-weight:500;margin-bottom:4px;display:block;color:var(--text-sub)">말풍선 색</label>
+            <input type="color" id="mbColor" value="#1A1A1A" style="width:36px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;background:var(--bg)">
+          </div>
+          <button class="btn-p" style="padding:8px 20px;font-size:.78rem;white-space:nowrap;height:36px" onclick="saveMyBanner()">저장</button>
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin-bottom:16px"></div>
+
+      <!-- 배너 목록 -->
+      <div style="font-size:.75rem;font-weight:500;margin-bottom:10px;color:var(--text-sub)">다른 배너</div>
       <div id="heartLinkList"></div>
       <div id="hlFormWrap" style="margin-top:10px">
         <div style="font-size:.75rem;font-weight:500;margin-bottom:10px;color:var(--text-sub)">배너 추가</div>
@@ -1922,6 +1956,7 @@ function rAdmin(){
   }).join('');
   rCcBar();
   rHeartLinkList();
+  loadMyBannerFields();
 }
 
 function rCcBar(){
@@ -2757,25 +2792,36 @@ document.addEventListener('click',function(e){
 /* ── Heart Link Panel ── */
 function initHeartPanel(){
   var links=cfg.heartLinks||[];
+  var mb=cfg.myBanner;
+  var hasAny=(mb&&mb.img)||links.length;
   var wrap=$('#heartWrap');
-  if(!links.length){wrap.style.display='none';return;}
+  if(!hasAny){wrap.style.display='none';return;}
   wrap.style.display='';
   rHeartGrid();
 }
 function rHeartGrid(){
   var links=cfg.heartLinks||[];
+  var mb=cfg.myBanner;
   var grid=$('#heartGrid');
-  if(!links.length){
-    grid.innerHTML='<div class="heart-empty" style="grid-column:1/-1">등록된 배너가 없어요</div>';
-    return;
+  var html='';
+  // 내 배너 (맨 위 고정, 클릭 시 링크 복사)
+  if(mb&&mb.img){
+    var c=mb.color||'#1A1A1A';
+    html+='<div class="heart-item" onclick="copyMyBannerUrl()" style="cursor:copy">'
+      +'<div class="heart-item-img"><img src="'+mb.img+'" loading="lazy"></div>'
+      +(mb.label?'<div class="heart-tooltip" style="background:'+c+'">'+esc(mb.label)+'<span class="ht-arrow" style="border-top-color:'+c+'"></span></div>':'')
+      +'</div>';
   }
-  grid.innerHTML=links.map(function(l){
+  // 나머지 배너
+  html+=links.map(function(l){
     var c=l.color||'#1A1A1A';
     return '<div class="heart-item" onclick="window.open(\''+l.url.replace(/'/g,"\\'")+'\',\'_blank\')">'
       +'<div class="heart-item-img"><img src="'+l.img+'" loading="lazy"></div>'
       +(l.label?'<div class="heart-tooltip" style="background:'+c+'">'+esc(l.label)+'<span class="ht-arrow" style="border-top-color:'+c+'"></span></div>':'')
       +'</div>';
   }).join('');
+  if(!html)html='<div class="heart-empty">등록된 배너가 없어요</div>';
+  grid.innerHTML=html;
 }
 function toggleHeartPanel(){
   var panel=$('#heartPanel'),btn=$('#heartBtn');
@@ -2794,6 +2840,60 @@ document.addEventListener('click',function(e){
 });
 
 /* Admin: Heart Link 관리 */
+function saveMyBanner(){
+  var img=$('#mbImg').value.trim();
+  var url=$('#mbUrl').value.trim();
+  var label=$('#mbLabel').value.trim();
+  var color=$('#mbColor').value||'#1A1A1A';
+  if(!img){
+    // 이미지 비우면 내 배너 삭제
+    cfg.myBanner=null;
+    sv();initHeartPanel();rMyBannerPreview();
+    toast('내 배너 삭제됨');
+    return;
+  }
+  if(!url){showAlert('⚠️','이동할 URL을 입력해주세요');return;}
+  cfg.myBanner={img:img,url:url,label:label,color:color};
+  sv();initHeartPanel();rMyBannerPreview();
+  toast('내 배너 저장됨');
+}
+function copyMyBannerUrl(){
+  var mb=cfg.myBanner;
+  if(!mb||!mb.url)return;
+  navigator.clipboard.writeText(mb.url).then(function(){
+    toast('링크가 복사되었어요!');
+  }).catch(function(){
+    // fallback
+    var t=document.createElement('textarea');
+    t.value=mb.url;t.style.position='fixed';t.style.opacity='0';
+    document.body.appendChild(t);t.select();
+    document.execCommand('copy');document.body.removeChild(t);
+    toast('링크가 복사되었어요!');
+  });
+}
+function previewMyBanner(){
+  var url=$('#mbImg').value.trim();
+  var pv=$('#myBannerPreview'),img=$('#myBannerPreviewImg');
+  if(!url){pv.style.display='none';return;}
+  img.src=url;
+  img.onload=function(){pv.style.display='';};
+  img.onerror=function(){pv.style.display='none';};
+}
+function rMyBannerPreview(){
+  var mb=cfg.myBanner;
+  var pv=$('#myBannerPreview'),img=$('#myBannerPreviewImg');
+  if(mb&&mb.img){img.src=mb.img;pv.style.display='';}
+  else if(pv){pv.style.display='none';}
+}
+function loadMyBannerFields(){
+  var mb=cfg.myBanner||{};
+  if($('#mbImg'))$('#mbImg').value=mb.img||'';
+  if($('#mbUrl'))$('#mbUrl').value=mb.url||'';
+  if($('#mbLabel'))$('#mbLabel').value=mb.label||'';
+  if($('#mbColor'))$('#mbColor').value=mb.color||'#1A1A1A';
+  rMyBannerPreview();
+}
+
 function rHeartLinkList(){
   var links=cfg.heartLinks||[];
   var el=$('#heartLinkList');
