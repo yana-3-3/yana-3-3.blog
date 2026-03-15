@@ -35,7 +35,7 @@
   --shadow:0 0 0 1px var(--border);--shadow-h:0 0 0 1px var(--border-h),0 4px 20px rgba(0,0,0,.3);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;transition:background .3s,color .3s;overflow-y:scroll}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;transition:background .3s,color .3s;overflow-y:scroll;overflow-x:hidden}
 ::selection{background:var(--accent);color:var(--bg)}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:5px}
 button,input,select,textarea{font-family:inherit;letter-spacing:inherit}
@@ -210,6 +210,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 
 /* Pair Detail - redesigned */
 .pair-detail-wrap{max-width:860px;margin:0 auto;padding:0 0 80px;position:relative;overflow:visible}
+#pg-pairdetail .pw{overflow:visible}
 .pair-detail-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .pair-detail-layout{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:0;align-items:start}
 @media(max-width:720px){.pair-detail-layout{grid-template-columns:1fr;gap:20px}}
@@ -247,7 +248,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-detail-tags{margin-top:8px;display:flex;gap:6px;justify-content:flex-start;flex-wrap:wrap}
 .pair-detail-tags span{font-size:.72rem;color:var(--text-sub);font-weight:300}
 /* Pair detail ... menu */
-.pair-dt-menu-wrap{position:relative}
+.pair-dt-menu-wrap{position:relative;display:flex;align-items:center;gap:2px}
 .pair-dt-menu-btn{width:34px;height:34px;border-radius:8px;border:none;background:transparent;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all var(--tr);letter-spacing:1px}
 .pair-dt-menu-btn:hover{background:var(--accent-soft);color:var(--text)}
 .pair-dt-menu-drop{position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:130px;z-index:50;overflow:hidden;display:none}
@@ -276,9 +277,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
 .pair-empty-txt{font-size:.85rem}
 /* ── Pair Stickers ── */
-.sticker-layer{position:absolute;top:0;bottom:0;left:-120px;right:-120px;pointer-events:none;z-index:10;overflow:visible}
-@media(max-width:1100px){.sticker-layer{left:-40px;right:-40px}}
-@media(max-width:720px){.sticker-layer{left:-16px;right:-16px}}
+.sticker-layer{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:visible}
 .sticker{position:absolute;pointer-events:auto;cursor:default;user-select:none;transition:filter .2s}
 .sticker img{width:100%;height:auto;display:block;-webkit-user-drag:none;pointer-events:none}
 .sticker.editing{cursor:move;z-index:20}
@@ -295,7 +294,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-dt-lock-btn:hover{background:var(--accent-soft);color:var(--text)}
 .pair-dt-lock-btn.locked{background:var(--accent);color:var(--bg)}
 /* Image lightbox */
-.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:999;justify-content:center;align-items:center;cursor:zoom-out}
+.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:999;justify-content:center;align-items:center;cursor:default}
 .img-lightbox.on{display:flex}
 .img-lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:500;justify-content:center;align-items:center}
@@ -2421,6 +2420,8 @@ function openPairDetail(id){
   renderStickers();
   // Render messages
   renderMsgList(p);
+  // 잠금 상태 복원
+  applyPairLock();
   // 이미지 업로드 input
   if(!document.getElementById('pairImgInputA')){
     var inA=document.createElement('input');inA.type='file';inA.accept='image/*';inA.id='pairImgInputA';inA.style.display='none';
@@ -2980,7 +2981,7 @@ function removeHeartLink(i){
 }
 
 /* ── Pair Stickers ── */
-var pairLocked=false;
+var pairLocked=localStorage.getItem('e_pairLocked')==='1';
 function renderStickers(){
   var wrap=document.querySelector('.pair-detail-wrap');
   if(!wrap)return;
@@ -2991,12 +2992,15 @@ function renderStickers(){
   var layer=document.createElement('div');
   layer.className='sticker-layer';
   var canEdit=isAdmin&&!pairLocked;
+  var wrapW=wrap.offsetWidth;
   p.stickers.forEach(function(s,i){
     var el=document.createElement('div');
     el.className='sticker'+(canEdit?' editing':'');
     el.style.left=s.x+'%';
     el.style.top=s.y+'px';
-    el.style.width=s.w+'px';
+    // w를 %로 저장 (기존 px값 호환: 100 이상이면 px로 간주하여 변환)
+    var wPct=(s.w>100)?(s.w/wrapW*100):s.w;
+    el.style.width=wPct+'%';
     if(s.r)el.style.transform='rotate('+s.r+'deg)';
     el.dataset.idx=i;
     el.innerHTML='<img src="'+s.img+'">'
@@ -3024,7 +3028,7 @@ function addSticker(){
         var p=pairs.find(function(x){return x.id===curPairId});
         if(!p)return;
         if(!p.stickers)p.stickers=[];
-        p.stickers.push({img:d,x:30,y:100,w:80,r:0});
+        p.stickers.push({img:d,x:30,y:100,w:10,r:0});
         sv();renderStickers();
         toast('스티커 추가됨 — 드래그로 이동하세요');
       },{maxW:400,quality:0.9,maxBytes:150000});
@@ -3043,42 +3047,43 @@ function delSticker(i){
   toast('스티커 삭제됨');
 }
 function initStickerDrag(el,idx){
-  var startX,startY,origLeft,origTop,dragging=false;
+  var startX,startY,origPctLeft,origTop,wrapW,dragging=false;
   function onDown(cx,cy){
     dragging=true;
     var wrap=document.querySelector('.pair-detail-wrap');
-    var layer=wrap.querySelector('.sticker-layer');
-    var lr=layer.getBoundingClientRect();
+    wrapW=wrap.offsetWidth;
     startX=cx;startY=cy;
-    origLeft=el.getBoundingClientRect().left-lr.left;
-    origTop=parseInt(el.style.top);
-    return lr;
+    origPctLeft=parseFloat(el.style.left)||0;
+    origTop=parseFloat(el.style.top)||0;
   }
   el.addEventListener('mousedown',function(e){
     if(e.target.classList.contains('stk-resize')||e.target.classList.contains('stk-del')||e.target.classList.contains('stk-rotate'))return;
-    e.preventDefault();
-    var lr=onDown(e.clientX,e.clientY);
-    var onMove=function(e2){if(!dragging)return;el.style.left=((origLeft+(e2.clientX-startX))/lr.width*100)+'%';el.style.top=(origTop+(e2.clientY-startY))+'px';};
+    e.preventDefault();onDown(e.clientX,e.clientY);
+    var onMove=function(e2){if(!dragging)return;var dxPct=(e2.clientX-startX)/wrapW*100;el.style.left=(origPctLeft+dxPct)+'%';el.style.top=(origTop+(e2.clientY-startY))+'px';};
     var onUp=function(){dragging=false;document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveStickerPos(idx,el);};
     document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
   });
   el.addEventListener('touchstart',function(e){
     if(e.target.classList.contains('stk-resize')||e.target.classList.contains('stk-del')||e.target.classList.contains('stk-rotate'))return;
-    var t=e.touches[0];var lr=onDown(t.clientX,t.clientY);
-    var onMove=function(e2){if(!dragging)return;e2.preventDefault();var t2=e2.touches[0];el.style.left=((origLeft+(t2.clientX-startX))/lr.width*100)+'%';el.style.top=(origTop+(t2.clientY-startY))+'px';};
+    var t=e.touches[0];onDown(t.clientX,t.clientY);
+    var onMove=function(e2){if(!dragging)return;e2.preventDefault();var t2=e2.touches[0];var dxPct=(t2.clientX-startX)/wrapW*100;el.style.left=(origPctLeft+dxPct)+'%';el.style.top=(origTop+(t2.clientY-startY))+'px';};
     var onUp=function(){dragging=false;document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);saveStickerPos(idx,el);};
     document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
   },{passive:false});
 }
 function initStickerResize(el,idx){
   var handle=el.querySelector('.stk-resize');if(!handle)return;
-  handle.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();var sX=e.clientX,oW=el.offsetWidth;
-    var onMove=function(e2){el.style.width=Math.max(30,oW+(e2.clientX-sX))+'px';};
+  handle.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();
+    var sX=e.clientX,oW=el.offsetWidth;
+    var wrapW=document.querySelector('.pair-detail-wrap').offsetWidth;
+    var onMove=function(e2){var nw=Math.max(30,oW+(e2.clientX-sX));el.style.width=(nw/wrapW*100)+'%';};
     var onUp=function(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveStickerPos(idx,el);};
     document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
   });
-  handle.addEventListener('touchstart',function(e){e.preventDefault();e.stopPropagation();var sX=e.touches[0].clientX,oW=el.offsetWidth;
-    var onMove=function(e2){e2.preventDefault();el.style.width=Math.max(30,oW+(e2.touches[0].clientX-sX))+'px';};
+  handle.addEventListener('touchstart',function(e){e.preventDefault();e.stopPropagation();
+    var sX=e.touches[0].clientX,oW=el.offsetWidth;
+    var wrapW=document.querySelector('.pair-detail-wrap').offsetWidth;
+    var onMove=function(e2){e2.preventDefault();var nw=Math.max(30,oW+(e2.touches[0].clientX-sX));el.style.width=(nw/wrapW*100)+'%';};
     var onUp=function(){document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);saveStickerPos(idx,el);};
     document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
   },{passive:false});
@@ -3105,14 +3110,10 @@ function initStickerRotate(el,idx){
 function saveStickerPos(idx,el){
   var p=pairs.find(function(x){return x.id===curPairId});
   if(!p||!p.stickers||!p.stickers[idx])return;
-  var wrap=document.querySelector('.pair-detail-wrap');
-  var layer=wrap.querySelector('.sticker-layer');
-  if(!layer)return;
-  var lr=layer.getBoundingClientRect();
-  var er=el.getBoundingClientRect();
-  p.stickers[idx].x=Math.round((er.left-lr.left)/lr.width*10000)/100;
-  p.stickers[idx].y=parseInt(el.style.top);
-  p.stickers[idx].w=el.offsetWidth;
+  // CSS 값을 직접 읽기 (getBoundingClientRect는 회전에 영향받아 어긋남)
+  p.stickers[idx].x=Math.round(parseFloat(el.style.left)*100)/100;
+  p.stickers[idx].y=Math.round(parseFloat(el.style.top)*100)/100;
+  p.stickers[idx].w=Math.round(parseFloat(el.style.width)*100)/100;
   var tr=el.style.transform||'';
   var m=tr.match(/rotate\((-?\d+)deg\)/);
   p.stickers[idx].r=m?parseInt(m[1]):0;
@@ -3122,7 +3123,13 @@ function saveStickerPos(idx,el){
 /* ── Pair Lock ── */
 function togglePairLock(){
   pairLocked=!pairLocked;
+  localStorage.setItem('e_pairLocked',pairLocked?'1':'0');
+  applyPairLock();
+  toast(pairLocked?'편집 잠금됨':'편집 잠금 해제');
+}
+function applyPairLock(){
   var btn=$('#pairLockBtn');
+  if(!btn)return;
   if(pairLocked){
     btn.classList.add('locked');
     btn.title='편집 잠금 해제';
@@ -3136,15 +3143,13 @@ function togglePairLock(){
   $$('.pair-msg-del').forEach(function(b){b.style.display=pairLocked?'none':'';});
   $$('.pair-char-upload').forEach(function(b){b.style.display=pairLocked?'none':'';});
   $$('.pair-char-img img').forEach(function(img){
-    if(pairLocked){
-      img.style.cursor='zoom-in';
+    // 게스트는 항상 라이트박스, 관리자는 잠금 시만
+    if(!isAdmin||pairLocked){
       img.onclick=function(){openLightbox(img.src);};
     }else{
-      img.style.cursor='';
       img.onclick=null;
     }
   });
-  toast(pairLocked?'편집 잠금됨':'편집 잠금 해제');
 }
 
 /* ── Image Lightbox ── */
