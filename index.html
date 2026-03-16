@@ -1067,15 +1067,19 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <h3 style="font-size:.95rem;font-weight:600;margin-bottom:20px" id="pmtEdTitle">프롬프트 작성</h3>
       <div class="ef">
         <label>분류</label>
-        <select id="pmtEdType" onchange="togglePmtNsfwCheck()">
+        <select id="pmtEdType" onchange="togglePmtNsfwCheck();togglePmtTitle()">
           <option value="persona">페르소나</option>
           <option value="costume">의상</option>
           <option value="pose">구도</option>
         </select>
       </div>
-      <div class="ef">
+      <div class="ef" id="pmtTitleWrap">
         <label>제목</label>
         <input type="text" id="pmtEdName" placeholder="프롬프트 제목">
+      </div>
+      <div class="ef" id="pmtAutoNumWrap" style="display:none">
+        <label>제목 <span style="font-weight:300;color:var(--text-light)">(자동 넘버링)</span></label>
+        <div id="pmtAutoNumPreview" style="padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;font-family:'IBM Plex Mono',monospace"></div>
       </div>
       <div class="ef">
         <label>이미지 <span style="color:#E16B5A">*</span> <span style="font-weight:300;color:var(--text-light);font-size:.68rem">(여러 장 가능)</span></label>
@@ -3553,6 +3557,26 @@ function togglePmtNsfwCheck(){
   if(isPersona){cb.checked=false;}
   cb.parentElement.style.opacity=isPersona?'0.4':'1';
 }
+function togglePmtTitle(){
+  var type=$('#pmtEdType').value;
+  var isPersona=type==='persona';
+  $('#pmtTitleWrap').style.display=isPersona?'':'none';
+  $('#pmtAutoNumWrap').style.display=isPersona?'none':'';
+  if(!isPersona){
+    var num=getNextPmtNum(type);
+    $('#pmtAutoNumPreview').textContent=String(num).padStart(2,'0');
+  }
+}
+function getNextPmtNum(type){
+  var list=prompts.filter(function(p){return p.type===type});
+  // 기존 넘버링에서 최대값 추출
+  var max=0;
+  list.forEach(function(p){
+    var m=p.title.match(/^(\d+)$/);
+    if(m){var n=parseInt(m[1]);if(n>max)max=n;}
+  });
+  return max+1;
+}
 function setPmtPriv(v){
   $$('[data-ppriv]').forEach(function(el){el.classList.toggle('on',el.dataset.ppriv===v)});
   var pwRow=$('#pmtPrivPwRow');
@@ -3674,6 +3698,15 @@ function initPmtEditor(){
       setPmtPriv(p.priv||'');
       if(p.priv==='pw')$('#pmtEdPrivPw').value=p.privPw||'';
       togglePmtNsfwCheck();
+      // 수정 시 기존 번호 표시
+      if(p.type!=='persona'){
+        $('#pmtTitleWrap').style.display='none';
+        $('#pmtAutoNumWrap').style.display='';
+        $('#pmtAutoNumPreview').textContent=p.title;
+      }else{
+        $('#pmtTitleWrap').style.display='';
+        $('#pmtAutoNumWrap').style.display='none';
+      }
       return;
     }
   }
@@ -3689,16 +3722,29 @@ function initPmtEditor(){
   setPmtPriv('');
   $('#pmtEdPrivPw').value='';
   togglePmtNsfwCheck();
+  togglePmtTitle();
 }
 function savePrompt(){
   var type=$('#pmtEdType').value;
-  var title=$('#pmtEdName').value.trim();
+  var isPersona=type==='persona';
+  var title;
+  if(isPersona){
+    title=$('#pmtEdName').value.trim();
+    if(!title){showAlert('⚠️','제목을 입력해주세요');return;}
+  }else{
+    // 수정 시 기존 번호 유지, 새 작성 시 자동 넘버링
+    if(pmtEditId){
+      var ep=prompts.find(function(x){return x.id===pmtEditId});
+      title=ep?ep.title:String(getNextPmtNum(type)).padStart(2,'0');
+    }else{
+      title=String(getNextPmtNum(type)).padStart(2,'0');
+    }
+  }
   var body=$('#pmtEdBody').value.trim();
   var nsfw=$('#pmtEdNsfw').checked;
   var priv=document.querySelector('[data-ppriv].on');
   priv=priv?priv.dataset.ppriv:'';
   var privPw=priv==='pw'?$('#pmtEdPrivPw').value.trim():'';
-  if(!title){showAlert('⚠️','제목을 입력해주세요');return;}
   if(!pmtImgList.length){showAlert('⚠️','이미지를 1장 이상 업로드해주세요');return;}
   if(!body){showAlert('⚠️','프롬프트 내용을 입력해주세요');return;}
   if(priv==='pw'&&!privPw){showAlert('⚠️','비밀번호를 입력해주세요');return;}
