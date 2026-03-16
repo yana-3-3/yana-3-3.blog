@@ -2724,7 +2724,7 @@ function renderMsgList(p){
     var tc=isA?textA:textB;
     var cls=isA?'from-a':'from-b';
     var html='<div class="pair-msg-bubble '+cls+'" style="background:'+bg+';color:'+tc+'">';
-    html+='<div>'+esc(m.text)+'</div>';
+    html+='<div>'+esc(m.text).replace(/\n/g,'<br>')+'</div>';
     if(isAdmin)html+='<button class="pair-msg-del" style="color:'+tc+'" onclick="event.stopPropagation();deleteMsg('+i+')">✕</button>';
     html+='</div>';
     return html;
