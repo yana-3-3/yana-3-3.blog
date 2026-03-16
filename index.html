@@ -3490,7 +3490,7 @@ function rPromptGrid(){
     if(isPersona){pmtNsfwState=0;nsfwBtn.classList.remove('only','hide');}
   }
   if(btn19){
-    btn19.style.display=isPersona?'none':'flex';
+    btn19.style.display=(isPersona||isAdmin)?'none':'flex';
     $('#pmt19Cb').checked=pmt19Unlocked;
   }
   var list=prompts.filter(function(p){return p.type===curPromptTab});
