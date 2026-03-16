@@ -99,7 +99,7 @@ nav{height:var(--nav-h);position:sticky;top:0;z-index:100;background:var(--bg);t
 .pc-dim{position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(0,0,0,.65))}
 .pc-body{position:absolute;bottom:0;left:0;right:0;padding:18px 20px;z-index:2}
 .pc-badge{display:inline-block;font-size:.6rem;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:8px;letter-spacing:.03em;text-transform:uppercase}
-.pc .pc-badge{background:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(4px)}
+.pc .pc-badge{background:rgba(255,255,255,.18);color:#fff}
 .pc-title{font-size:.94rem;font-weight:600;line-height:1.5;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#fff}
 .pc-ex{font-size:.75rem;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:300;color:rgba(255,255,255,.75)}
 .pc-foot{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.68rem;color:rgba(255,255,255,.55)}
@@ -294,10 +294,10 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pair-dt-lock-btn:hover{background:var(--accent-soft);color:var(--text)}
 .pair-dt-lock-btn.locked{background:var(--accent);color:var(--bg)}
 /* Image lightbox */
-.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:999;justify-content:center;align-items:center;cursor:default}
+.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;justify-content:center;align-items:center;cursor:default}
 .img-lightbox.on{display:flex}
 .img-lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:500;justify-content:center;align-items:center}
+.pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;justify-content:center;align-items:center}
 .pair-modal-dim.on{display:flex}
 .pair-modal{background:var(--card);border-radius:14px;padding:28px 26px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
 .pair-modal h3{font-size:1rem;font-weight:600;margin-bottom:20px}
@@ -328,7 +328,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .dt-menu-drop button.danger:hover{background:#D4564A10}
 
 /* ── Crop Modal ── */
-.crop-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:950;justify-content:center;align-items:center}
+.crop-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:950;justify-content:center;align-items:center}
 .crop-modal-dim.on{display:flex}
 .crop-modal{background:var(--card);border-radius:16px;padding:24px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .crop-modal h3{font-size:.9rem;font-weight:600;margin-bottom:16px}
@@ -394,7 +394,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .cp-add-btn:hover{border-color:var(--text-light);color:var(--text)}
 
 /* Custom color picker modal */
-.ccp-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);z-index:900;justify-content:center;align-items:center}
+.ccp-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:900;justify-content:center;align-items:center}
 .ccp-dim.on{display:flex}
 .ccp-box{background:var(--card);border-radius:14px;padding:22px 24px;width:90%;max-width:300px;box-shadow:0 20px 60px rgba(0,0,0,.18);animation:fin .2s ease}
 .ccp-box h4{font-size:.86rem;font-weight:600;margin-bottom:16px}
@@ -653,7 +653,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .prompt-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
 
 /* ── Prompt Detail Modal ── */
-.pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(5px);z-index:900;justify-content:center;align-items:center;padding:20px}
+.pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;justify-content:center;align-items:center;padding:20px}
 .pmt-modal-dim.on{display:flex}
 .pmt-modal{background:var(--card);border-radius:14px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fin .2s ease}
 .pmt-modal::-webkit-scrollbar{width:4px}.pmt-modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
@@ -662,7 +662,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pmt-modal-title{font-size:1.05rem;font-weight:600;margin-bottom:4px}
 .pmt-modal-date{font-size:.72rem;color:var(--text-light);margin-bottom:16px;font-family:'IBM Plex Mono',monospace}
 .pmt-modal-prompt{font-size:.85rem;line-height:1.8;color:var(--text-sub);white-space:pre-wrap;word-break:break-word;background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border)}
-.pmt-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);color:#fff;border:none;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .2s}
+.pmt-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .2s}
 .pmt-modal-close:hover{background:rgba(0,0,0,.6)}
 .pmt-modal-admin{display:flex;gap:6px;margin-top:16px;justify-content:flex-end}
 .pmt-modal-admin button{padding:6px 14px;border-radius:6px;font-size:.74rem;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text-sub);transition:all var(--tr)}
@@ -681,7 +681,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pmt-img-upload:hover{border-color:var(--text-light)}
 
 /* ── Modal ── */
-.modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center}
+.modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:900;justify-content:center;align-items:center}
 .modal-dim.on{display:flex}
 .modal-box{background:var(--card);border-radius:14px;padding:28px 30px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fin .2s ease}
 .modal-icon{font-size:1.6rem;margin-bottom:12px;opacity:.6}
@@ -3763,7 +3763,7 @@ if(window._fbReady){
   <img id="lightboxImg" src="">
 </div>
 
-<div id="loginModalDim" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center">
+<div id="loginModalDim" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:900;justify-content:center;align-items:center">
   <div style="background:var(--card);border-radius:14px;padding:32px 30px;width:90%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fin .2s ease">
     <div style="font-size:1.4rem;margin-bottom:12px;opacity:.6">🔐</div>
     <div style="font-size:.9rem;font-weight:500;margin-bottom:6px">관리자 로그인</div>
