@@ -634,6 +634,11 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .prompt-tab{padding:7px 14px;border-radius:6px;font-size:.8rem;color:var(--text-sub);cursor:pointer;border:none;background:none;transition:all var(--tr);font-weight:400}
 .prompt-tab:hover{color:var(--text)}
 .prompt-tab.on{color:var(--text);font-weight:500;background:var(--accent-soft)}
+.ptab-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);padding:5px 12px;border-radius:6px;font-size:.68rem;font-weight:500;color:#fff;background:#1A1A1A;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:10}
+.ptab-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top:5px solid #1A1A1A}
+.prompt-tab:hover .ptab-tip{opacity:1}
+[data-theme="dark"] .ptab-tip{background:#EBEBEB;color:#111}
+[data-theme="dark"] .ptab-tip::after{border-top-color:#EBEBEB}
 .prompt-nsfw{padding:5px 12px;border-radius:50px;font-size:.7rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text-sub);transition:all var(--tr);letter-spacing:.02em}
 .prompt-nsfw:hover{border-color:var(--text-light)}
 .prompt-nsfw.only{background:#E16B5A;color:#fff;border-color:#E16B5A}
@@ -779,6 +784,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <button onclick="goPromptTab('persona')">페르소나</button>
         <button onclick="goPromptTab('costume')">의상</button>
         <button onclick="goPromptTab('pose')">구도</button>
+        <button onclick="goPromptTab('set')">세트</button>
       </div>
     </div>
     <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
@@ -1041,8 +1047,9 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Prompt</span>
         <div class="prompt-tabs">
           <button class="prompt-tab on" data-pt="persona" onclick="switchPromptTab('persona')">페르소나</button>
-          <button class="prompt-tab" data-pt="costume" onclick="switchPromptTab('costume')">의상</button>
-          <button class="prompt-tab" data-pt="pose" onclick="switchPromptTab('pose')">구도</button>
+          <button class="prompt-tab" data-pt="costume" onclick="switchPromptTab('costume')" style="position:relative">의상<span class="ptab-tip">의상만 있어요.</span></button>
+          <button class="prompt-tab" data-pt="pose" onclick="switchPromptTab('pose')" style="position:relative">구도<span class="ptab-tip">구도만 있어요.</span></button>
+          <button class="prompt-tab" data-pt="set" onclick="switchPromptTab('set')" style="position:relative">세트<span class="ptab-tip">의상과 구도가 있어요.</span></button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
@@ -1071,6 +1078,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
           <option value="persona">페르소나</option>
           <option value="costume">의상</option>
           <option value="pose">구도</option>
+          <option value="set">세트</option>
         </select>
       </div>
       <div class="ef" id="pmtTitleWrap">
@@ -2381,7 +2389,7 @@ function impD(e){
   };
   r.readAsText(f);e.target.value='';
 }
-function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps','e_prompts'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
+function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps','e_prompts','e_pmt_migrated_set'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
 
 function lightenColor(hex,amt){
   var h=hex.replace('#','');
@@ -3800,6 +3808,13 @@ function startApp(){
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
   if(window._fbPrompts){prompts=window._fbPrompts;localStorage.setItem('e_prompts',JSON.stringify(prompts));}
+  // 기존 '구도(pose)' → '세트(set)' 일회성 마이그레이션
+  if(!localStorage.getItem('e_pmt_migrated_set')){
+    var migrated=false;
+    prompts.forEach(function(p){if(p.type==='pose'){p.type='set';migrated=true;}});
+    if(migrated){localStorage.setItem('e_prompts',JSON.stringify(prompts));sv();}
+    localStorage.setItem('e_pmt_migrated_set','1');
+  }
   applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
