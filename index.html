@@ -1039,7 +1039,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
-        <div class="prompt-nsfw" id="pmt19Btn" onclick="toggle19()" style="display:none;cursor:pointer;align-items:center;gap:5px" title="NSFW 블러 해제"><input type="checkbox" id="pmt19Cb" style="accent-color:#E16B5A;pointer-events:none" tabindex="-1">19</div>
+        <div class="prompt-nsfw" id="pmt19Btn" onclick="toggle19()" style="display:none;cursor:pointer;align-items:center;gap:5px" title="NSFW 블러 해제"><input type="checkbox" id="pmt19Cb" style="accent-color:#1A1A1A;pointer-events:none" tabindex="-1">19</div>
         <button class="prompt-nsfw" id="pmtNsfwBtn" onclick="cycleNsfw()">NSFW</button>
       </div>
     </div>
@@ -3475,7 +3475,6 @@ function rPromptGrid(){
   }
   if(btn19){
     btn19.style.display=isPersona?'none':'flex';
-    btn19.classList.toggle('only',pmt19Unlocked);
     $('#pmt19Cb').checked=pmt19Unlocked;
   }
   var list=prompts.filter(function(p){return p.type===curPromptTab});
@@ -3531,7 +3530,6 @@ function buildPmtPagi(cur,total){
 function toggle19(){
   pmt19Unlocked=!pmt19Unlocked;
   $('#pmt19Cb').checked=pmt19Unlocked;
-  $('#pmt19Btn').classList.toggle('only',pmt19Unlocked);
   rPromptGrid();
 }
 
