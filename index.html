@@ -657,7 +657,16 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pmt-modal-dim.on{display:flex}
 .pmt-modal{background:var(--card);border-radius:14px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fin .2s ease}
 .pmt-modal::-webkit-scrollbar{width:4px}.pmt-modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-.pmt-modal-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border-radius:14px 14px 0 0}
+.pmt-modal-img-wrap{position:relative;width:100%;aspect-ratio:2/3;border-radius:14px 14px 0 0;overflow:hidden}
+.pmt-modal-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.pmt-modal-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.45);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;transition:background .2s}
+.pmt-modal-arrow:hover{background:rgba(255,255,255,.7)}
+.pmt-modal-arrow svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.pmt-modal-arrow.left{left:10px}
+.pmt-modal-arrow.right{right:10px}
+.pmt-modal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:3}
+.pmt-modal-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);transition:all .2s}
+.pmt-modal-dots span.on{background:#fff;transform:scale(1.2)}
 .pmt-modal-content{padding:24px}
 .pmt-modal-title{font-size:1.05rem;font-weight:600;margin-bottom:4px}
 .pmt-modal-date{font-size:.72rem;color:var(--text-light);margin-bottom:16px;font-family:'IBM Plex Mono',monospace}
@@ -675,8 +684,10 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pmt-editor .ef label{font-size:.75rem;color:var(--text-sub);font-weight:500;display:block;margin-bottom:5px}
 .pmt-editor input,.pmt-editor textarea,.pmt-editor select{width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit}
 .pmt-editor textarea{resize:vertical;min-height:120px;line-height:1.7}
-.pmt-img-preview{width:100%;aspect-ratio:2/3;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;display:none}
-.pmt-img-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.pmt-img-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pmt-img-thumb{width:72px;height:108px;border-radius:6px;overflow:hidden;border:1px solid var(--border);position:relative;flex-shrink:0}
+.pmt-img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.pmt-img-thumb .xb{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:.55rem;display:flex;align-items:center;justify-content:center}
 .pmt-img-upload{border:1.5px dashed var(--border-h);border-radius:8px;padding:24px;text-align:center;cursor:pointer;font-size:.78rem;color:var(--text-light);transition:all var(--tr)}
 .pmt-img-upload:hover{border-color:var(--text-light)}
 
@@ -1060,10 +1071,10 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <input type="text" id="pmtEdName" placeholder="프롬프트 제목">
       </div>
       <div class="ef">
-        <label>이미지 <span style="color:#E16B5A">*</span></label>
-        <div class="pmt-img-preview" id="pmtImgPv"><img id="pmtImgPvImg"></div>
-        <div class="pmt-img-upload" id="pmtImgUpload" onclick="document.getElementById('pmtImgIn').click()">클릭하여 이미지 업로드</div>
-        <input type="file" id="pmtImgIn" accept="image/*" onchange="onPmtImg(event)" style="display:none">
+        <label>이미지 <span style="color:#E16B5A">*</span> <span style="font-weight:300;color:var(--text-light);font-size:.68rem">(여러 장 가능)</span></label>
+        <div class="pmt-img-list" id="pmtImgList"></div>
+        <div class="pmt-img-upload" onclick="document.getElementById('pmtImgIn').click()">클릭하여 이미지 업로드</div>
+        <input type="file" id="pmtImgIn" accept="image/*" multiple onchange="onPmtImgs(event)" style="display:none">
       </div>
       <div class="ef">
         <label>프롬프트 내용</label>
@@ -1103,7 +1114,12 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 <div class="pmt-modal-dim" id="pmtModalDim" onclick="if(event.target===this)closePmtModal()">
   <div class="pmt-modal" style="position:relative">
     <button class="pmt-modal-close" onclick="closePmtModal()">✕</button>
-    <img class="pmt-modal-img" id="pmtModalImg">
+    <div class="pmt-modal-img-wrap" id="pmtModalImgWrap">
+      <img id="pmtModalImg">
+      <button class="pmt-modal-arrow left" id="pmtArrowL" onclick="pmtSlide(-1)" style="display:none"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pmt-modal-arrow right" id="pmtArrowR" onclick="pmtSlide(1)" style="display:none"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>
+      <div class="pmt-modal-dots" id="pmtDots"></div>
+    </div>
     <div class="pmt-modal-content">
       <div class="pmt-modal-title" id="pmtModalTitle"></div>
       <div class="pmt-modal-date" id="pmtModalDate"></div>
@@ -3425,8 +3441,9 @@ function closeLightbox(){
 
 /* ── Prompt System ── */
 var curPromptTab='persona',pmtNsfwState=0,pmtEditId=null,pmtViewId=null;
-var pmtImgData='';
+var pmtImgList=[];
 var pmtPage=0,pmt19Unlocked=false;
+var pmtSlideIdx=0,pmtSlideImgs=[];
 
 function goPromptTab(tab){
   curPromptTab=tab;
@@ -3488,8 +3505,9 @@ function rPromptGrid(){
     if(p.priv==='pw')badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>';
     if(isHidden)badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="18"/></svg></div>';
     var imgStyle=isNsfwBlur?' style="filter:blur(8px);transform:scale(1.1)"':'';
+    var cardImg=getImgs(p)[0]||'';
     return '<div class="pmt-card" onclick="openPmtModal('+p.id+')" oncontextmenu="copyPromptRC(event,'+p.id+')">'
-      +(isPw?'<div style="position:absolute;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>':'<img src="'+p.img+'" loading="lazy"'+imgStyle+'>')
+      +(isPw?'<div style="position:absolute;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>':'<img src="'+cardImg+'" loading="lazy"'+imgStyle+'>')
       +'<div class="pmt-card-dim"></div>'
       +badge
       +'<div class="pmt-card-body"><div class="pmt-card-title">'+esc(p.title)+'</div></div>'
@@ -3536,21 +3554,21 @@ function openPmtModal(id){
   var p=prompts.find(function(x){return x.id===id});
   if(!p)return;
   pmtViewId=id;
+  var imgs=getImgs(p);
   $('#pmtModalTitle').textContent=p.title;
   $('#pmtModalDate').textContent=fDT(p.ts);
   $('#pmtModalAdmin').style.display=isAdmin?'flex':'none';
-  // 비밀번호 처리
   var needPw=p.priv==='pw'&&!isAdmin;
+  var wrap=$('#pmtModalImgWrap');
   if(needPw){
-    $('#pmtModalImg').src='';
-    $('#pmtModalImg').style.display='none';
+    wrap.style.display='none';
     $('#pmtPwArea').style.display='';
     $('#pmtBodyArea').style.display='none';
     $('#pmtPwErr').style.display='none';
     $('#pmtPwIn').value='';
   }else{
-    $('#pmtModalImg').src=p.img;
-    $('#pmtModalImg').style.display='';
+    wrap.style.display='';
+    showPmtCarousel(imgs);
     $('#pmtPwArea').style.display='none';
     $('#pmtBodyArea').style.display='';
     $('#pmtModalBody').textContent=p.body;
@@ -3563,8 +3581,9 @@ function checkPmtPw(){
   if(!p)return;
   var val=$('#pmtPwIn').value;
   if(val===p.privPw){
-    $('#pmtModalImg').src=p.img;
-    $('#pmtModalImg').style.display='';
+    var imgs=getImgs(p);
+    $('#pmtModalImgWrap').style.display='';
+    showPmtCarousel(imgs);
     $('#pmtPwArea').style.display='none';
     $('#pmtBodyArea').style.display='';
     $('#pmtModalBody').textContent=p.body;
@@ -3597,16 +3616,39 @@ function copyPromptRC(e,id){
   _doCopyPrompt(p.body);
 }
 
-/* Prompt Editor */
-function onPmtImg(e){
-  var f=e.target.files[0];if(!f)return;
+/* Prompt Editor — multi-image */
+function getImgs(p){
+  // 하위 호환: p.img(문자열) → [p.img], p.imgs(배열) → p.imgs
+  if(p.imgs&&p.imgs.length)return p.imgs;
+  if(p.img)return[p.img];
+  return[];
+}
+function onPmtImgs(e){
+  var files=Array.from(e.target.files);if(!files.length)return;
+  var remaining=files.length;
   toast('이미지 업로드 중...');
-  rdF(f,function(d){
-    pmtImgData=d;
-    $('#pmtImgPv').style.display='';
-    $('#pmtImgPvImg').src=d;
-    $('#pmtImgUpload').style.display='none';
-  },{maxW:800,quality:0.9,maxBytes:200000});
+  files.forEach(function(f){
+    rdF(f,function(d){
+      pmtImgList.push(d);
+      remaining--;
+      if(remaining<=0){rPmtImgList();toast(files.length+'장 업로드 완료');}
+    },{maxW:800,quality:0.9,maxBytes:200000});
+  });
+  e.target.value='';
+}
+function rPmtImgList(){
+  var el=$('#pmtImgList');
+  if(!pmtImgList.length){el.innerHTML='';return;}
+  el.innerHTML=pmtImgList.map(function(src,i){
+    return '<div class="pmt-img-thumb">'
+      +'<img src="'+src+'">'
+      +'<button class="xb" onclick="removePmtImg('+i+')">✕</button>'
+      +'</div>';
+  }).join('');
+}
+function removePmtImg(i){
+  pmtImgList.splice(i,1);
+  rPmtImgList();
 }
 function initPmtEditor(){
   if(pmtEditId){
@@ -3617,10 +3659,8 @@ function initPmtEditor(){
       $('#pmtEdName').value=p.title;
       $('#pmtEdBody').value=p.body;
       $('#pmtEdNsfw').checked=!!p.nsfw;
-      pmtImgData=p.img;
-      $('#pmtImgPv').style.display='';
-      $('#pmtImgPvImg').src=p.img;
-      $('#pmtImgUpload').style.display='none';
+      pmtImgList=getImgs(p).slice();
+      rPmtImgList();
       setPmtPriv(p.priv||'');
       if(p.priv==='pw')$('#pmtEdPrivPw').value=p.privPw||'';
       togglePmtNsfwCheck();
@@ -3633,9 +3673,8 @@ function initPmtEditor(){
   $('#pmtEdName').value='';
   $('#pmtEdBody').value='';
   $('#pmtEdNsfw').checked=false;
-  pmtImgData='';
-  $('#pmtImgPv').style.display='none';
-  $('#pmtImgUpload').style.display='';
+  pmtImgList=[];
+  rPmtImgList();
   document.getElementById('pmtImgIn').value='';
   setPmtPriv('');
   $('#pmtEdPrivPw').value='';
@@ -3650,16 +3689,41 @@ function savePrompt(){
   priv=priv?priv.dataset.ppriv:'';
   var privPw=priv==='pw'?$('#pmtEdPrivPw').value.trim():'';
   if(!title){showAlert('⚠️','제목을 입력해주세요');return;}
-  if(!pmtImgData){showAlert('⚠️','이미지를 1장 이상 업로드해주세요');return;}
+  if(!pmtImgList.length){showAlert('⚠️','이미지를 1장 이상 업로드해주세요');return;}
   if(!body){showAlert('⚠️','프롬프트 내용을 입력해주세요');return;}
   if(priv==='pw'&&!privPw){showAlert('⚠️','비밀번호를 입력해주세요');return;}
   if(pmtEditId){
     var p=prompts.find(function(x){return x.id===pmtEditId});
-    if(p){p.type=type;p.title=title;p.body=body;p.nsfw=nsfw;p.img=pmtImgData;p.priv=priv;p.privPw=privPw;}
+    if(p){p.type=type;p.title=title;p.body=body;p.nsfw=nsfw;p.imgs=pmtImgList.slice();p.img=pmtImgList[0];p.priv=priv;p.privPw=privPw;}
   }else{
-    prompts.push({id:Date.now(),type:type,title:title,body:body,nsfw:nsfw,img:pmtImgData,ts:Date.now(),priv:priv,privPw:privPw});
+    prompts.push({id:Date.now(),type:type,title:title,body:body,nsfw:nsfw,imgs:pmtImgList.slice(),img:pmtImgList[0],ts:Date.now(),priv:priv,privPw:privPw});
   }
   sv();pmtEditId=null;curPromptTab=type;go('prompt');toast('저장됨');
+}
+
+/* Prompt Modal — carousel */
+function showPmtCarousel(imgs){
+  pmtSlideImgs=imgs;
+  pmtSlideIdx=0;
+  $('#pmtModalImg').src=imgs[0];
+  $('#pmtArrowL').style.display=imgs.length>1?'flex':'none';
+  $('#pmtArrowR').style.display=imgs.length>1?'flex':'none';
+  rPmtDots();
+}
+function pmtSlide(dir){
+  if(!pmtSlideImgs.length)return;
+  pmtSlideIdx+=dir;
+  if(pmtSlideIdx<0)pmtSlideIdx=pmtSlideImgs.length-1;
+  if(pmtSlideIdx>=pmtSlideImgs.length)pmtSlideIdx=0;
+  $('#pmtModalImg').src=pmtSlideImgs[pmtSlideIdx];
+  rPmtDots();
+}
+function rPmtDots(){
+  var el=$('#pmtDots');
+  if(pmtSlideImgs.length<=1){el.innerHTML='';return;}
+  el.innerHTML=pmtSlideImgs.map(function(_,i){
+    return '<span class="'+(i===pmtSlideIdx?'on':'')+'"></span>';
+  }).join('');
 }
 function editPromptFromModal(){
   pmtEditId=pmtViewId;
