@@ -458,8 +458,17 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .ad-add input{flex:1;padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.82rem;outline:none;font-weight:300}
 .ad-add input:focus{border-color:var(--text)}
 .ad-add button{padding:8px 16px;border-radius:7px;border:none;background:var(--text);color:var(--bg);font-size:.78rem;cursor:pointer;font-weight:500}
-.cbar{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.cbar{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .cb{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.cb-add{width:20px;height:20px;border-radius:50%;border:1.5px dashed var(--border-h);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);transition:all .15s;position:relative}
+.cb-add:hover{border-color:var(--text-light);color:var(--text)}
+.cb-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border-h);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.12);padding:12px;z-index:50;width:180px}
+.cb-pop.on{display:block;animation:fin .15s ease}
+.cb-pop-preview{width:100%;height:28px;border-radius:6px;border:1px solid var(--border);margin-bottom:8px}
+.cb-pop input[type=color]{width:100%;height:32px;border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;background:var(--bg)}
+.cb-pop-hex{display:flex;gap:6px;margin-top:8px;align-items:center}
+.cb-pop-hex input[type=text]{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:.75rem;font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);outline:none}
+.cb-pop-hex button{padding:5px 10px;border-radius:6px;border:none;background:var(--text);color:var(--bg);font-size:.72rem;cursor:pointer;font-weight:500;white-space:nowrap}
 .cb:hover{transform:scale(1.2)}.cb.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg)}
 .lo{display:flex;gap:8px}
 .lo-o{flex:1;padding:14px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;font-size:.76rem;color:var(--text-sub);transition:all var(--tr)}
@@ -606,6 +615,71 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .heart-empty{font-size:.75rem;color:var(--text-light);text-align:center;padding:20px 0;font-weight:300}
 @media(max-width:640px){.heart-wrap{bottom:14px;left:14px}.heart-panel{width:250px}}
 
+
+/* ── Prompt Nav Submenu ── */
+.n-link-wrap{position:relative;display:inline-block}
+.n-link-wrap .n-sub{display:none;position:absolute;top:100%;left:0;background:var(--card);border:1px solid var(--border-h);border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.1);min-width:auto;z-index:200;flex-direction:row}
+.n-link-wrap .n-sub::before{content:'';position:absolute;top:-8px;left:0;right:0;height:8px}
+.n-link-wrap:hover .n-sub{display:flex;animation:fin .15s ease}
+.n-sub button{display:block;padding:9px 16px;border:none;background:none;color:var(--text-sub);font-size:.78rem;text-align:center;cursor:pointer;transition:all var(--tr);font-family:inherit;white-space:nowrap}
+.n-sub button:first-child{border-radius:8px 0 0 8px}
+.n-sub button:last-child{border-radius:0 8px 8px 0}
+.n-sub button:hover{background:var(--accent-soft);color:var(--text)}
+.n-sub button.on{color:var(--text);font-weight:500}
+@media(max-width:640px){.n-link-wrap .n-sub{position:static;display:none;border:none;box-shadow:none;margin:0;border-radius:0}.n-link-wrap:hover .n-sub{display:none}.n-link-wrap .n-sub.mob-open{display:block}}
+
+/* ── Prompt Grid & Cards ── */
+.prompt-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.prompt-tabs{display:flex;gap:1px}
+.prompt-tab{padding:7px 14px;border-radius:6px;font-size:.8rem;color:var(--text-sub);cursor:pointer;border:none;background:none;transition:all var(--tr);font-weight:400}
+.prompt-tab:hover{color:var(--text)}
+.prompt-tab.on{color:var(--text);font-weight:500;background:var(--accent-soft)}
+.prompt-nsfw{padding:5px 12px;border-radius:50px;font-size:.7rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text-sub);transition:all var(--tr);letter-spacing:.02em}
+.prompt-nsfw:hover{border-color:var(--text-light)}
+.prompt-nsfw.only{background:#E16B5A;color:#fff;border-color:#E16B5A}
+.prompt-nsfw.hide{background:var(--bg2);color:var(--text-light);border-color:var(--border);text-decoration:line-through}
+.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.prompt-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.prompt-grid{grid-template-columns:repeat(2,1fr)}}
+.pmt-card{position:relative;aspect-ratio:2/3;border-radius:var(--radius);overflow:hidden;cursor:pointer;box-shadow:var(--shadow);background:var(--bg2);transition:all .3s cubic-bezier(.4,0,.2,1)}
+.pmt-card:hover{box-shadow:var(--shadow-h);transform:translateY(-2px)}
+.pmt-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.pmt-card:hover img{transform:scale(1.04)}
+.pmt-card-dim{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.65))}
+.pmt-card-body{position:absolute;bottom:0;left:0;right:0;padding:14px 14px;z-index:2}
+.pmt-card-title{font-size:.82rem;font-weight:600;color:#fff;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pmt-card-nsfw{position:absolute;top:8px;right:8px;font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:3px;background:rgba(225,107,90,.85);color:#fff;letter-spacing:.04em;z-index:2}
+.prompt-empty{text-align:center;padding:80px 20px;color:var(--text-light)}
+.prompt-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
+
+/* ── Prompt Detail Modal ── */
+.pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(5px);z-index:900;justify-content:center;align-items:center;padding:20px}
+.pmt-modal-dim.on{display:flex}
+.pmt-modal{background:var(--card);border-radius:14px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fin .2s ease}
+.pmt-modal::-webkit-scrollbar{width:4px}.pmt-modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.pmt-modal-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border-radius:14px 14px 0 0}
+.pmt-modal-content{padding:24px}
+.pmt-modal-title{font-size:1.05rem;font-weight:600;margin-bottom:4px}
+.pmt-modal-date{font-size:.72rem;color:var(--text-light);margin-bottom:16px;font-family:'IBM Plex Mono',monospace}
+.pmt-modal-prompt{font-size:.85rem;line-height:1.8;color:var(--text-sub);white-space:pre-wrap;word-break:break-word;background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border)}
+.pmt-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);color:#fff;border:none;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .2s}
+.pmt-modal-close:hover{background:rgba(0,0,0,.6)}
+.pmt-modal-admin{display:flex;gap:6px;margin-top:16px;justify-content:flex-end}
+.pmt-modal-admin button{padding:6px 14px;border-radius:6px;font-size:.74rem;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text-sub);transition:all var(--tr)}
+.pmt-modal-admin button:hover{border-color:var(--text)}
+.pmt-modal-admin button.danger{color:#D4564A;border-color:#D4564A30}
+.pmt-modal-admin button.danger:hover{background:#D4564A10}
+
+/* ── Prompt Editor ── */
+.pmt-editor{max-width:520px;margin:0 auto}
+.pmt-editor .ef label{font-size:.75rem;color:var(--text-sub);font-weight:500;display:block;margin-bottom:5px}
+.pmt-editor input,.pmt-editor textarea,.pmt-editor select{width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit}
+.pmt-editor textarea{resize:vertical;min-height:120px;line-height:1.7}
+.pmt-img-preview{width:100%;aspect-ratio:2/3;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;display:none}
+.pmt-img-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.pmt-img-upload{border:1.5px dashed var(--border-h);border-radius:8px;padding:24px;text-align:center;cursor:pointer;font-size:.78rem;color:var(--text-light);transition:all var(--tr)}
+.pmt-img-upload:hover{border-color:var(--text-light)}
+
 /* ── Modal ── */
 .modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);z-index:900;justify-content:center;align-items:center}
 .modal-dim.on{display:flex}
@@ -656,6 +730,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         if (data.cats) window._fbCats = data.cats;
         if (data.ps) window._fbPs = data.ps;
         if (data.pairs) window._fbPairs = data.pairs;
+        if (data.prompts) window._fbPrompts = data.prompts;
       }
     } catch(e) {
       console.warn('Firebase 로드 실패, 로컬 데이터 사용:', e);
@@ -680,6 +755,14 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   <div class="n-links">
     <button class="n-link" data-p="series" onclick="go('series')">시리즈</button>
     <button class="n-link" data-p="pair" onclick="go('pair')">페어</button>
+    <div class="n-link-wrap">
+      <button class="n-link" data-p="prompt" onclick="go('prompt')">프롬프트</button>
+      <div class="n-sub" id="promptSub">
+        <button onclick="goPromptTab('persona')">페르소나</button>
+        <button onclick="goPromptTab('costume')">의상</button>
+        <button onclick="goPromptTab('pose')">구도</button>
+      </div>
+    </div>
     <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
   </div>
   <div class="n-r">
@@ -693,6 +776,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <button class="n-wr fab-main" onclick="toggleFab()" id="fabBtn">+</button>
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
+        <button onclick="closeFab();go('pmt-editor')">✎ 프롬프트</button>
       </div>
     </div>
 
@@ -925,6 +1009,120 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div id="pairEmpty" class="pair-empty" style="display:none">
         <div class="pair-empty-icon">💞</div>
         <div class="pair-empty-txt">아직 등록된 페어가 없어요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PROMPT -->
+<div class="page" id="pg-prompt">
+  <div class="pw">
+    <div class="prompt-top">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Prompt</span>
+        <div class="prompt-tabs">
+          <button class="prompt-tab on" data-pt="persona" onclick="switchPromptTab('persona')">페르소나</button>
+          <button class="prompt-tab" data-pt="costume" onclick="switchPromptTab('costume')">의상</button>
+          <button class="prompt-tab" data-pt="pose" onclick="switchPromptTab('pose')">구도</button>
+        </div>
+      </div>
+      <button class="prompt-nsfw" id="pmtNsfwBtn" onclick="cycleNsfw()">NSFW</button>
+    </div>
+    <div id="pmtGrid" class="prompt-grid"></div>
+    <div class="prompt-empty" id="pmtEmpty" style="display:none">
+      <div class="prompt-empty-icon">✦</div>
+      <div style="font-size:.85rem">아직 프롬프트가 없어요</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT EDITOR -->
+<div class="page" id="pg-pmt-editor">
+  <div class="pw">
+    <div class="pmt-editor">
+      <button class="dt-back" onclick="go('prompt')" style="margin-bottom:20px">← 프롬프트 목록</button>
+      <h3 style="font-size:.95rem;font-weight:600;margin-bottom:20px" id="pmtEdTitle">프롬프트 작성</h3>
+      <div class="ef">
+        <label>분류</label>
+        <select id="pmtEdType" onchange="togglePmtNsfwCheck()">
+          <option value="persona">페르소나</option>
+          <option value="costume">의상</option>
+          <option value="pose">구도</option>
+        </select>
+      </div>
+      <div class="ef">
+        <label>제목</label>
+        <input type="text" id="pmtEdName" placeholder="프롬프트 제목">
+      </div>
+      <div class="ef">
+        <label>이미지 <span style="color:#E16B5A">*</span></label>
+        <div class="pmt-img-preview" id="pmtImgPv"><img id="pmtImgPvImg"></div>
+        <div class="pmt-img-upload" id="pmtImgUpload" onclick="document.getElementById('pmtImgIn').click()">클릭하여 이미지 업로드</div>
+        <input type="file" id="pmtImgIn" accept="image/*" onchange="onPmtImg(event)" style="display:none">
+      </div>
+      <div class="ef">
+        <label>프롬프트 내용</label>
+        <textarea id="pmtEdBody" placeholder="프롬프트를 입력하세요"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        <label style="font-size:.78rem;color:var(--text-sub);display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="pmtEdNsfw" style="accent-color:#E16B5A"> NSFW
+        </label>
+      </div>
+      <div class="ed-b">
+        <div class="priv-sel" style="margin-right:auto">
+          <div class="priv-opt on" data-ppriv="" onclick="setPmtPriv('')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2"/></svg>
+            공개
+          </div>
+          <div class="priv-opt" data-ppriv="pw" onclick="setPmtPriv('pw')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            비밀번호
+          </div>
+          <div class="priv-opt" data-ppriv="hidden" onclick="setPmtPriv('hidden')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="18"/></svg>
+            비공개
+          </div>
+        </div>
+        <div class="priv-pw-row" id="pmtPrivPwRow">
+          <input id="pmtEdPrivPw" placeholder="비밀번호" autocomplete="off" style="width:120px">
+        </div>
+        <button class="btn-g" onclick="go('prompt')">취소</button>
+        <button class="btn-p" onclick="savePrompt()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT DETAIL MODAL -->
+<div class="pmt-modal-dim" id="pmtModalDim" onclick="if(event.target===this)closePmtModal()">
+  <div class="pmt-modal" style="position:relative">
+    <button class="pmt-modal-close" onclick="closePmtModal()">✕</button>
+    <img class="pmt-modal-img" id="pmtModalImg">
+    <div class="pmt-modal-content">
+      <div class="pmt-modal-title" id="pmtModalTitle"></div>
+      <div class="pmt-modal-date" id="pmtModalDate"></div>
+      <!-- 비밀번호 입력 영역 -->
+      <div id="pmtPwArea" style="display:none;text-align:center;padding:20px 0">
+        <div style="font-size:.85rem;color:var(--text-sub);margin-bottom:12px">비밀번호가 필요한 프롬프트예요</div>
+        <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+          <input type="password" id="pmtPwIn" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')checkPmtPw()" style="padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.84rem;width:160px;outline:none;font-family:inherit">
+          <button class="btn-p" onclick="checkPmtPw()" style="padding:8px 16px;font-size:.82rem">확인</button>
+        </div>
+        <div id="pmtPwErr" style="font-size:.74rem;color:#D4564A;margin-top:8px;display:none">비밀번호가 틀렸어요</div>
+      </div>
+      <!-- 프롬프트 내용 영역 -->
+      <div id="pmtBodyArea" style="display:none">
+        <div class="pmt-modal-prompt" id="pmtModalBody"></div>
+        <button onclick="copyPromptText()" style="margin-top:10px;padding:7px 16px;border-radius:7px;border:1px solid var(--border);background:var(--card);color:var(--text-sub);font-size:.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;font-family:inherit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          복사
+        </button>
+      </div>
+      <div class="pmt-modal-admin" id="pmtModalAdmin" style="display:none">
+        <button onclick="editPromptFromModal()">수정</button>
+        <button class="danger" onclick="deletePromptFromModal()">삭제</button>
       </div>
     </div>
   </div>
@@ -1209,6 +1407,7 @@ let cats=ld('e_cats')||[
 let ps=ld('e_ps')||defP();
 let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null,catSortAsc=false,catPage=0;
 let pairs=ld('e_pairs')||[];
+let prompts=ld('e_prompts')||[];
 let curPairId=null;
 let eCov='',eIL=[],eFI=[];
 let editCatId=null,catThumb='',catThumbOrig='';
@@ -1237,6 +1436,7 @@ function sv(){
     localStorage.setItem('e_cats',JSON.stringify(cats));
     localStorage.setItem('e_ps',JSON.stringify(ps));
     localStorage.setItem('e_pairs',JSON.stringify(pairs));
+    localStorage.setItem('e_prompts',JSON.stringify(prompts));
   }catch(e){
     console.warn('localStorage 저장 실패:',e);
     if(e.name==='QuotaExceededError'||e.code===22){
@@ -1246,7 +1446,7 @@ function sv(){
   if(window._db && window._firestoreFns){
     var db=window._db, docFn=window._firestoreFns.doc, setDocFn=window._firestoreFns.setDoc;
     setDocFn(docFn(db,'blog','data'),{
-      cfg:cfg,cats:cats,ps:ps,pairs:pairs,updatedAt:Date.now()
+      cfg:cfg,cats:cats,ps:ps,pairs:pairs,prompts:prompts,updatedAt:Date.now()
     }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e);showAlert('⚠️','저장에 실패했어요.<br><span style="font-size:.78rem;color:var(--text-sub)">데이터가 너무 커요. 이미지 수를 줄여보세요.</span>');});
   }
 }
@@ -1269,7 +1469,7 @@ function go(p){
   if(p!=='detail')hideDtSb();
   if(p!=='catview'&&bdMode){bdMode=false;bdSet.clear();}
   var el=$('#pg-'+p);if(el)el.classList.add('on');
-  $$('.n-link').forEach(function(l){l.classList.toggle('on',l.dataset.p===p)});
+  $$('.n-link').forEach(function(l){l.classList.toggle('on',l.dataset.p===p||(p==='pmt-editor'&&l.dataset.p==='prompt'))});
   if(['editor'].indexOf(p)===-1){
     if(p==='catview'){dtBackTarget='catview';try{history.replaceState(null,'','#catview:'+viewCatId);}catch(e){}}
     else if(p==='detail'){try{history.replaceState(null,'','#detail:'+curId);}catch(e){}}
@@ -1281,8 +1481,10 @@ function go(p){
   if(p==='series')rSeries();
   if(p==='admin'){rAdmin();resetCatForm()}
   if(p==='editor')initEd();
+  if(p==='pmt-editor')initPmtEditor();
   if(p==='catview')rCatView();
   if(p==='pair')rPair();
+  if(p==='prompt')rPromptGrid();
 }
 var dtBackTarget='home';
 function goBack(){
@@ -1986,8 +2188,63 @@ function rAdmin(){
 }
 
 function rCcBar(){
-  $('#ccBar').innerHTML=CL.map(function(c){return '<div class="cb'+(selC===c?' on':'')+'" style="background:'+c+'" onclick="selC=\''+c+'\';rCcBar()"></div>'}).join('');
+  var html=CL.map(function(c){return '<div class="cb'+(selC===c?' on':'')+'" style="background:'+c+'" onclick="selC=\''+c+'\';rCcBar()"></div>'}).join('');
+  // 현재 선택이 CL에 없으면 (커스텀 색) 표시
+  var isCustom=CL.indexOf(selC)===-1&&selC;
+  if(isCustom){
+    html+='<div class="cb on" style="background:'+selC+'" onclick=""></div>';
+  }
+  html+='<div class="cb-add" id="ccAddBtn" onclick="toggleCcPop(event)">'
+    +'+'
+    +'<div class="cb-pop" id="ccPop" onclick="event.stopPropagation()">'
+    +'<div class="cb-pop-preview" id="ccPopPv" style="background:'+(selC||'#1A1A1A')+'"></div>'
+    +'<input type="color" id="ccPopColor" value="'+(selC||'#1A1A1A')+'" oninput="onCcPopColor(this.value)">'
+    +'<div class="cb-pop-hex">'
+    +'<input type="text" id="ccPopHex" value="'+(selC||'#1A1A1A')+'" placeholder="#000000" oninput="onCcPopHex(this.value)">'
+    +'<button onclick="applyCcPop()">적용</button>'
+    +'</div>'
+    +'</div>'
+    +'</div>';
+  $('#ccBar').innerHTML=html;
 }
+function toggleCcPop(e){
+  e.stopPropagation();
+  var pop=$('#ccPop');
+  pop.classList.toggle('on');
+  if(pop.classList.contains('on')){
+    $('#ccPopColor').value=selC||'#1A1A1A';
+    $('#ccPopHex').value=selC||'#1A1A1A';
+    $('#ccPopPv').style.background=selC||'#1A1A1A';
+  }
+}
+function onCcPopColor(v){
+  $('#ccPopHex').value=v;
+  $('#ccPopPv').style.background=v;
+}
+function onCcPopHex(v){
+  v=v.trim();
+  if(/^#[0-9A-Fa-f]{6}$/.test(v)){
+    $('#ccPopColor').value=v;
+    $('#ccPopPv').style.background=v;
+  }
+}
+function applyCcPop(){
+  var v=$('#ccPopHex').value.trim();
+  if(!/^#[0-9A-Fa-f]{6}$/.test(v)){
+    v=$('#ccPopColor').value;
+  }
+  selC=v;
+  $('#ccPop').classList.remove('on');
+  rCcBar();
+}
+// 바깥 클릭 시 팝업 닫기
+document.addEventListener('click',function(e){
+  var pop=$('#ccPop');
+  var btn=$('#ccAddBtn');
+  if(pop&&pop.classList.contains('on')&&!pop.contains(e.target)&&e.target!==btn){
+    pop.classList.remove('on');
+  }
+});
 
 function thumbHTML(src){
   return '<img src="'+src+'"><div class="thumb-overlay"><span onclick="event.stopPropagation();onCatThumbClick()">✂ 재편집</span><br><span onclick="event.stopPropagation();document.getElementById(\'catThIn\').click()">🔄 새 이미지</span></div><button class="thumb-remove" onclick="event.stopPropagation();catThumb=\'\';catThumbOrig=\'\';$(\'#catFormThumb\').innerHTML=thumbEmpty()">✕</button><input type="file" id="catThIn" accept="image/*" onchange="onCatThumb(event)">';
@@ -2022,16 +2279,17 @@ function startEditCat(id){
   var el=$('#catFormThumb');
   if(c.thumb)el.innerHTML=thumbHTML(c.thumb);
   else el.innerHTML=thumbEmpty();
-  $('#ccBar').innerHTML=CL.map(function(co){return '<div class="cb'+(selC===co?' on':'')+'" style="background:'+co+'" onclick="selC=\''+co+'\';rCcBar()"></div>'}).join('');
+  rCcBar();
   $('#catFormCancel').style.display='';
 }
 
 function resetCatForm(){
-  editCatId=null;catThumb='';catThumbOrig='';
+  editCatId=null;catThumb='';catThumbOrig='';selC=CL[0];
   $('#catFormTitle').textContent='시리즈 추가';
   $('#ncN').value='';$('#ncD').value='';
   $('#catFormThumb').innerHTML=thumbEmpty();
   $('#catFormCancel').style.display='none';
+  rCcBar();
 }
 
 function saveCatForm(){
@@ -2070,7 +2328,7 @@ function saveCfg(){sv();rHome();applyMeta();initBgm();initHeartPanel();toast('�
 
 
 function expD(){
-  var d=JSON.stringify({cfg:cfg,cats:cats,ps:ps},null,2);
+  var d=JSON.stringify({cfg:cfg,cats:cats,ps:ps,prompts:prompts},null,2);
   var bl=new Blob([d],{type:'application/json'});
   var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='blog-backup.json';a.click();
   toast('다운로드 완료');
@@ -2081,13 +2339,13 @@ function impD(e){
   r.onload=function(ev){
     try{
       var d=JSON.parse(ev.target.result);
-      if(d.cfg)cfg=d.cfg;if(d.cats)cats=d.cats;if(d.ps)ps=d.ps;
+      if(d.cfg)cfg=d.cfg;if(d.cats)cats=d.cats;if(d.ps)ps=d.ps;if(d.prompts)prompts=d.prompts;
       sv();applyAcc();rAdmin();rHome();toast('불러오기 완료');
     }catch(err){showAlert('⚠️','올바른 백업 파일이 아니에요')}
   };
   r.readAsText(f);e.target.value='';
 }
-function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
+function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps','e_prompts'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
 
 function lightenColor(hex,amt){
   var h=hex.replace('#','');
@@ -3160,11 +3418,227 @@ function openLightbox(src){
 function closeLightbox(){
   $('#imgLightbox').classList.remove('on');
 }
+
+/* ── Prompt System ── */
+var curPromptTab='persona',pmtNsfwState=0,pmtEditId=null,pmtViewId=null;
+var pmtImgData='';
+
+function goPromptTab(tab){
+  curPromptTab=tab;
+  go('prompt');
+}
+function switchPromptTab(tab){
+  curPromptTab=tab;
+  $$('.prompt-tab').forEach(function(t){t.classList.toggle('on',t.dataset.pt===tab)});
+  rPromptGrid();
+}
+function cycleNsfw(){
+  pmtNsfwState=(pmtNsfwState+1)%3;
+  var btn=$('#pmtNsfwBtn');
+  btn.classList.remove('only','hide');
+  if(pmtNsfwState===1)btn.classList.add('only');
+  else if(pmtNsfwState===2)btn.classList.add('hide');
+  rPromptGrid();
+}
+function rPromptGrid(){
+  $$('.prompt-tab').forEach(function(t){t.classList.toggle('on',t.dataset.pt===curPromptTab)});
+  // 페르소나 탭에서는 NSFW 버튼 숨김
+  var nsfwBtn=$('#pmtNsfwBtn');
+  if(nsfwBtn){
+    nsfwBtn.style.display=curPromptTab==='persona'?'none':'';
+    if(curPromptTab==='persona'){pmtNsfwState=0;nsfwBtn.classList.remove('only','hide');}
+  }
+  var list=prompts.filter(function(p){return p.type===curPromptTab});
+  // 게스트: 비공개 숨김
+  if(!isAdmin)list=list.filter(function(p){return p.priv!=='hidden'});
+  // NSFW filter
+  if(pmtNsfwState===1)list=list.filter(function(p){return p.nsfw});
+  else if(pmtNsfwState===2)list=list.filter(function(p){return !p.nsfw});
+  // Sort newest first
+  list.sort(function(a,b){return(b.ts||0)-(a.ts||0)});
+  var grid=$('#pmtGrid'),empty=$('#pmtEmpty');
+  if(!list.length){grid.innerHTML='';empty.style.display='';return;}
+  empty.style.display='none';
+  grid.innerHTML=list.map(function(p){
+    var isPw=p.priv==='pw'&&!isAdmin;
+    var isHidden=p.priv==='hidden';
+    var badge='';
+    if(p.nsfw)badge+='<div class="pmt-card-nsfw">NSFW</div>';
+    if(p.priv==='pw')badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>';
+    if(isHidden)badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="18"/></svg></div>';
+    return '<div class="pmt-card" onclick="openPmtModal('+p.id+')" oncontextmenu="copyPromptRC(event,'+p.id+')"'+(isPw?' style="filter:blur(2px) brightness(.8)"':'')+'>'
+      +(isPw?'':'<img src="'+p.img+'" loading="lazy">')
+      +(isPw?'<div style="position:absolute;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>':'')
+      +'<div class="pmt-card-dim"></div>'
+      +badge
+      +'<div class="pmt-card-body"><div class="pmt-card-title">'+esc(p.title)+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+/* Prompt Privacy */
+function togglePmtNsfwCheck(){
+  var isPersona=$('#pmtEdType').value==='persona';
+  var cb=$('#pmtEdNsfw');
+  cb.disabled=isPersona;
+  if(isPersona){cb.checked=false;}
+  cb.parentElement.style.opacity=isPersona?'0.4':'1';
+}
+function setPmtPriv(v){
+  $$('[data-ppriv]').forEach(function(el){el.classList.toggle('on',el.dataset.ppriv===v)});
+  var pwRow=$('#pmtPrivPwRow');
+  if(v==='pw'){pwRow.classList.add('on');}else{pwRow.classList.remove('on');}
+}
+
+/* Prompt Modal */
+function openPmtModal(id){
+  var p=prompts.find(function(x){return x.id===id});
+  if(!p)return;
+  pmtViewId=id;
+  $('#pmtModalTitle').textContent=p.title;
+  $('#pmtModalDate').textContent=fDT(p.ts);
+  $('#pmtModalAdmin').style.display=isAdmin?'flex':'none';
+  // 비밀번호 처리
+  var needPw=p.priv==='pw'&&!isAdmin;
+  if(needPw){
+    $('#pmtModalImg').src='';
+    $('#pmtModalImg').style.display='none';
+    $('#pmtPwArea').style.display='';
+    $('#pmtBodyArea').style.display='none';
+    $('#pmtPwErr').style.display='none';
+    $('#pmtPwIn').value='';
+  }else{
+    $('#pmtModalImg').src=p.img;
+    $('#pmtModalImg').style.display='';
+    $('#pmtPwArea').style.display='none';
+    $('#pmtBodyArea').style.display='';
+    $('#pmtModalBody').textContent=p.body;
+  }
+  $('#pmtModalDim').classList.add('on');
+  if(needPw)setTimeout(function(){$('#pmtPwIn').focus()},200);
+}
+function checkPmtPw(){
+  var p=prompts.find(function(x){return x.id===pmtViewId});
+  if(!p)return;
+  var val=$('#pmtPwIn').value;
+  if(val===p.privPw){
+    $('#pmtModalImg').src=p.img;
+    $('#pmtModalImg').style.display='';
+    $('#pmtPwArea').style.display='none';
+    $('#pmtBodyArea').style.display='';
+    $('#pmtModalBody').textContent=p.body;
+  }else{
+    $('#pmtPwErr').style.display='';
+    $('#pmtPwIn').value='';
+    $('#pmtPwIn').focus();
+  }
+}
+function closePmtModal(){
+  $('#pmtModalDim').classList.remove('on');
+  pmtViewId=null;
+}
+function _doCopyPrompt(text){
+  navigator.clipboard.writeText(text).then(function(){toast('프롬프트 복사됨!')}).catch(function(){
+    var t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('프롬프트 복사됨!');
+  });
+}
+function copyPromptText(){
+  var p=prompts.find(function(x){return x.id===pmtViewId});
+  if(!p)return;
+  _doCopyPrompt(p.body);
+}
+function copyPromptRC(e,id){
+  e.preventDefault();
+  var p=prompts.find(function(x){return x.id===id});
+  if(!p)return;
+  // 게스트 + 비밀번호 → 복사 차단
+  if(p.priv==='pw'&&!isAdmin){toast('비밀번호가 필요한 프롬프트예요');return;}
+  _doCopyPrompt(p.body);
+}
+
+/* Prompt Editor */
+function onPmtImg(e){
+  var f=e.target.files[0];if(!f)return;
+  toast('이미지 업로드 중...');
+  rdF(f,function(d){
+    pmtImgData=d;
+    $('#pmtImgPv').style.display='';
+    $('#pmtImgPvImg').src=d;
+    $('#pmtImgUpload').style.display='none';
+  },{maxW:800,quality:0.9,maxBytes:200000});
+}
+function initPmtEditor(){
+  if(pmtEditId){
+    var p=prompts.find(function(x){return x.id===pmtEditId});
+    if(p){
+      $('#pmtEdTitle').textContent='프롬프트 수정';
+      $('#pmtEdType').value=p.type;
+      $('#pmtEdName').value=p.title;
+      $('#pmtEdBody').value=p.body;
+      $('#pmtEdNsfw').checked=!!p.nsfw;
+      pmtImgData=p.img;
+      $('#pmtImgPv').style.display='';
+      $('#pmtImgPvImg').src=p.img;
+      $('#pmtImgUpload').style.display='none';
+      setPmtPriv(p.priv||'');
+      if(p.priv==='pw')$('#pmtEdPrivPw').value=p.privPw||'';
+      togglePmtNsfwCheck();
+      return;
+    }
+  }
+  // 새 작성
+  $('#pmtEdTitle').textContent='프롬프트 작성';
+  $('#pmtEdType').value=curPromptTab;
+  $('#pmtEdName').value='';
+  $('#pmtEdBody').value='';
+  $('#pmtEdNsfw').checked=false;
+  pmtImgData='';
+  $('#pmtImgPv').style.display='none';
+  $('#pmtImgUpload').style.display='';
+  document.getElementById('pmtImgIn').value='';
+  setPmtPriv('');
+  $('#pmtEdPrivPw').value='';
+  togglePmtNsfwCheck();
+}
+function savePrompt(){
+  var type=$('#pmtEdType').value;
+  var title=$('#pmtEdName').value.trim();
+  var body=$('#pmtEdBody').value.trim();
+  var nsfw=$('#pmtEdNsfw').checked;
+  var priv=document.querySelector('[data-ppriv].on');
+  priv=priv?priv.dataset.ppriv:'';
+  var privPw=priv==='pw'?$('#pmtEdPrivPw').value.trim():'';
+  if(!title){showAlert('⚠️','제목을 입력해주세요');return;}
+  if(!pmtImgData){showAlert('⚠️','이미지를 1장 이상 업로드해주세요');return;}
+  if(!body){showAlert('⚠️','프롬프트 내용을 입력해주세요');return;}
+  if(priv==='pw'&&!privPw){showAlert('⚠️','비밀번호를 입력해주세요');return;}
+  if(pmtEditId){
+    var p=prompts.find(function(x){return x.id===pmtEditId});
+    if(p){p.type=type;p.title=title;p.body=body;p.nsfw=nsfw;p.img=pmtImgData;p.priv=priv;p.privPw=privPw;}
+  }else{
+    prompts.push({id:Date.now(),type:type,title:title,body:body,nsfw:nsfw,img:pmtImgData,ts:Date.now(),priv:priv,privPw:privPw});
+  }
+  sv();pmtEditId=null;curPromptTab=type;go('prompt');toast('저장됨');
+}
+function editPromptFromModal(){
+  closePmtModal();
+  pmtEditId=pmtViewId;
+  go('pmt-editor');
+}
+function deletePromptFromModal(){
+  var id=pmtViewId;
+  showModal('⚠️','이 프롬프트를 삭제하시겠습니까?','삭제',function(){
+    prompts=prompts.filter(function(p){return p.id!==id});
+    sv();closePmtModal();rPromptGrid();toast('삭제됨');
+  },{danger:true});
+}
+
 function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
-  if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
+  if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));
+    localStorage.setItem('e_prompts',JSON.stringify(prompts));}
   applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
@@ -3187,7 +3661,7 @@ function startApp(){
     var fc=cats.find(function(x){return x.id===cid});
     if(fc){viewCatId=cid;go('catview');return;}
   }
-  var validPages=['home','series','pair'];
+  var validPages=['home','series','pair','prompt'];
   if(hash && validPages.indexOf(hash)!==-1){go(hash);}
   else{rHome();}
 }
