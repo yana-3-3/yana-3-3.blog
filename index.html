@@ -741,7 +741,14 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         if (data.cats) window._fbCats = data.cats;
         if (data.ps) window._fbPs = data.ps;
         if (data.pairs) window._fbPairs = data.pairs;
+        // 하위호환: 메인 문서에 prompts가 있으면 사용
         if (data.prompts) window._fbPrompts = data.prompts;
+      }
+      // 프롬프트 별도 문서에서 로드 (있으면 메인 문서 것을 덮어씀)
+      const pSnap = await getDoc(doc(db, 'blog', 'prompts'));
+      if (pSnap.exists()) {
+        const pData = pSnap.data();
+        if (pData.prompts) window._fbPrompts = pData.prompts;
       }
     } catch(e) {
       console.warn('Firebase 로드 실패, 로컬 데이터 사용:', e);
@@ -1465,9 +1472,14 @@ function sv(){
   }
   if(window._db && window._firestoreFns){
     var db=window._db, docFn=window._firestoreFns.doc, setDocFn=window._firestoreFns.setDoc;
+    // 메인 데이터
     setDocFn(docFn(db,'blog','data'),{
-      cfg:cfg,cats:cats,ps:ps,pairs:pairs,prompts:prompts,updatedAt:Date.now()
-    }).then(function(){console.log('Firebase 저장 완료')}).catch(function(e){console.warn('Firebase 저장 실패:',e);showAlert('⚠️','저장에 실패했어요.<br><span style="font-size:.78rem;color:var(--text-sub)">데이터가 너무 커요. 이미지 수를 줄여보세요.</span>');});
+      cfg:cfg,cats:cats,ps:ps,pairs:pairs,updatedAt:Date.now()
+    }).then(function(){console.log('Firebase 메인 저장 완료')}).catch(function(e){console.warn('Firebase 메인 저장 실패:',e);showAlert('⚠️','저장에 실패했어요.<br><span style="font-size:.78rem;color:var(--text-sub)">데이터가 너무 커요. 이미지 수를 줄여보세요.</span>');});
+    // 프롬프트 별도 저장
+    setDocFn(docFn(db,'blog','prompts'),{
+      prompts:prompts,updatedAt:Date.now()
+    }).then(function(){console.log('Firebase 프롬프트 저장 완료')}).catch(function(e){console.warn('Firebase 프롬프트 저장 실패:',e);showAlert('⚠️','프롬프트 저장에 실패했어요.<br><span style="font-size:.78rem;color:var(--text-sub)">이미지를 ImgBB로 업로드하면 용량이 줄어요.</span>');});
   }
 }
 
