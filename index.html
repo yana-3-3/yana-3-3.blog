@@ -3740,8 +3740,8 @@ function startApp(){
   if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
-  if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));
-    localStorage.setItem('e_prompts',JSON.stringify(prompts));}
+  if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
+  if(window._fbPrompts){prompts=window._fbPrompts;localStorage.setItem('e_prompts',JSON.stringify(prompts));}
   applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
