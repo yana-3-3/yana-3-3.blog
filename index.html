@@ -1027,9 +1027,13 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
           <button class="prompt-tab" data-pt="pose" onclick="switchPromptTab('pose')">구도</button>
         </div>
       </div>
-      <button class="prompt-nsfw" id="pmtNsfwBtn" onclick="cycleNsfw()">NSFW</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="prompt-nsfw" id="pmtNsfwBtn" onclick="cycleNsfw()">NSFW</button>
+        <button class="prompt-nsfw" id="pmt19Btn" onclick="toggle19()" style="display:none" title="NSFW 블러 해제">19</button>
+      </div>
     </div>
     <div id="pmtGrid" class="prompt-grid"></div>
+    <div style="display:flex;justify-content:center;margin-top:20px" id="pmtPagi" class="pagi"></div>
     <div class="prompt-empty" id="pmtEmpty" style="display:none">
       <div class="prompt-empty-icon">✦</div>
       <div style="font-size:.85rem">아직 프롬프트가 없어요</div>
@@ -3422,6 +3426,7 @@ function closeLightbox(){
 /* ── Prompt System ── */
 var curPromptTab='persona',pmtNsfwState=0,pmtEditId=null,pmtViewId=null;
 var pmtImgData='';
+var pmtPage=0,pmt19Unlocked=false;
 
 function goPromptTab(tab){
   curPromptTab=tab;
@@ -3429,11 +3434,13 @@ function goPromptTab(tab){
 }
 function switchPromptTab(tab){
   curPromptTab=tab;
+  pmtPage=0;
   $$('.prompt-tab').forEach(function(t){t.classList.toggle('on',t.dataset.pt===tab)});
   rPromptGrid();
 }
 function cycleNsfw(){
   pmtNsfwState=(pmtNsfwState+1)%3;
+  pmtPage=0;
   var btn=$('#pmtNsfwBtn');
   btn.classList.remove('only','hide');
   if(pmtNsfwState===1)btn.classList.add('only');
@@ -3442,11 +3449,16 @@ function cycleNsfw(){
 }
 function rPromptGrid(){
   $$('.prompt-tab').forEach(function(t){t.classList.toggle('on',t.dataset.pt===curPromptTab)});
-  // 페르소나 탭에서는 NSFW 버튼 숨김
-  var nsfwBtn=$('#pmtNsfwBtn');
+  // 페르소나 탭에서는 NSFW/19 버튼 숨김
+  var nsfwBtn=$('#pmtNsfwBtn'),btn19=$('#pmt19Btn');
+  var isPersona=curPromptTab==='persona';
   if(nsfwBtn){
-    nsfwBtn.style.display=curPromptTab==='persona'?'none':'';
-    if(curPromptTab==='persona'){pmtNsfwState=0;nsfwBtn.classList.remove('only','hide');}
+    nsfwBtn.style.display=isPersona?'none':'';
+    if(isPersona){pmtNsfwState=0;nsfwBtn.classList.remove('only','hide');}
+  }
+  if(btn19){
+    btn19.style.display=isPersona?'none':'';
+    btn19.classList.toggle('only',pmt19Unlocked);
   }
   var list=prompts.filter(function(p){return p.type===curPromptTab});
   // 게스트: 비공개 숨김
@@ -3456,24 +3468,51 @@ function rPromptGrid(){
   else if(pmtNsfwState===2)list=list.filter(function(p){return !p.nsfw});
   // Sort newest first
   list.sort(function(a,b){return(b.ts||0)-(a.ts||0)});
-  var grid=$('#pmtGrid'),empty=$('#pmtEmpty');
-  if(!list.length){grid.innerHTML='';empty.style.display='';return;}
+  var grid=$('#pmtGrid'),empty=$('#pmtEmpty'),pagi=$('#pmtPagi');
+  if(!list.length){grid.innerHTML='';empty.style.display='';if(pagi)pagi.innerHTML='';return;}
   empty.style.display='none';
-  grid.innerHTML=list.map(function(p){
+  // Pagination (12 per page)
+  var perPage=12;
+  var totalPages=Math.ceil(list.length/perPage);
+  if(pmtPage>=totalPages)pmtPage=totalPages-1;
+  if(pmtPage<0)pmtPage=0;
+  var start=pmtPage*perPage;
+  var pageList=list.slice(start,start+perPage);
+  grid.innerHTML=pageList.map(function(p){
     var isPw=p.priv==='pw'&&!isAdmin;
     var isHidden=p.priv==='hidden';
+    var isNsfwBlur=p.nsfw&&!isAdmin&&!pmt19Unlocked;
     var badge='';
     if(p.nsfw)badge+='<div class="pmt-card-nsfw">NSFW</div>';
     if(p.priv==='pw')badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>';
     if(isHidden)badge+='<div style="position:absolute;top:8px;left:8px;z-index:2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="18"/></svg></div>';
-    return '<div class="pmt-card" onclick="openPmtModal('+p.id+')" oncontextmenu="copyPromptRC(event,'+p.id+')"'+(isPw?' style="filter:blur(2px) brightness(.8)"':'')+'>'
-      +(isPw?'':'<img src="'+p.img+'" loading="lazy">')
-      +(isPw?'<div style="position:absolute;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>':'')
+    var imgStyle=isNsfwBlur?' style="filter:blur(8px);transform:scale(1.1)"':'';
+    return '<div class="pmt-card" onclick="openPmtModal('+p.id+')" oncontextmenu="copyPromptRC(event,'+p.id+')">'
+      +(isPw?'<div style="position:absolute;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>':'<img src="'+p.img+'" loading="lazy"'+imgStyle+'>')
       +'<div class="pmt-card-dim"></div>'
       +badge
       +'<div class="pmt-card-body"><div class="pmt-card-title">'+esc(p.title)+'</div></div>'
       +'</div>';
   }).join('');
+  // Pagination
+  if(pagi)pagi.innerHTML=totalPages>1?buildPmtPagi(pmtPage,totalPages):'';
+}
+function buildPmtPagi(cur,total){
+  var arL='<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  var arR='<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
+  var h='<button '+(cur>0?'onclick="pmtPage='+(cur-1)+';rPromptGrid()"':'disabled')+'>'+arL+'</button>';
+  var start=Math.max(0,Math.min(cur-2,total-5));
+  var end=Math.min(start+5,total);
+  for(var i=start;i<end;i++){
+    h+='<button class="'+(i===cur?'on':'')+'" onclick="pmtPage='+i+';rPromptGrid()">'+(i+1)+'</button>';
+  }
+  h+='<button '+(cur<total-1?'onclick="pmtPage='+(cur+1)+';rPromptGrid()"':'disabled')+'>'+arR+'</button>';
+  return h;
+}
+function toggle19(){
+  pmt19Unlocked=!pmt19Unlocked;
+  $('#pmt19Btn').classList.toggle('only',pmt19Unlocked);
+  rPromptGrid();
 }
 
 /* Prompt Privacy */
@@ -3621,8 +3660,8 @@ function savePrompt(){
   sv();pmtEditId=null;curPromptTab=type;go('prompt');toast('저장됨');
 }
 function editPromptFromModal(){
-  closePmtModal();
   pmtEditId=pmtViewId;
+  closePmtModal();
   go('pmt-editor');
 }
 function deletePromptFromModal(){
