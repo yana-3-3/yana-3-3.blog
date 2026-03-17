@@ -2389,7 +2389,7 @@ function impD(e){
   };
   r.readAsText(f);e.target.value='';
 }
-function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps','e_prompts','e_pmt_migrated_set'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
+function rstAll(){showModal('⚠️','모든 데이터를 초기화하시겠습니까?<div class="modal-sub">글, 시리즈, 설정이 모두 삭제됩니다</div>','초기화',function(){['e_cfg','e_cats','e_ps','e_prompts'].forEach(function(k){localStorage.removeItem(k)});location.reload()},{danger:true})}
 
 function lightenColor(hex,amt){
   var h=hex.replace('#','');
@@ -3824,13 +3824,6 @@ function startApp(){
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
   if(window._fbPrompts){prompts=window._fbPrompts;localStorage.setItem('e_prompts',JSON.stringify(prompts));}
-  // 기존 '구도(pose)' → '세트(set)' 일회성 마이그레이션
-  if(!localStorage.getItem('e_pmt_migrated_set')){
-    var migrated=false;
-    prompts.forEach(function(p){if(p.type==='pose'){p.type='set';migrated=true;}});
-    if(migrated){localStorage.setItem('e_prompts',JSON.stringify(prompts));sv();}
-    localStorage.setItem('e_pmt_migrated_set','1');
-  }
   applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
