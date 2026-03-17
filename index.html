@@ -658,9 +658,9 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .prompt-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
 
 /* ── Prompt Detail Modal ── */
-.pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;justify-content:center;align-items:center;padding:20px}
+.pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
 .pmt-modal-dim.on{display:flex}
-.pmt-modal{background:var(--card);border-radius:14px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fin .2s ease}
+.pmt-modal{background:var(--card);border-radius:14px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fin .2s ease;margin:auto}
 .pmt-modal::-webkit-scrollbar{width:4px}.pmt-modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .pmt-modal-img-wrap{position:relative;width:100%;aspect-ratio:2/3;border-radius:14px 14px 0 0;overflow:hidden}
 .pmt-modal-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
@@ -800,7 +800,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <button class="n-wr fab-main" onclick="toggleFab()" id="fabBtn">+</button>
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
-        <button onclick="closeFab();go('pmt-editor')">✎ 프롬프트</button>
+        <button onclick="closeFab();pmtEditId=null;go('pmt-editor')">✎ 프롬프트</button>
       </div>
     </div>
 
@@ -1070,7 +1070,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 <div class="page" id="pg-pmt-editor">
   <div class="pw">
     <div class="pmt-editor">
-      <button class="dt-back" onclick="go('prompt')" style="margin-bottom:20px">← 프롬프트 목록</button>
+      <button class="dt-back" onclick="pmtEditId=null;go('prompt')" style="margin-bottom:20px">← 프롬프트 목록</button>
       <h3 style="font-size:.95rem;font-weight:600;margin-bottom:20px" id="pmtEdTitle">프롬프트 작성</h3>
       <div class="ef">
         <label>분류</label>
@@ -1122,7 +1122,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         <div class="priv-pw-row" id="pmtPrivPwRow">
           <input id="pmtEdPrivPw" placeholder="비밀번호" autocomplete="off" style="width:120px">
         </div>
-        <button class="btn-g" onclick="go('prompt')">취소</button>
+        <button class="btn-g" onclick="pmtEditId=null;go('prompt')">취소</button>
         <button class="btn-p" onclick="savePrompt()">저장</button>
       </div>
     </div>
@@ -3510,10 +3510,10 @@ function rPromptGrid(){
   // Sort newest first
   list.sort(function(a,b){return(b.ts||0)-(a.ts||0)});
   var grid=$('#pmtGrid'),empty=$('#pmtEmpty'),pagi=$('#pmtPagi');
-  if(!list.length){grid.innerHTML='';empty.style.display='';if(pagi)pagi.innerHTML='';return;}
+  if(!list.length){grid.innerHTML='';grid.style.minHeight='';empty.style.display='';if(pagi)pagi.innerHTML='';return;}
   empty.style.display='none';
-  // Pagination (12 per page)
-  var perPage=12;
+  // Pagination (8 per page)
+  var perPage=8;
   var totalPages=Math.ceil(list.length/perPage);
   if(pmtPage>=totalPages)pmtPage=totalPages-1;
   if(pmtPage<0)pmtPage=0;
@@ -3538,6 +3538,16 @@ function rPromptGrid(){
   }).join('');
   // Pagination
   if(pagi)pagi.innerHTML=totalPages>1?buildPmtPagi(pmtPage,totalPages):'';
+  // 그리드 높이 고정 (8개 기준, 페이지네이션 위치 고정)
+  setTimeout(function(){
+    var cards=grid.querySelectorAll('.pmt-card');
+    if(cards.length){
+      var cardH=cards[0].offsetHeight;
+      var cols=Math.max(1,Math.round(grid.offsetWidth/(cards[0].offsetWidth+12)));
+      var rows=Math.ceil(perPage/cols);
+      grid.style.minHeight=(cardH*rows+12*(rows-1))+'px';
+    }
+  },30);
 }
 function buildPmtPagi(cur,total){
   var arL='<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
@@ -3615,7 +3625,10 @@ function openPmtModal(id){
     $('#pmtBodyArea').style.display='';
     $('#pmtModalBody').textContent=p.body;
   }
-  $('#pmtModalDim').classList.add('on');
+  var dim=$('#pmtModalDim');
+  dim.classList.add('on');
+  dim.scrollTop=0;
+  document.body.style.overflow='hidden';
   if(needPw)setTimeout(function(){$('#pmtPwIn').focus()},200);
 }
 function checkPmtPw(){
@@ -3636,7 +3649,10 @@ function checkPmtPw(){
   }
 }
 function closePmtModal(){
-  $('#pmtModalDim').classList.remove('on');
+  var dim=$('#pmtModalDim');
+  dim.classList.remove('on');
+  dim.scrollTop=0;
+  document.body.style.overflow='';
   pmtViewId=null;
 }
 function _doCopyPrompt(text){
