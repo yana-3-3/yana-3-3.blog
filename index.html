@@ -3812,10 +3812,20 @@ function editPromptFromModal(){
 }
 function deletePromptFromModal(){
   var id=pmtViewId;
+  var delP=prompts.find(function(x){return x.id===id});
   showModal('⚠️','이 프롬프트를 삭제하시겠습니까?','삭제',function(){
     prompts=prompts.filter(function(p){return p.id!==id});
+    if(delP&&delP.type!=='persona')renumberPrompts(delP.type);
     sv();closePmtModal();rPromptGrid();toast('삭제됨');
   },{danger:true});
+}
+function renumberPrompts(type){
+  // 해당 분류의 프롬프트를 시간순 정렬 후 01부터 재넘버링
+  var list=prompts.filter(function(p){return p.type===type});
+  list.sort(function(a,b){return(a.ts||0)-(b.ts||0)});
+  list.forEach(function(p,i){
+    p.title=String(i+1).padStart(2,'0');
+  });
 }
 
 function startApp(){
