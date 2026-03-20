@@ -689,7 +689,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .pmt-editor .ef label{font-size:.75rem;color:var(--text-sub);font-weight:500;display:block;margin-bottom:5px}
 .pmt-editor input,.pmt-editor textarea,.pmt-editor select{width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit}
 .pmt-editor textarea{resize:vertical;min-height:120px;line-height:1.7}
-.pmt-img-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pmt-img-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;min-height:108px;align-content:flex-start}
 .pmt-img-thumb{width:72px;height:108px;border-radius:6px;overflow:hidden;border:1px solid var(--border);position:relative;flex-shrink:0}
 .pmt-img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .pmt-img-thumb .xb{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:.55rem;display:flex;align-items:center;justify-content:center}
@@ -1091,9 +1091,9 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       </div>
       <div class="ef">
         <label>이미지 <span style="color:#E16B5A">*</span> <span style="font-weight:300;color:var(--text-light);font-size:.68rem">(여러 장 가능)</span></label>
-        <div class="pmt-img-list" id="pmtImgList"></div>
         <div class="pmt-img-upload" onclick="document.getElementById('pmtImgIn').click()">클릭하여 이미지 업로드</div>
         <input type="file" id="pmtImgIn" accept="image/*" multiple onchange="onPmtImgs(event)" style="display:none">
+        <div class="pmt-img-list" id="pmtImgList"></div>
       </div>
       <div class="ef">
         <label>프롬프트 내용</label>
