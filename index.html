@@ -882,7 +882,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       if (saved.messagingSenderId) document.getElementById('fbSenderId').value = saved.messagingSenderId;
       if (saved.appId) document.getElementById('fbAppId').value = saved.appId;
     } else {
-      if (closeBtn) closeBtn.style.display = 'none';
+      if (closeBtn) closeBtn.style.display = 'flex';
       if (statusBar) statusBar.style.display = 'none';
     }
   };
@@ -891,6 +891,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   window._resetFirebaseConfig = function() {
     if (confirm('Firebase 설정을 초기화할까요? 페이지가 새로고침됩니다.')) {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('_fb_setup_skipped');
       location.reload();
     }
   };
@@ -967,12 +968,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     // 저장된 설정으로 바로 초기화
     initFirebase(saved);
   } else {
-    // 설정 화면 표시
-    document.addEventListener('DOMContentLoaded', function() {
-      const dim = document.getElementById('fbSetupDim');
-      if (dim) dim.classList.add('open');
-    });
-    // Firebase 없이도 앱은 로컬 모드로 동작 가능하게
+    // Firebase 설정 없음 → 로컬 모드로 조용히 시작 (방문자에게 설정 화면 안 보여줌)
     setTimeout(function() {
       if (!window._fbReady) {
         window._fbReady = true;
@@ -987,7 +983,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 <!-- Firebase 설정 화면 -->
 <div class="fb-setup-dim" id="fbSetupDim">
   <div class="fb-setup">
-    <button class="fb-close" id="fbCloseBtn" onclick="document.getElementById('fbSetupDim').classList.remove('open')">×</button>
+    <button class="fb-close" id="fbCloseBtn" onclick="document.getElementById('fbSetupDim').classList.remove('open');localStorage.setItem('_fb_setup_skipped','1')">×</button>
 
     <div class="fb-header">
       <div class="fb-icon">
@@ -1198,6 +1194,7 @@ function showFbErr(msg) {
 
 function startLocalMode() {
   document.getElementById('fbSetupDim').classList.remove('open');
+  localStorage.setItem('_fb_setup_skipped','1');
   if (!window._fbReady) {
     window._fbReady = true;
     if (window._fbReadyCb) window._fbReadyCb();
@@ -3003,19 +3000,35 @@ async function tryLogin(){
       if(snap.exists())ADMIN_PW_HASH=snap.data().pwHash;
     }catch(e){}
   }
+  // localStorage 폴백 (Firebase 없을 때)
+  if(!ADMIN_PW_HASH){
+    var localHash=localStorage.getItem('e_adminPwHash');
+    if(localHash)ADMIN_PW_HASH=localHash;
+  }
   // 아직 비밀번호가 설정 안 된 경우 → 첫 로그인으로 설정
   if(!ADMIN_PW_HASH){
     var hash=hashPw(pw);
-    try{
-      await window._firestoreFns.setDoc(window._firestoreFns.doc(window._db,'blog','admin'),{pwHash:hash});
-      ADMIN_PW_HASH=hash;
-    }catch(e){toast('저장 실패');return;}
+    // Firebase 있으면 Firestore에 저장
+    if(window._db && window._firestoreFns){
+      try{
+        await window._firestoreFns.setDoc(window._firestoreFns.doc(window._db,'blog','admin'),{pwHash:hash});
+      }catch(e){}
+    }
+    // 항상 localStorage에도 저장 (폴백)
+    localStorage.setItem('e_adminPwHash',hash);
+    ADMIN_PW_HASH=hash;
   }
   if(hashPw(pw)===ADMIN_PW_HASH){
     setAdmin(true);
     localStorage.setItem('e_admin','1');
     closeLoginModal();
     toast('관리자 모드');
+    // Firebase 설정이 없으면 첫 관리자 로그인 시 설정 안내
+    if(!localStorage.getItem('_fb_config') && !localStorage.getItem('_fb_setup_skipped')){
+      setTimeout(function(){
+        if(window._openFirebaseSetup)window._openFirebaseSetup();
+      },400);
+    }
   }else{
     $('#pwErr').style.display='block';
     $('#pwInput').value='';
