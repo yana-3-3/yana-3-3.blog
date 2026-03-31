@@ -135,8 +135,8 @@ nav{height:var(--nav-h);position:sticky;top:0;z-index:100;background:var(--bg);t
 .pc .priv-badge.hidden,.pc .priv-badge.locked{background:rgba(255,255,255,.18);color:rgba(255,255,255,.85)}
 .priv-badge svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .priv-sel{display:flex;gap:6px}
-.priv-opt{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;background:var(--card);font-size:.78rem;font-weight:500;color:var(--text-sub);white-space:nowrap}
-.priv-opt:hover{border-color:var(--text-light)}
+.priv-opt{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);background:var(--card);font-size:.78rem;font-weight:500;color:var(--text-sub);white-space:nowrap}
+.priv-opt:hover{border-color:var(--text-light);background:var(--accent-soft)}
 .priv-opt.on{border-color:var(--text);color:var(--text);background:var(--accent-soft)}
 .priv-opt svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .priv-pw-row{display:none}
@@ -297,16 +297,17 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;justify-content:center;align-items:center;cursor:default}
 .img-lightbox.on{display:flex}
 .img-lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;justify-content:center;align-items:center}
+.pair-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;justify-content:center;align-items:center;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 .pair-modal-dim.on{display:flex}
-.pair-modal{background:var(--card);border-radius:14px;padding:28px 26px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.pair-modal h3{font-size:1rem;font-weight:600;margin-bottom:20px}
+.pair-modal{background:var(--card);border-radius:16px;padding:30px 28px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fin .2s ease}
+.pair-modal h3{font-size:1rem;font-weight:600;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .pair-modal .ef{margin-bottom:14px}
-.pair-modal label{font-size:.75rem;color:var(--text-sub);font-weight:500;display:block;margin-bottom:5px}
-.pair-modal input[type=text],.pair-modal input[type=date],.pair-modal textarea{width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border-h);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit}
+.pair-modal label{font-size:.72rem;color:var(--text-sub);font-weight:600;display:block;margin-bottom:6px;letter-spacing:.03em;text-transform:uppercase}
+.pair-modal input[type=text],.pair-modal input[type=date],.pair-modal textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;font-family:inherit;transition:border .2s,box-shadow .2s}
+.pair-modal input[type=text]:focus,.pair-modal input[type=date]:focus,.pair-modal textarea:focus{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
 .pair-modal textarea{resize:vertical;min-height:80px}
-.pair-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
-.pair-modal-btns button{padding:9px 22px;border-radius:7px;font-size:.82rem;cursor:pointer;border:none;transition:all var(--tr);font-weight:500}
+.pair-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.pair-modal-btns button{padding:10px 24px;border-radius:9px;font-size:.82rem;cursor:pointer;border:none;transition:all .2s cubic-bezier(.4,0,.2,1);font-weight:500}
 .dt-body blockquote{border-left:2px solid var(--text-light);padding:10px 18px;margin:16px 0;color:var(--text-sub);background:var(--bg2);border-radius:0 var(--radius) var(--radius) 0;font-style:italic;font-weight:400}
 .dt-body ul,.dt-body ol{padding-left:22px;margin:12px 0}.dt-body li{margin-bottom:4px}
 .dt-body h1,.dt-body h2,.dt-body h3{margin:20px 0 8px;font-weight:600;line-height:1.4}
@@ -341,28 +342,32 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 
 
 /* ── EDITOR ── */
-.ed-c{background:var(--card);box-shadow:var(--shadow);border-radius:var(--radius);padding:32px;overflow:visible}
-.ed-c h2{font-family:var(--font-d);font-size:1.2rem;font-weight:400;margin-bottom:28px}
-.ef{margin-bottom:16px}
-.ef label{display:block;font-size:.7rem;font-weight:500;color:var(--text-light);margin-bottom:5px;letter-spacing:.05em;text-transform:uppercase}
-.ef input,.ef select,.ef textarea{width:100%;padding:10px 14px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;transition:all var(--tr);font-weight:300}
+.ed-c{background:var(--card);box-shadow:var(--shadow);border-radius:14px;padding:36px 32px;overflow:visible;position:relative}
+.ed-c::before{content:'';position:absolute;top:0;left:32px;right:32px;height:1px;background:linear-gradient(90deg,transparent,var(--border-h),transparent)}
+.ed-c h2{font-family:var(--font-d);font-size:1.25rem;font-weight:400;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.ed-c h2::before{content:'';display:inline-block;width:4px;height:18px;border-radius:2px;background:var(--accent);flex-shrink:0}
+.ef{margin-bottom:18px}
+.ef label{display:block;font-size:.68rem;font-weight:600;color:var(--text-light);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.ef:focus-within label{color:var(--text-sub)}
+.ef input,.ef select,.ef textarea{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.86rem;outline:none;transition:all .2s cubic-bezier(.4,0,.2,1);font-weight:300}
 .ef input:focus,.ef select:focus,.ef textarea:focus{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
+.ef input:hover,.ef select:hover,.ef textarea:hover{border-color:var(--border-h)}
 .ef .toolbar select{width:auto;padding:4px 8px;font-size:.74rem;height:30px;box-shadow:none}
-.ef .hint{font-size:.66rem;color:var(--text-light);margin-top:3px;font-weight:300}
-.ef-r{display:flex;gap:12px}.ef-r .ef{flex:1}
+.ef .hint{font-size:.66rem;color:var(--text-light);margin-top:4px;font-weight:300}
+.ef-r{display:flex;gap:14px}.ef-r .ef{flex:1}
 @media(max-width:540px){.ef-r{flex-direction:column;gap:0}}
 
 /* Rich Text Toolbar */
-.rte-wrap{border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--tr)}
+.rte-wrap{border:1px solid var(--border);border-radius:12px;transition:border-color .2s,box-shadow .2s;overflow:hidden}
 .rte-wrap:focus-within{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
-.toolbar{display:flex;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;position:relative;z-index:10;overflow:visible}
-.tb-row{display:flex;align-items:center;gap:2px;padding:7px 10px;flex-wrap:nowrap}
+.toolbar{display:flex;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;z-index:10;overflow:visible}
+.tb-row{display:flex;align-items:center;gap:3px;padding:8px 12px;flex-wrap:nowrap}
 .tb-row+.tb-row{border-top:1px solid var(--border)}
-.tb-sep{width:1px;height:18px;background:var(--border-h);margin:0 4px;flex-shrink:0}
-.tb-btn{width:28px;height:28px;border-radius:5px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--text-sub);transition:all var(--tr);flex-shrink:0}
+.tb-sep{width:1px;height:16px;background:var(--border);margin:0 5px;flex-shrink:0}
+.tb-btn{width:30px;height:30px;border-radius:6px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--text-sub);transition:all .15s;flex-shrink:0}
 .tb-btn:hover{background:var(--card);color:var(--text)}
 .tb-btn.active{background:var(--accent-soft);color:var(--text);font-weight:700}
-.tb-select{padding:3px 6px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.74rem;outline:none;cursor:pointer;height:28px;transition:border var(--tr);font-family:inherit;flex-shrink:0}
+.tb-select{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.74rem;outline:none;cursor:pointer;height:30px;transition:border .15s;font-family:inherit;flex-shrink:0}
 .tb-select:focus{border-color:var(--text)}
 
 /* ── Color Picker Button (toolbar) ── */
@@ -415,7 +420,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 
 
 /* Editor content area */
-.rte-content{min-height:300px;max-height:500px;overflow-y:auto;padding:18px 20px;font-size:.9rem;line-height:1.9;outline:none;color:var(--text);background:var(--bg);border-radius:0 0 var(--radius) var(--radius)}
+.rte-content{min-height:320px;max-height:500px;overflow-y:auto;padding:20px 22px;font-size:.9rem;line-height:1.9;outline:none;color:var(--text);background:var(--bg)}
 .rte-content:empty::before{content:attr(data-placeholder);color:var(--text-light);pointer-events:none;font-weight:300}
 .rte-content p{margin-bottom:.6rem}
 .rte-content blockquote{border-left:2px solid var(--text-light);padding:6px 14px;margin:8px 0;color:var(--text-sub);background:var(--bg2);border-radius:0 6px 6px 0}
@@ -425,62 +430,69 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .rte-content ul,.rte-content ol{padding-left:20px;margin:8px 0}
 
 /* Cover & uploads (same as v5) */
-.cov-a{border:1.5px dashed var(--border-h);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:all var(--tr);min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.cov-a:hover{border-color:var(--text-light)}
+.cov-a{border:1.5px dashed var(--border-h);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;gap:6px}
+.cov-a:hover{border-color:var(--text-light);background:var(--accent-soft)}
 .cov-a input{display:none}
-.cov-a.has img{width:100%;height:200px;object-fit:cover;border-radius:8px}
-.cov-a .xb{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center}
-.uz{border:1.5px dashed var(--border-h);border-radius:7px;padding:14px;text-align:center;cursor:pointer;font-size:.8rem;color:var(--text-light);transition:all var(--tr);font-weight:300}
-.uz:hover{border-color:var(--text-light);color:var(--text-sub)}
+.cov-a.has img{width:100%;height:200px;object-fit:cover;border-radius:10px}
+.cov-a .xb{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.cov-a .xb:hover{background:rgba(0,0,0,.7)}
+.uz{border:1.5px dashed var(--border-h);border-radius:10px;padding:16px;text-align:center;cursor:pointer;font-size:.8rem;color:var(--text-light);transition:all .2s cubic-bezier(.4,0,.2,1);font-weight:300}
+.uz:hover{border-color:var(--text-light);color:var(--text-sub);background:var(--accent-soft)}
 .uz input{display:none}
-.ths{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.ths img{width:52px;height:52px;object-fit:cover;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;transition:all var(--tr)}
-.ths img:hover{border-color:var(--text)}
-.atr{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border-radius:5px;font-size:.78rem;margin-top:5px;font-weight:300}
+.ths{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ths img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.ths img:hover{border-color:var(--text);transform:scale(1.05)}
+.atr{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border-radius:8px;font-size:.78rem;margin-top:5px;font-weight:300;border:1px solid var(--border)}
 .atr span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.atr button{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.72rem;transition:color var(--tr)}
-.atr button:hover{color:var(--text)}
-.ed-b{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:24px}
-.ed-b button{padding:9px 22px;border-radius:7px;font-size:.82rem;cursor:pointer;border:none;transition:all var(--tr);font-weight:500}
+.atr button{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.72rem;transition:color .15s;padding:2px 4px;border-radius:4px}
+.atr button:hover{color:#D4564A}
+.ed-b{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.ed-b button{padding:10px 24px;border-radius:9px;font-size:.82rem;cursor:pointer;border:none;transition:all .2s cubic-bezier(.4,0,.2,1);font-weight:500}
 .btn-g{background:var(--bg2);color:var(--text-sub)}.btn-g:hover{background:var(--border-h);color:var(--text)}
-.btn-p{background:var(--text);color:var(--bg)}.btn-p:hover{opacity:.8}
+.btn-p{background:var(--text);color:var(--bg);position:relative;overflow:hidden}.btn-p:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08)}.btn-p:active{transform:translateY(0)}
 
-/* Admin (same as v5) */
-.ab{background:var(--card);box-shadow:var(--shadow);border-radius:var(--radius);padding:28px;margin-bottom:16px}
-.ab h3{font-size:.82rem;font-weight:600;margin-bottom:16px;letter-spacing:.03em;text-transform:uppercase;color:var(--text-sub)}
-.cr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:7px;margin-bottom:4px;transition:background var(--tr)}
+/* Admin blocks */
+.ab{background:var(--card);box-shadow:var(--shadow);border-radius:14px;padding:28px 28px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+.ab::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px;opacity:.4}
+.ab h3{font-size:.78rem;font-weight:600;margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-sub);display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.ab h3::after{content:'';flex:1}
+.cr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;margin-bottom:4px;transition:all .2s cubic-bezier(.4,0,.2,1)}
 .cr:hover{background:var(--accent-soft)}
-.cr-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cr-d{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--border)}
 .cr-n{flex:1;font-size:.86rem;font-weight:500}.cr-c{font-size:.68rem;color:var(--text-light)}
-.cr button{background:none;border:none;cursor:pointer;font-size:.72rem;color:var(--text-light);padding:3px 5px;border-radius:4px;transition:all var(--tr)}
+.cr button{background:none;border:none;cursor:pointer;font-size:.72rem;color:var(--text-light);padding:4px 8px;border-radius:5px;transition:all .15s}
 .cr button:hover{background:var(--bg2);color:var(--text)}
 .ad-add{display:flex;gap:6px;margin-top:12px}
-.ad-add input{flex:1;padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.82rem;outline:none;font-weight:300}
+.ad-add input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.82rem;outline:none;font-weight:300;transition:border .2s}
 .ad-add input:focus{border-color:var(--text)}
-.ad-add button{padding:8px 16px;border-radius:7px;border:none;background:var(--text);color:var(--bg);font-size:.78rem;cursor:pointer;font-weight:500}
+.ad-add button{padding:8px 16px;border-radius:8px;border:none;background:var(--text);color:var(--bg);font-size:.78rem;cursor:pointer;font-weight:500;transition:opacity .15s}
+.ad-add button:hover{opacity:.85}
 .cbar{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;align-items:center}
-.cb{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s}
-.cb-add{width:20px;height:20px;border-radius:50%;border:1.5px dashed var(--border-h);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);transition:all .15s;position:relative}
+.cb{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.cb-add{width:22px;height:22px;border-radius:50%;border:1.5px dashed var(--border-h);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);transition:all .15s;position:relative}
 .cb-add:hover{border-color:var(--text-light);color:var(--text)}
-.cb-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border-h);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.12);padding:12px;z-index:50;width:180px}
+.cb-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border-h);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);padding:14px;z-index:50;width:180px}
 .cb-pop.on{display:block;animation:fin .15s ease}
-.cb-pop-preview{width:100%;height:28px;border-radius:6px;border:1px solid var(--border);margin-bottom:8px}
-.cb-pop input[type=color]{width:100%;height:32px;border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;background:var(--bg)}
+.cb-pop-preview{width:100%;height:28px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px}
+.cb-pop input[type=color]{width:100%;height:32px;border:1px solid var(--border);border-radius:8px;padding:2px;cursor:pointer;background:var(--bg)}
 .cb-pop-hex{display:flex;gap:6px;margin-top:8px;align-items:center}
 .cb-pop-hex input[type=text]{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:.75rem;font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);outline:none}
 .cb-pop-hex button{padding:5px 10px;border-radius:6px;border:none;background:var(--text);color:var(--bg);font-size:.72rem;cursor:pointer;font-weight:500;white-space:nowrap}
-.cb:hover{transform:scale(1.2)}.cb.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg)}
+.cb:hover{transform:scale(1.15)}.cb.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg)}
 .lo{display:flex;gap:8px}
 .lo-o{flex:1;padding:14px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;font-size:.76rem;color:var(--text-sub);transition:all var(--tr)}
 .lo-o:hover{border-color:var(--text-light)}
 .lo-o.on{border-color:var(--text);color:var(--text);font-weight:500}
 .lo-o div{font-size:1.1rem;margin-bottom:4px;opacity:.5}
-.bp{width:100%;height:100px;border-radius:7px;overflow:hidden;margin-top:6px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:.76rem;color:var(--text-light);position:relative}
+.bp{width:100%;height:100px;border-radius:10px;overflow:hidden;margin-top:6px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:.76rem;color:var(--text-light);position:relative}
 .bp img{width:100%;height:100%;object-fit:cover}
-.bp button{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center}
-.ad-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.ad-btns button{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:var(--card);color:var(--text-sub);font-size:.78rem;cursor:pointer;transition:all var(--tr)}
-.ad-btns button:hover{border-color:var(--text);color:var(--text)}
+.bp button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.bp button:hover{background:rgba(0,0,0,.6)}
+.ad-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ad-btns button{padding:9px 18px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text-sub);font-size:.78rem;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);font-family:inherit;font-weight:400}
+.ad-btns button:hover{border-color:var(--text);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ad-btns button:last-child{border-color:rgba(212,86,74,.2);color:rgba(212,86,74,.7)}
+.ad-btns button:last-child:hover{border-color:rgba(212,86,74,.5);color:#D4564A;background:rgba(212,86,74,.04)}
 
 .fb{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
 .ft{padding:6px 14px;border-radius:50px;border:1px solid var(--border);background:var(--card);color:var(--text-sub);font-size:.76rem;cursor:pointer;transition:all var(--tr)}
@@ -548,11 +560,11 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .acat-acts button:hover{background:var(--bg);color:var(--text)}
 
 /* ── Category Add/Edit Form ── */
-.cat-form{background:var(--bg2);border-radius:var(--radius);padding:18px;margin-top:14px}
-.cat-form-title{font-size:.8rem;font-weight:500;margin-bottom:12px}
+.cat-form{background:var(--bg2);border-radius:12px;padding:20px;margin-top:14px;border:1px solid var(--border)}
+.cat-form-title{font-size:.8rem;font-weight:600;margin-bottom:14px;color:var(--text-sub)}
 .cat-form .ef{margin-bottom:10px}
-.cat-form-thumb{width:80px;height:80px;border-radius:8px;border:1.5px dashed var(--border-h);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);transition:all var(--tr);background:var(--bg);position:relative}
-.cat-form-thumb:hover{border-color:var(--text-light)}
+.cat-form-thumb{width:80px;height:80px;border-radius:10px;border:1.5px dashed var(--border-h);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text-light);transition:all .2s cubic-bezier(.4,0,.2,1);background:var(--bg);position:relative}
+.cat-form-thumb:hover{border-color:var(--text-light);background:var(--accent-soft)}
 .cat-form-thumb img{width:100%;height:100%;object-fit:cover}
 .cat-form-thumb input{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
 .cat-form-thumb .thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:.58rem;color:#fff;font-weight:500;text-align:center;line-height:1.4;gap:4px}
@@ -569,10 +581,19 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:var(--bg);padding:10px 24px;border-radius:50px;font-size:.8rem;z-index:999;transition:transform .3s cubic-bezier(.4,0,.2,1);font-weight:400}
 .toast.on{transform:translateX(-50%) translateY(0)}
 
+/* ── BGM Track List (Admin) ── */
+.bgm-track{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:4px;font-size:.78rem;border:1px solid var(--border)}
+.bgm-track .bgm-t-num{font-size:.66rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace;width:18px;text-align:center;flex-shrink:0}
+.bgm-track .bgm-t-info{flex:1;min-width:0}
+.bgm-track .bgm-t-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bgm-track .bgm-t-url{font-size:.66rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bgm-track button{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.72rem;padding:3px 6px;border-radius:4px;transition:all .15s;flex-shrink:0}
+.bgm-track button:hover{color:#D4564A;background:rgba(212,86,74,.06)}
+
 /* ── Mini Music Player ── */
 .bgm-player{position:fixed;bottom:20px;right:20px;z-index:90;display:flex;align-items:center;gap:0;transition:all .35s cubic-bezier(.4,0,.2,1);opacity:0;transform:translateY(12px);pointer-events:none}
 .bgm-player.on{opacity:1;transform:translateY(0);pointer-events:auto}
-.bgm-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border-h);border-radius:50px;padding:6px 6px 6px 14px;box-shadow:0 4px 20px rgba(0,0,0,.08);cursor:default;max-width:220px;transition:all .3s}
+.bgm-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border-h);border-radius:50px;padding:6px 6px 6px 14px;box-shadow:0 4px 20px rgba(0,0,0,.08);cursor:default;max-width:280px;transition:all .3s}
 .bgm-pill:hover{box-shadow:0 6px 28px rgba(0,0,0,.12)}
 .bgm-info{display:flex;flex-direction:column;min-width:0;flex:1}
 .bgm-title{font-size:.7rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
@@ -587,6 +608,7 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 @keyframes bgmEq{0%{height:3px}100%{height:12px}}
 .bgm-btn{width:30px;height:30px;border-radius:50%;border:none;background:var(--accent);color:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:all .2s}
 .bgm-btn:hover{opacity:.8}
+.bgm-btn-sm{width:24px;height:24px;font-size:.55rem;background:var(--accent-soft);color:var(--text)}
 .bgm-vol{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--border-h);border-radius:10px;padding:12px 10px;box-shadow:0 4px 20px rgba(0,0,0,.1);display:none;flex-direction:column;align-items:center;gap:6px;min-height:120px}
 .bgm-vol.on{display:flex}
 .bgm-vol input[type=range]{writing-mode:vertical-lr;direction:rtl;height:80px;width:20px;accent-color:var(--accent)}
@@ -715,29 +737,175 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- Firebase SDK (동적 로드) -->
+<style>
+/* ── Firebase Setup Screen ── */
+.fb-setup-dim{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;justify-content:center;align-items:center;flex-direction:column;overflow-y:auto}
+.fb-setup-dim.open{display:flex}
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyChWTzVBURkusx3uY8x8-2mMNMzS8ZjkQQ",
-    authDomain: "yana-3-3.firebaseapp.com",
-    projectId: "yana-3-3",
-    storageBucket: "yana-3-3.firebasestorage.app",
-    messagingSenderId: "173326989265",
-    appId: "1:173326989265:web:9445e2495a3dc695efd2f0"
+/* Decorative background */
+.fb-setup-dim::before{content:'';position:fixed;top:-40%;right:-20%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 70%);pointer-events:none;opacity:.6}
+.fb-setup-dim::after{content:'';position:fixed;bottom:-30%;left:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 70%);pointer-events:none;opacity:.4}
+
+.fb-setup{width:92%;max-width:460px;position:relative;z-index:1;padding:20px 0}
+
+/* Header */
+.fb-header{text-align:center;margin-bottom:36px;animation:fbSlideUp .5s cubic-bezier(.4,0,.2,1) both}
+.fb-icon{width:56px;height:56px;border-radius:16px;background:var(--card);box-shadow:var(--shadow),0 4px 24px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:transform .3s}
+.fb-icon:hover{transform:scale(1.05) rotate(-3deg)}
+.fb-icon svg{width:28px;height:28px}
+.fb-header h2{font-family:var(--font-d);font-size:1.8rem;margin-bottom:8px;letter-spacing:-.02em}
+.fb-header p{font-size:.82rem;color:var(--text-sub);line-height:1.7;font-weight:300}
+
+/* Close button */
+.fb-close{position:absolute;top:24px;right:0;width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--text-sub);font-size:1.1rem;transition:all var(--tr);line-height:1;z-index:2}
+.fb-close:hover{border-color:var(--border-h);color:var(--text);box-shadow:var(--shadow-h)}
+
+/* Card */
+.fb-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow),0 8px 40px rgba(0,0,0,.04);padding:24px;animation:fbSlideUp .5s cubic-bezier(.4,0,.2,1) .08s both}
+
+/* Tabs */
+.fb-tabs{display:flex;gap:2px;margin-bottom:22px;background:var(--bg);border-radius:10px;padding:3px}
+.fb-tab{flex:1;padding:9px;border-radius:8px;font-size:.78rem;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text-light);font-family:inherit;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative}
+.fb-tab:hover{color:var(--text-sub)}
+.fb-tab.on{background:var(--bg2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.fb-tab .fb-tab-icon{display:inline-block;margin-right:4px;font-size:.7rem;opacity:.7}
+
+/* Fields */
+.fb-field{margin-bottom:14px;animation:fbFieldIn .35s cubic-bezier(.4,0,.2,1) both}
+.fb-field:nth-child(1){animation-delay:.02s}
+.fb-field:nth-child(2){animation-delay:.05s}
+.fb-field:nth-child(3){animation-delay:.08s}
+.fb-field:nth-child(4){animation-delay:.11s}
+.fb-field:nth-child(5){animation-delay:.14s}
+.fb-field:nth-child(6){animation-delay:.17s}
+.fb-field label{display:flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-light);margin-bottom:6px;transition:color .2s}
+.fb-field:focus-within label{color:var(--text-sub)}
+.fb-field label .fb-req{color:#D4564A;font-size:.6rem}
+.fb-field input{width:100%;padding:11px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.82rem;outline:none;font-family:'IBM Plex Mono',monospace;transition:all .2s cubic-bezier(.4,0,.2,1);letter-spacing:.01em}
+.fb-field input:focus{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
+.fb-field input::placeholder{color:var(--text-light);font-family:var(--font);font-size:.78rem}
+
+/* Paste area */
+.fb-paste-area{margin-bottom:4px;animation:fbFieldIn .35s cubic-bezier(.4,0,.2,1) both}
+.fb-paste-area textarea{width:100%;height:160px;padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.76rem;font-family:'IBM Plex Mono',monospace;outline:none;resize:vertical;transition:all .2s cubic-bezier(.4,0,.2,1);line-height:1.65;letter-spacing:.01em}
+.fb-paste-area textarea:focus{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
+.fb-paste-area textarea::placeholder{color:var(--text-light);font-family:var(--font);font-size:.78rem;line-height:1.65}
+.fb-paste-hint{font-size:.68rem;color:var(--text-light);margin-top:8px;display:flex;align-items:center;gap:4px}
+.fb-paste-hint svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+
+/* Error */
+.fb-err{font-size:.76rem;color:#D4564A;margin-top:14px;padding:10px 14px;background:rgba(212,86,74,.06);border-radius:9px;border:1px solid rgba(212,86,74,.12);display:none;animation:fbShake .4s cubic-bezier(.4,0,.2,1)}
+
+/* Buttons */
+.fb-btns{display:flex;gap:8px;margin-top:22px}
+.fb-btn{flex:1;padding:12px;border-radius:10px;font-size:.84rem;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.fb-btn-p{background:var(--text);color:var(--bg)}
+.fb-btn-p:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.fb-btn-p:active{transform:translateY(0)}
+.fb-btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.fb-btn-s{background:none;color:var(--text-sub);border:1px solid var(--border)}
+.fb-btn-s:hover{border-color:var(--border-h);color:var(--text);background:var(--accent-soft)}
+
+/* Loading spinner in button */
+.fb-btn .fb-spin{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:fbSpin .6s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes fbSpin{to{transform:rotate(360deg)}}
+
+/* Guide section */
+.fb-guide{margin-top:16px;animation:fbSlideUp .5s cubic-bezier(.4,0,.2,1) .16s both}
+.fb-guide-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:500;color:var(--text-sub);transition:all var(--tr)}
+.fb-guide-toggle:hover{border-color:var(--border-h);color:var(--text)}
+.fb-guide-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .25s}
+.fb-guide-toggle.open svg{transform:rotate(180deg)}
+.fb-guide-body{display:none;padding:16px;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;animation:fbSlideDown .25s ease}
+.fb-guide-toggle.open{border-radius:10px 10px 0 0}
+.fb-guide-body.open{display:block}
+.fb-step{display:flex;gap:12px;padding:10px 0;position:relative}
+.fb-step:not(:last-child)::after{content:'';position:absolute;left:13px;top:34px;bottom:-2px;width:1px;background:var(--border)}
+.fb-step-num{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--text);font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fb-step-text{font-size:.74rem;color:var(--text-sub);line-height:1.65;padding-top:3px}
+.fb-step-text a{color:var(--text);font-weight:500;text-decoration:none;border-bottom:1px solid var(--border-h);transition:border-color .2s}
+.fb-step-text a:hover{border-color:var(--text)}
+
+/* Animations */
+@keyframes fbSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fbSlideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fbFieldIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fbShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+
+/* Status dot (when connected) */
+.fb-status{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;color:var(--text-light);margin-top:12px}
+.fb-status .dot{width:6px;height:6px;border-radius:50%}
+.fb-status .dot.on{background:#34A853;box-shadow:0 0 6px rgba(52,168,83,.4)}
+.fb-status .dot.off{background:var(--text-light)}
+
+@media(max-width:640px){
+  .fb-setup{padding:16px 0}
+  .fb-header h2{font-size:1.5rem}
+  .fb-card{padding:20px 18px}
+  .fb-icon{width:48px;height:48px;border-radius:13px;margin-bottom:16px}
+  .fb-icon svg{width:24px;height:24px}
+}
+</style>
+<script type="module">
+  // Firebase 설정을 localStorage에서 로드
+  const STORAGE_KEY = '_fb_config';
+
+  function getSavedConfig() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  function saveConfig(cfg) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+  }
+
+  // 전역 함수: 설정 화면 열기 (FAB 메뉴 등에서 호출)
+  window._openFirebaseSetup = function() {
+    const dim = document.getElementById('fbSetupDim');
+    if (!dim) return;
+    dim.classList.add('open');
+    const closeBtn = document.getElementById('fbCloseBtn');
+    const statusBar = document.getElementById('fbStatusBar');
+    const saved = getSavedConfig();
+    if (saved) {
+      if (closeBtn) closeBtn.style.display = 'flex';
+      if (statusBar) { statusBar.style.display = 'flex'; }
+      switchFbTab('manual');
+      if (saved.apiKey) document.getElementById('fbApiKey').value = saved.apiKey;
+      if (saved.authDomain) document.getElementById('fbAuthDomain').value = saved.authDomain;
+      if (saved.projectId) document.getElementById('fbProjectId').value = saved.projectId;
+      if (saved.storageBucket) document.getElementById('fbStorageBucket').value = saved.storageBucket;
+      if (saved.messagingSenderId) document.getElementById('fbSenderId').value = saved.messagingSenderId;
+      if (saved.appId) document.getElementById('fbAppId').value = saved.appId;
+    } else {
+      if (closeBtn) closeBtn.style.display = 'none';
+      if (statusBar) statusBar.style.display = 'none';
+    }
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // 전역 함수: Firebase 설정 초기화
+  window._resetFirebaseConfig = function() {
+    if (confirm('Firebase 설정을 초기화할까요? 페이지가 새로고침됩니다.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  };
 
-  // 전역 노출 (기존 코드에서 사용)
-  window._db = db;
-  window._firestoreFns = { doc, setDoc, getDoc };
+  async function initFirebase(config) {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getFirestore, doc, setDoc, getDoc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
 
-  // Firestore에서 초기 데이터 로드
-  async function loadFromFirestore() {
+    const app = initializeApp(config);
+    const db = getFirestore(app);
+
+    window._db = db;
+    window._firestoreFns = { doc, setDoc, getDoc };
+
+    // Firestore에서 초기 데이터 로드
     try {
       const snap = await getDoc(doc(db, 'blog', 'data'));
       if (snap.exists()) {
@@ -746,10 +914,8 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         if (data.cats) window._fbCats = data.cats;
         if (data.ps) window._fbPs = data.ps;
         if (data.pairs) window._fbPairs = data.pairs;
-        // 하위호환: 메인 문서에 prompts가 있으면 사용
         if (data.prompts) window._fbPrompts = data.prompts;
       }
-      // 프롬프트 별도 문서에서 로드 (있으면 메인 문서 것을 덮어씀)
       const pSnap = await getDoc(doc(db, 'blog', 'prompts'));
       if (pSnap.exists()) {
         const pData = pSnap.data();
@@ -758,15 +924,286 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     } catch(e) {
       console.warn('Firebase 로드 실패, 로컬 데이터 사용:', e);
     }
-    // 로드 완료 후 앱 초기화
+
     window._fbReady = true;
     if (window._fbReadyCb) window._fbReadyCb();
   }
 
-  loadFromFirestore();
+  // 설정 화면에서 연결 테스트 후 저장
+  window._tryFirebaseConnect = async function(config) {
+    const errEl = document.getElementById('fbSetupErr');
+    const btnEl = document.getElementById('fbConnectBtn');
+    if (errEl) errEl.style.display = 'none';
+    if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = '<span class="fb-spin"></span>연결 중…'; }
+
+    try {
+      const { initializeApp, deleteApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+      const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+
+      const testApp = initializeApp(config, 'test-' + Date.now());
+      const testDb = getFirestore(testApp);
+      await getDoc(doc(testDb, 'blog', 'data'));
+      await deleteApp(testApp);
+
+      saveConfig(config);
+      if (btnEl) btnEl.innerHTML = '✓ 연결 성공!';
+      setTimeout(function(){ location.reload(); }, 500);
+    } catch(e) {
+      console.error('Firebase 연결 실패:', e);
+      if (errEl) {
+        errEl.textContent = '연결에 실패했어요 — 설정을 다시 확인해 주세요';
+        errEl.style.display = 'block';
+        errEl.style.animation = 'none';
+        errEl.offsetHeight;
+        errEl.style.animation = '';
+      }
+      if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '연결하기'; }
+    }
+  };
+
+  // 메인 로직
+  const saved = getSavedConfig();
+  if (saved) {
+    // 저장된 설정으로 바로 초기화
+    initFirebase(saved);
+  } else {
+    // 설정 화면 표시
+    document.addEventListener('DOMContentLoaded', function() {
+      const dim = document.getElementById('fbSetupDim');
+      if (dim) dim.classList.add('open');
+    });
+    // Firebase 없이도 앱은 로컬 모드로 동작 가능하게
+    setTimeout(function() {
+      if (!window._fbReady) {
+        window._fbReady = true;
+        if (window._fbReadyCb) window._fbReadyCb();
+      }
+    }, 500);
+  }
 </script>
 </head>
 <body>
+
+<!-- Firebase 설정 화면 -->
+<div class="fb-setup-dim" id="fbSetupDim">
+  <div class="fb-setup">
+    <button class="fb-close" id="fbCloseBtn" onclick="document.getElementById('fbSetupDim').classList.remove('open')">×</button>
+
+    <div class="fb-header">
+      <div class="fb-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h2>Connect Database</h2>
+      <p>블로그 데이터를 저장할 Firebase 프로젝트를 연결해 주세요.<br>아직 없다면 아래 가이드를 참고해서 만들 수 있어요.</p>
+    </div>
+
+    <div class="fb-card">
+      <div class="fb-tabs">
+        <button class="fb-tab on" onclick="switchFbTab('paste')">
+          <span class="fb-tab-icon">⌘</span> 붙여넣기
+        </button>
+        <button class="fb-tab" onclick="switchFbTab('manual')">
+          <span class="fb-tab-icon">✎</span> 직접 입력
+        </button>
+      </div>
+
+      <!-- 붙여넣기 모드 -->
+      <div id="fbTabPaste">
+        <div class="fb-paste-area">
+          <textarea id="fbPasteInput" placeholder='Firebase Console에서 복사한 config를 붙여넣으세요&#10;&#10;const firebaseConfig = {&#10;  apiKey: "AIza...",&#10;  authDomain: "my-app.firebaseapp.com",&#10;  projectId: "my-app",&#10;  storageBucket: "my-app.appspot.com",&#10;  ...&#10;};'></textarea>
+        </div>
+        <div class="fb-paste-hint">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          프로젝트 설정 → 내 앱 → SDK 설정 및 구성에서 복사
+        </div>
+      </div>
+
+      <!-- 직접 입력 모드 -->
+      <div id="fbTabManual" style="display:none">
+        <div class="fb-field">
+          <label>API Key <span class="fb-req">필수</span></label>
+          <input type="text" id="fbApiKey" placeholder="AIzaSy...">
+        </div>
+        <div class="fb-field">
+          <label>Auth Domain</label>
+          <input type="text" id="fbAuthDomain" placeholder="my-project.firebaseapp.com">
+        </div>
+        <div class="fb-field">
+          <label>Project ID <span class="fb-req">필수</span></label>
+          <input type="text" id="fbProjectId" placeholder="my-project">
+        </div>
+        <div class="fb-field">
+          <label>Storage Bucket</label>
+          <input type="text" id="fbStorageBucket" placeholder="my-project.appspot.com">
+        </div>
+        <div class="fb-field">
+          <label>Messaging Sender ID</label>
+          <input type="text" id="fbSenderId" placeholder="123456789">
+        </div>
+        <div class="fb-field">
+          <label>App ID</label>
+          <input type="text" id="fbAppId" placeholder="1:123456789:web:abc123">
+        </div>
+      </div>
+
+      <div class="fb-err" id="fbSetupErr"></div>
+
+      <div class="fb-btns">
+        <button class="fb-btn fb-btn-s" onclick="startLocalMode()">로컬 모드로 시작</button>
+        <button class="fb-btn fb-btn-p" id="fbConnectBtn" onclick="connectFirebase()">연결하기</button>
+      </div>
+    </div>
+
+    <!-- 가이드 -->
+    <div class="fb-guide">
+      <button class="fb-guide-toggle" onclick="toggleFbGuide(this)">
+        <span>Firebase 프로젝트 만드는 법</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="fb-guide-body" id="fbGuideBody">
+        <div class="fb-step">
+          <div class="fb-step-num">1</div>
+          <div class="fb-step-text">
+            <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a>에 접속해서<br>
+            새 프로젝트를 만들어 주세요.
+          </div>
+        </div>
+        <div class="fb-step">
+          <div class="fb-step-num">2</div>
+          <div class="fb-step-text">
+            좌측 메뉴에서 <strong>Firestore Database</strong>를 선택하고<br>
+            <strong>테스트 모드</strong>로 데이터베이스를 생성하세요.
+          </div>
+        </div>
+        <div class="fb-step">
+          <div class="fb-step-num">3</div>
+          <div class="fb-step-text">
+            프로젝트 설정(⚙) → 내 앱 → <strong>웹 앱 추가</strong> 클릭 후<br>
+            앱 이름을 입력하고 등록하세요.
+          </div>
+        </div>
+        <div class="fb-step">
+          <div class="fb-step-num">4</div>
+          <div class="fb-step-text">
+            표시되는 <strong>firebaseConfig</strong> 코드를<br>
+            그대로 복사해서 위에 붙여넣으면 끝!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-status" id="fbStatusBar" style="display:none;justify-content:center">
+      <span class="dot on"></span>
+      <span id="fbStatusText">Firebase 연결됨</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchFbTab(tab) {
+  document.querySelectorAll('.fb-tab').forEach(function(t,i) {
+    t.classList.toggle('on', (tab==='paste' && i===0) || (tab==='manual' && i===1));
+  });
+  document.getElementById('fbTabPaste').style.display = tab==='paste' ? '' : 'none';
+  document.getElementById('fbTabManual').style.display = tab==='manual' ? '' : 'none';
+  // Re-trigger field animations
+  if (tab==='manual') {
+    document.querySelectorAll('#fbTabManual .fb-field').forEach(function(f) {
+      f.style.animation = 'none';
+      f.offsetHeight; // reflow
+      f.style.animation = '';
+    });
+  }
+}
+
+function toggleFbGuide(btn) {
+  var body = document.getElementById('fbGuideBody');
+  var isOpen = btn.classList.toggle('open');
+  body.classList.toggle('open', isOpen);
+}
+
+function parsePastedConfig(text) {
+  var clean = text.replace(/const\s+\w+\s*=\s*/, '').replace(/;/g, '').trim();
+  clean = clean.replace(/(['"])?(\w+)(['"])?\s*:/g, '"$2":');
+  clean = clean.replace(/'/g, '"');
+  clean = clean.replace(/,\s*}/g, '}');
+  try {
+    var obj = JSON.parse(clean);
+    return obj;
+  } catch(e) {
+    var fields = {};
+    var patterns = {
+      apiKey: /apiKey['":\s]+["']([^"']+)/,
+      authDomain: /authDomain['":\s]+["']([^"']+)/,
+      projectId: /projectId['":\s]+["']([^"']+)/,
+      storageBucket: /storageBucket['":\s]+["']([^"']+)/,
+      messagingSenderId: /messagingSenderId['":\s]+["']([^"']+)/,
+      appId: /appId['":\s]+["']([^"']+)/
+    };
+    for (var key in patterns) {
+      var m = text.match(patterns[key]);
+      if (m) fields[key] = m[1];
+    }
+    if (fields.apiKey && fields.projectId) return fields;
+    return null;
+  }
+}
+
+function connectFirebase() {
+  var config = null;
+  var isPaste = document.getElementById('fbTabPaste').style.display !== 'none';
+
+  if (isPaste) {
+    var raw = document.getElementById('fbPasteInput').value.trim();
+    if (!raw) {
+      showFbErr('설정 코드를 붙여넣어 주세요');
+      return;
+    }
+    config = parsePastedConfig(raw);
+    if (!config) {
+      showFbErr('코드를 파싱할 수 없어요 — 직접 입력 탭을 이용해 보세요');
+      return;
+    }
+  } else {
+    config = {
+      apiKey: document.getElementById('fbApiKey').value.trim(),
+      authDomain: document.getElementById('fbAuthDomain').value.trim(),
+      projectId: document.getElementById('fbProjectId').value.trim(),
+      storageBucket: document.getElementById('fbStorageBucket').value.trim(),
+      messagingSenderId: document.getElementById('fbSenderId').value.trim(),
+      appId: document.getElementById('fbAppId').value.trim()
+    };
+  }
+
+  if (!config.apiKey || !config.projectId) {
+    showFbErr('API Key와 Project ID는 필수예요');
+    return;
+  }
+
+  window._tryFirebaseConnect(config);
+}
+
+function showFbErr(msg) {
+  var el = document.getElementById('fbSetupErr');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+}
+
+function startLocalMode() {
+  document.getElementById('fbSetupDim').classList.remove('open');
+  if (!window._fbReady) {
+    window._fbReady = true;
+    if (window._fbReadyCb) window._fbReadyCb();
+  }
+}
+</script>
 
 <div id="appLoader" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease">
 </div>
@@ -801,6 +1238,8 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
         <button onclick="closeFab();pmtEditId=null;go('pmt-editor')">✎ 프롬프트</button>
+        <button onclick="closeFab();window._openFirebaseSetup()">⚙ Firebase 설정</button>
+        <button onclick="closeFab();window._resetFirebaseConfig()" style="color:#D4564A">↺ Firebase 초기화</button>
       </div>
     </div>
 
@@ -1198,7 +1637,6 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   <div class="pw" style="max-width:700px">
     <div class="ab"><h3>Blog Settings</h3>
       <div class="ef"><label>Name</label><input id="cN" oninput="uC()"></div>
-      <div class="ef"><label>Description</label><input id="cD" oninput="uC()"></div>
       <div class="ef"><label>Banner Title</label><input id="cHT" oninput="uC()"></div>
       <div class="ef"><label>Banner Description</label><input id="cHD" oninput="uC()"></div>
       <div class="ef"><label>Banner Image</label>
@@ -1228,16 +1666,23 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
           오디오 파일의 직접 링크(mp3, ogg 등)를 넣으면 블로그에 미니 플레이어가 나타나요.<br>
           <a href="https://github.com/" target="_blank" style="color:var(--text-sub);text-decoration:underline">GitHub</a>에 mp3를 업로드하고 raw 링크를 복사해서 사용하세요.
         </div>
-        <input id="cBgmUrl" placeholder="https://files.catbox.moe/example.mp3" style="font-family:'IBM Plex Mono',monospace;font-size:.8rem" oninput="uC()">
-        <div style="margin-top:8px">
-          <input id="cBgmTitle" placeholder="곡 제목 (선택)" style="font-size:.82rem" oninput="uC()">
+        <div id="bgmListAdmin"></div>
+        <div style="margin-top:8px;background:var(--bg2);border-radius:8px;padding:12px">
+          <input id="cBgmNewUrl" placeholder="오디오 URL (mp3, ogg 등)" style="font-family:'IBM Plex Mono',monospace;font-size:.78rem;margin-bottom:6px">
+          <div style="display:flex;gap:6px">
+            <input id="cBgmNewTitle" placeholder="곡 제목 (선택)" style="font-size:.82rem;flex:1">
+            <button class="btn-p" style="padding:0 18px;font-size:.78rem;white-space:nowrap;flex-shrink:0" onclick="addBgmTrack()">+ 추가</button>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
-          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" id="cBgmAuto" onchange="uC()" style="accent-color:var(--accent)"> 자동 재생
+        <div style="display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:nowrap">
+          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="cBgmAuto" onchange="uC()" style="accent-color:var(--accent);margin:0"> 자동재생
           </label>
-          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" id="cBgmLoop" onchange="uC()" style="accent-color:var(--accent)"> 반복 재생
+          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="cBgmLoop" onchange="uC()" style="accent-color:var(--accent);margin:0"> 전체반복
+          </label>
+          <label style="font-size:.75rem;color:var(--text-sub);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="cBgmShuffle" onchange="uC()" style="accent-color:var(--accent);margin:0"> 셔플
           </label>
         </div>
       </div>
@@ -1351,7 +1796,9 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div class="bgm-title" id="bgmTitle">♪ Music</div>
       <div class="bgm-time" id="bgmTime">0:00</div>
     </div>
+    <button class="bgm-btn bgm-btn-sm" id="bgmPrevBtn" onclick="prevBgm()" title="이전 곡" style="display:none">⏮</button>
     <button class="bgm-btn" id="bgmPlayBtn" onclick="toggleBgm()" title="재생/일시정지">▶</button>
+    <button class="bgm-btn bgm-btn-sm" id="bgmNextBtn" onclick="nextBgm()" title="다음 곡" style="display:none">⏭</button>
     <button class="bgm-btn" id="bgmVolBtn" onclick="toggleBgmVol()" title="볼륨" style="background:var(--accent-soft);color:var(--text);font-size:.65rem;width:26px;height:26px;margin-left:-2px">♪</button>
   </div>
   <div class="bgm-vol" id="bgmVol">
@@ -2202,12 +2649,12 @@ function applyCrop(){
 }
 
 function rAdmin(){
-  $('#cN').value=cfg.name;$('#cD').value=cfg.desc;$('#cHT').value=cfg.ht;$('#cHD').value=cfg.hd;
+  $('#cN').value=cfg.name;$('#cHT').value=cfg.ht;$('#cHD').value=cfg.hd;
   if($('#cImgKey'))$('#cImgKey').value=cfg.imgbbKey||'';
-  if($('#cBgmUrl'))$('#cBgmUrl').value=cfg.bgmUrl||'';
-  if($('#cBgmTitle'))$('#cBgmTitle').value=cfg.bgmTitle||'';
+  rBgmList();
   if($('#cBgmAuto'))$('#cBgmAuto').checked=!!cfg.bgmAuto;
   if($('#cBgmLoop'))$('#cBgmLoop').checked=!!cfg.bgmLoop;
+  if($('#cBgmShuffle'))$('#cBgmShuffle').checked=!!cfg.bgmShuffle;
   var bp=$('#banPv');
   if(cfg.hbg)bp.innerHTML='<img src="'+cfg.hbg+'"><button onclick="cfg.hbg=\'\';rAdmin()">✕</button>';
   var fpv=$('#faviconPv');
@@ -2350,7 +2797,7 @@ function saveCatForm(){
 }
 
 function delC(id){showModal('📂','이 시리즈를 삭제하시겠습니까?<div class="modal-sub">시리즈만 삭제되고 글은 유지돼요</div>','삭제',function(){cats=cats.filter(function(c){return c.id!==id});sv();rAdmin();toast('삭제됨')},{danger:true})}
-function uC(){cfg.name=$('#cN').value;cfg.desc=$('#cD').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value;if($('#cImgKey'))cfg.imgbbKey=$('#cImgKey').value.trim();if($('#cBgmUrl'))cfg.bgmUrl=$('#cBgmUrl').value.trim();if($('#cBgmTitle'))cfg.bgmTitle=$('#cBgmTitle').value.trim();if($('#cBgmAuto'))cfg.bgmAuto=$('#cBgmAuto').checked;if($('#cBgmLoop'))cfg.bgmLoop=$('#cBgmLoop').checked}
+function uC(){cfg.name=$('#cN').value;cfg.ht=$('#cHT').value;cfg.hd=$('#cHD').value;if($('#cImgKey'))cfg.imgbbKey=$('#cImgKey').value.trim();if($('#cBgmAuto'))cfg.bgmAuto=$('#cBgmAuto').checked;if($('#cBgmLoop'))cfg.bgmLoop=$('#cBgmLoop').checked;if($('#cBgmShuffle'))cfg.bgmShuffle=$('#cBgmShuffle').checked}
 function onBan(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){cfg.hbg=d;rAdmin()})}
 function onFavicon(e){
   var f=e.target.files[0];if(!f)return;
@@ -2977,16 +3424,64 @@ function setAdmin(on){
 }
 
 /* ── BGM Player ── */
-var bgmAudio=null,bgmPlaying=false,bgmRetries=0;
+var bgmAudio=null,bgmPlaying=false,bgmRetries=0,bgmIdx=0;
+
+// ── BGM 관리자 UI ──
+function getBgmList(){
+  // 하위호환: 기존 단일 bgmUrl → bgmList 마이그레이션
+  if(!cfg.bgmList){
+    cfg.bgmList=[];
+    if(cfg.bgmUrl){cfg.bgmList.push({url:cfg.bgmUrl,title:cfg.bgmTitle||''});delete cfg.bgmUrl;delete cfg.bgmTitle;}
+  }
+  return cfg.bgmList;
+}
+function rBgmList(){
+  var list=getBgmList();
+  var el=$('#bgmListAdmin');
+  if(!el)return;
+  if(!list.length){el.innerHTML='<div style="font-size:.76rem;color:var(--text-light);padding:8px 0;font-weight:300">추가된 곡이 없어요</div>';return;}
+  el.innerHTML=list.map(function(t,i){
+    return '<div class="bgm-track"><span class="bgm-t-num">'+(i+1)+'</span><div class="bgm-t-info"><div class="bgm-t-name">'+(t.title||'제목 없음')+'</div><div class="bgm-t-url">'+t.url+'</div></div><button onclick="moveBgmTrack('+i+',-1)" title="위로"'+(i===0?' disabled style="opacity:.3"':'')+'>↑</button><button onclick="moveBgmTrack('+i+',1)" title="아래로"'+(i===list.length-1?' disabled style="opacity:.3"':'')+'>↓</button><button onclick="removeBgmTrack('+i+')" title="삭제">✕</button></div>';
+  }).join('');
+}
+function addBgmTrack(){
+  var url=$('#cBgmNewUrl').value.trim();
+  if(!url){toast('URL을 입력해 주세요');return;}
+  var title=$('#cBgmNewTitle').value.trim();
+  getBgmList().push({url:url,title:title});
+  $('#cBgmNewUrl').value='';$('#cBgmNewTitle').value='';
+  rBgmList();
+}
+function removeBgmTrack(i){
+  getBgmList().splice(i,1);
+  rBgmList();
+}
+function moveBgmTrack(i,dir){
+  var list=getBgmList();
+  var ni=i+dir;
+  if(ni<0||ni>=list.length)return;
+  var tmp=list[i];list[i]=list[ni];list[ni]=tmp;
+  rBgmList();
+}
+
+// ── BGM 플레이어 ──
 function initBgm(){
   var player=$('#bgmPlayer');
-  if(!cfg.bgmUrl){
+  var list=getBgmList();
+  if(!list.length){
     player.classList.remove('on');
     if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
     bgmPlaying=false;
     return;
   }
-  $('#bgmTitle').textContent=cfg.bgmTitle||'♪ Music';
+  // prev/next 버튼 표시
+  var showNav=list.length>1;
+  if($('#bgmPrevBtn'))$('#bgmPrevBtn').style.display=showNav?'flex':'none';
+  if($('#bgmNextBtn'))$('#bgmNextBtn').style.display=showNav?'flex':'none';
+
+  if(bgmIdx>=list.length)bgmIdx=0;
+  var track=list[bgmIdx];
+  $('#bgmTitle').textContent=track.title||(list.length>1?'♪ Track '+(bgmIdx+1):'♪ Music');
   $('#bgmTime').textContent='로딩 중...';
   player.classList.add('on');
   var vol=localStorage.getItem('e_bgmVol');
@@ -2994,9 +3489,7 @@ function initBgm(){
   if($('#bgmVolRange'))$('#bgmVolRange').value=Math.round(volVal*100);
   if($('#bgmVolLabel'))$('#bgmVolLabel').textContent=Math.round(volVal*100)+'%';
 
-  // 이전 오디오 정리 & 새로 생성 (깨끗한 상태)
-  if(bgmAudio&&bgmAudio._bgmSrc===cfg.bgmUrl){
-    // 같은 URL이면 재사용
+  if(bgmAudio&&bgmAudio._bgmSrc===track.url){
     player.classList.add('on');
     updateBgmUI();
     return;
@@ -3006,10 +3499,13 @@ function initBgm(){
   loadBgmAudio(volVal);
 }
 function loadBgmAudio(vol){
+  var list=getBgmList();
+  if(!list.length)return;
+  var track=list[bgmIdx];
   var a=new Audio();
-  a._bgmSrc=cfg.bgmUrl;
+  a._bgmSrc=track.url;
   a.preload='auto';
-  a.loop=!!cfg.bgmLoop;
+  a.loop=false; // 루프는 플레이리스트 레벨에서 처리
   a.volume=vol||0.6;
 
   a.addEventListener('canplay',function(){
@@ -3021,27 +3517,48 @@ function loadBgmAudio(vol){
     if(isNaN(d))return;
     var cm=Math.floor(c/60),cs=Math.floor(c%60);
     var dm=Math.floor(d/60),ds=Math.floor(d%60);
-    $('#bgmTime').textContent=cm+':'+String(cs).padStart(2,'0')+' / '+dm+':'+String(ds).padStart(2,'0');
+    var prefix=list.length>1?(bgmIdx+1)+'/'+list.length+' · ':'';
+    $('#bgmTime').textContent=prefix+cm+':'+String(cs).padStart(2,'0')+' / '+dm+':'+String(ds).padStart(2,'0');
   });
   a.addEventListener('ended',function(){
-    if(!a.loop){bgmPlaying=false;updateBgmUI();}
+    bgmPlaying=false;updateBgmUI();
+    // 다음 곡으로
+    if(list.length>1){
+      if(cfg.bgmShuffle){
+        var ni=bgmIdx;
+        while(ni===bgmIdx&&list.length>1)ni=Math.floor(Math.random()*list.length);
+        bgmIdx=ni;
+      } else {
+        bgmIdx++;
+      }
+      if(bgmIdx>=list.length){
+        if(cfg.bgmLoop){bgmIdx=0;}
+        else{bgmIdx=list.length-1;return;} // 끝
+      }
+      var v=bgmAudio?bgmAudio.volume:0.6;
+      if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
+      bgmRetries=0;
+      loadBgmAudio(v);
+      // 자동으로 다음 곡 재생
+      setTimeout(function(){playBgm();},100);
+    } else if(cfg.bgmLoop){
+      // 1곡 반복
+      a.currentTime=0;
+      playBgm();
+    }
   });
   a.addEventListener('error',function(){
     bgmPlaying=false;updateBgmUI();
     var code=a.error?a.error.code:0;
     console.warn('BGM 에러 code:',code,a.error);
-    // 자동 재시도 (최대 2회)
     if(bgmRetries<2){
       bgmRetries++;
       $('#bgmTime').textContent='재시도 중... ('+bgmRetries+'/2)';
       setTimeout(function(){
-        if(bgmAudio===a){
-          a.load(); // 다시 로드
-        }
+        if(bgmAudio===a){a.load();}
       },1500);
       return;
     }
-    // 재시도 소진
     if(code===2||code===4){
       $('#bgmTime').textContent='로딩 실패 — ▶ 눌러서 재시도';
     } else if(code===3){
@@ -3052,14 +3569,14 @@ function loadBgmAudio(vol){
   });
 
   bgmAudio=a;
-  a.src=cfg.bgmUrl;
-  // load()는 src 설정 후 자동 시작되지만 명시적 호출
+  a.src=track.url;
   a.load();
+  // 제목 업데이트
+  $('#bgmTitle').textContent=track.title||(list.length>1?'♪ Track '+(bgmIdx+1):'♪ Music');
   updateBgmUI();
 }
 function playBgm(){
   if(!bgmAudio){initBgm();return;}
-  // 에러 상태면 새로 로드
   if(bgmAudio.error){
     bgmRetries=0;
     var vol=bgmAudio.volume;
@@ -3077,7 +3594,6 @@ function playBgm(){
          bgmPlaying=false;updateBgmUI();
          waitForInteraction();
        } else if(err.name==='AbortError'){
-         // 아직 로딩 중 — 로드 완료 후 자동 재생
          $('#bgmTime').textContent='로딩 중...';
          bgmAudio.addEventListener('canplay',function _r(){
            bgmAudio.removeEventListener('canplay',_r);
@@ -3088,6 +3604,37 @@ function playBgm(){
        }
      });
   }
+}
+function nextBgm(){
+  var list=getBgmList();
+  if(list.length<=1)return;
+  if(cfg.bgmShuffle){
+    var ni=bgmIdx;
+    while(ni===bgmIdx&&list.length>1)ni=Math.floor(Math.random()*list.length);
+    bgmIdx=ni;
+  } else {
+    bgmIdx=(bgmIdx+1)%list.length;
+  }
+  var vol=bgmAudio?bgmAudio.volume:0.6;
+  if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
+  bgmPlaying=false;bgmRetries=0;
+  loadBgmAudio(vol);
+  setTimeout(function(){playBgm();},100);
+}
+function prevBgm(){
+  var list=getBgmList();
+  if(list.length<=1)return;
+  // 3초 이상 재생했으면 현재 곡 처음으로
+  if(bgmAudio&&bgmAudio.currentTime>3){
+    bgmAudio.currentTime=0;
+    return;
+  }
+  bgmIdx=(bgmIdx-1+list.length)%list.length;
+  var vol=bgmAudio?bgmAudio.volume:0.6;
+  if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
+  bgmPlaying=false;bgmRetries=0;
+  loadBgmAudio(vol);
+  setTimeout(function(){playBgm();},100);
 }
 function waitForInteraction(){
   $('#bgmTime').textContent='▶ 클릭하여 재생';
