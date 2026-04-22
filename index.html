@@ -352,6 +352,19 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .ef-r{display:flex;gap:12px}.ef-r .ef{flex:1}
 @media(max-width:540px){.ef-r{flex-direction:column;gap:0}}
 
+/* Auto Numbering Toggle */
+.autonum-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:10px}
+.autonum-ctrl{display:flex;align-items:center;gap:8px}
+.autonum-badge{font-family:var(--font-d);font-size:.78rem;color:var(--text-sub);padding:2px 8px;background:var(--accent-soft);border-radius:5px;letter-spacing:.02em;min-width:32px;text-align:center;transition:opacity var(--tr)}
+.autonum-badge.off{opacity:.35}
+.autonum-switch{position:relative;display:inline-block;width:32px;height:18px;flex-shrink:0}
+.autonum-switch input{opacity:0;width:0;height:0}
+.autonum-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border-h);border-radius:18px;transition:background .2s}
+.autonum-slider:before{content:"";position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.autonum-switch input:checked + .autonum-slider{background:var(--text)}
+.autonum-switch input:checked + .autonum-slider:before{transform:translateX(14px)}
+.autonum-label{font-size:.66rem;color:var(--text-light);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;user-select:none;font-weight:500}
+
 /* Rich Text Toolbar */
 .rte-wrap{border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--tr)}
 .rte-wrap:focus-within{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -528,6 +541,17 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .sc-name{font-size:.9rem;font-weight:600;color:#fff;margin-bottom:3px;line-height:1.4}
 .sc-desc{font-size:.72rem;color:rgba(255,255,255,.75);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:300}
 .sc-count{font-size:.66rem;color:rgba(255,255,255,.6);margin-top:5px;display:block}
+.sc-menu{position:absolute;top:8px;right:8px;z-index:3;opacity:0;transition:opacity .2s}
+.sc:hover .sc-menu{opacity:1}
+.sc-menu-btn{width:28px;height:28px;border-radius:7px;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .2s}
+.sc-menu-btn:hover{background:rgba(0,0,0,.75)}
+.sc-menu-drop{display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--card);border:1px solid var(--border-h);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);overflow:hidden;min-width:100px;z-index:10}
+.sc-menu-drop.open{display:block}
+.sc-menu-drop button{display:block;width:100%;padding:9px 14px;border:none;background:none;color:var(--text);font-size:.78rem;text-align:left;cursor:pointer;transition:background .15s;font-family:inherit}
+.sc-menu-drop button:hover{background:var(--accent-soft)}
+.sc-menu-drop button.danger{color:#D4564A}
+.series-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.series-head .n-wr{padding:7px 14px;display:flex;align-items:center;gap:5px}
 @media(max-width:540px){.series-grid{grid-template-columns:1fr 1fr!important}}
 
 /* ── Category Hero ── */
@@ -829,7 +853,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     <div class="fab-wrap" id="fabWrap" style="display:none">
       <button class="n-wr fab-main" onclick="toggleFab()" id="fabBtn">+</button>
       <div class="fab-menu" id="fabMenu">
-        <button onclick="closeFab();edId=null;go('editor')">✎ 게시글</button>
+        <button onclick="closeFab();edId=null;edFromCatView();go('editor')">✎ 게시글</button>
         <button onclick="closeFab();pmtEditId=null;go('pmt-editor')">✎ 프롬프트</button>
       </div>
     </div>
@@ -852,9 +876,12 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
 <!-- SERIES -->
 <div class="page" id="pg-series">
   <div class="pw">
-    <div style="margin-bottom:20px"><span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Series</span></div>
+    <div class="series-head">
+      <span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Series</span>
+      <button class="n-wr admin-only" id="seriesAddBtn" onclick="openCatModal()" style="display:none">+ 시리즈 추가</button>
+    </div>
     <div id="seriesGrid" class="grid g3 series-grid"></div>
-    <div class="empty" id="seriesE" style="display:none"><div>◻</div><h3>아직 시리즈가 없어요</h3><p>관리 페이지에서 시리즈를 만들어보세요</p></div>
+    <div class="empty" id="seriesE" style="display:none"><div>◻</div><h3>아직 시리즈가 없어요</h3><p id="seriesEMsg">관리 페이지에서 시리즈를 만들어보세요</p></div>
   </div>
 </div>
 
@@ -925,10 +952,22 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         </div>
       </div>
       <div class="ef-r">
-        <div class="ef"><label>Category</label><select id="eCat"></select></div>
+        <div class="ef"><label>Category</label><select id="eCat" onchange="onEdCatChange()"></select></div>
         <div class="ef"><label>Date</label><input type="date" id="eDate"></div>
       </div>
-      <div class="ef"><label>Title</label><input id="eTit" placeholder="제목을 입력하세요"></div>
+      <div class="ef">
+        <div class="autonum-row">
+          <label style="margin-bottom:0">Title</label>
+          <div class="autonum-ctrl">
+            <span class="autonum-badge off" id="eAutoNumPreview">—</span>
+            <label class="autonum-switch" title="자동 넘버링">
+              <input type="checkbox" id="eAutoNumCb" onchange="onAutoNumToggle()">
+              <span class="autonum-slider"></span>
+            </label>
+          </div>
+        </div>
+        <input id="eTit" placeholder="제목을 입력하세요" oninput="onEdTitleInput()">
+      </div>
 
       <div class="ef">
         <label>Content</label>
@@ -1285,31 +1324,6 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     </div>
 
     <div class="ab">
-      <div class="ab-head"><div class="ab-icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="ab-title-wrap"><h3>시리즈 관리</h3><div class="ab-sub">글을 묶어서 시리즈로 관리해요</div></div></div>
-      <div class="ab-body">
-      <div id="cL"></div>
-      <div class="cat-form" id="catForm">
-        <div class="cat-form-title" id="catFormTitle">시리즈 추가</div>
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          <div class="cat-form-thumb" id="catFormThumb" onclick="onCatThumbClick()" style="position:relative">
-            썸네일
-            <input type="file" id="catThIn" accept="image/*" onchange="onCatThumb(event)">
-          </div>
-          <div style="flex:1">
-            <div class="ef" style="margin-bottom:8px"><input id="ncN" placeholder="시리즈 이름"></div>
-            <div class="ef" style="margin-bottom:8px"><input id="ncD" placeholder="시리즈 소개 (선택)"></div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-          <div class="cbar" id="ccBar" style="flex:1"></div>
-          <button class="btn-p" style="padding:7px 16px;font-size:.78rem" onclick="saveCatForm()">저장</button>
-          <button class="btn-g" style="padding:7px 12px;font-size:.78rem;border:1px solid var(--border);display:none" onclick="resetCatForm()" id="catFormCancel">취소</button>
-        </div>
-      </div>
-      </div>
-    </div>
-
-    <div class="ab">
       <div class="ab-head"><div class="ab-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="ab-title-wrap"><h3>배너 패널</h3><div class="ab-sub">좌측 하단 ♥ 버튼에 표시될 배너를 관리해요</div></div></div>
       <div class="ab-body">
       <!-- 내 배너 -->
@@ -1500,6 +1514,8 @@ let prompts=ld('e_prompts')||[];
 let curPairId=null;
 let eCov='',eIL=[],eFI=[];
 let editCatId=null,catThumb='',catThumbOrig='';
+let eCatHint=null; // 시리즈 페이지에서 글쓰기 시 카테고리 힌트
+let eAutoNum=true; // 제목 자동 넘버링 ON/OFF
 
 function defP(){return[
   {id:1,cid:'daily',t:'블로그를 시작합니다',d:'2026-03-12',
@@ -1573,7 +1589,7 @@ function go(p){
   window.scrollTo({top:0,behavior:'smooth'});
   if(p==='home')rHome();
   if(p==='series')rSeries();
-  if(p==='admin'){rAdmin();resetCatForm()}
+  if(p==='admin'){rAdmin();}
   if(p==='editor')initEd();
   if(p==='pmt-editor')initPmtEditor();
   if(p==='catview')rCatView();
@@ -1867,6 +1883,12 @@ function lcC(p,chk,onclickOverride){
 }
 
 function rSeries(){
+  // 추가 버튼 표시 (관리자만)
+  var addBtn=$('#seriesAddBtn');
+  if(addBtn)addBtn.style.display=isAdmin?'':'none';
+  // 빈 상태 메시지도 관리자면 바뀜
+  var em=$('#seriesEMsg');
+  if(em)em.textContent=isAdmin?'우측 상단 + 버튼으로 시리즈를 추가하세요':'관리 페이지에서 시리즈를 만들어보세요';
   if(!cats.length){$('#seriesGrid').innerHTML='';$('#seriesE').style.display='';return}
   $('#seriesE').style.display='none';
   $('#seriesGrid').innerHTML=cats.map(function(c){
@@ -1880,9 +1902,48 @@ function rSeries(){
     html+='<div class="sc-name">'+esc(c.name)+'</div>';
     if(c.desc)html+='<div class="sc-desc">'+esc(c.desc)+'</div>';
     html+='<span class="sc-count">'+cnt+'개의 글</span>';
-    html+='</div></div>';
+    html+='</div>';
+    // 관리자용 메뉴
+    if(isAdmin){
+      html+='<div class="sc-menu">';
+      html+='<button class="sc-menu-btn" onclick="event.stopPropagation();toggleScMenu(\''+c.id+'\',event)">⋯</button>';
+      html+='<div class="sc-menu-drop" id="scMenu_'+c.id+'">';
+      html+='<button onclick="event.stopPropagation();closeAllScMenus();openCatModal(\''+c.id+'\')">✎ 수정</button>';
+      html+='<button class="danger" onclick="event.stopPropagation();closeAllScMenus();delCatFromTab(\''+c.id+'\')">✕ 삭제</button>';
+      html+='</div></div>';
+    }
+    html+='</div>';
     return html;
   }).join('');
+}
+
+function toggleScMenu(id,e){
+  var drop=$('#scMenu_'+id);
+  if(!drop)return;
+  var wasOpen=drop.classList.contains('open');
+  closeAllScMenus();
+  if(!wasOpen){
+    drop.classList.add('open');
+    setTimeout(function(){
+      document.addEventListener('click',closeAllScMenusOutside,{once:true});
+    },0);
+  }
+}
+function closeAllScMenus(){
+  document.querySelectorAll('.sc-menu-drop.open').forEach(function(el){el.classList.remove('open')});
+}
+function closeAllScMenusOutside(e){
+  if(!e.target.closest('.sc-menu'))closeAllScMenus();
+  else setTimeout(function(){document.addEventListener('click',closeAllScMenusOutside,{once:true})},0);
+}
+function delCatFromTab(id){
+  showModal('📂','이 시리즈를 삭제하시겠습니까?<div class="modal-sub">시리즈만 삭제되고 글은 유지돼요</div>','삭제',function(){
+    cats=cats.filter(function(c){return c.id!==id});
+    sv();rSeries();
+    // 관리 페이지도 열려있으면 재렌더
+    if(document.querySelector('#pg-admin.on'))rAdmin();
+    toast('삭제됨');
+  },{danger:true});
 }
 
 function rCatView(){
@@ -1962,6 +2023,8 @@ function bdDelAll(){
   var cnt=bdSet.size;
   showModal('','선택한 '+cnt+'개의 글을 삭제하시겠습니까?<div class="modal-sub">삭제된 글은 복구할 수 없어요</div>','삭제',function(){
     ps=ps.filter(function(p){return !bdSet.has(p.id)});
+    // catview에서의 일괄 삭제 → 해당 시리즈 재넘버링
+    if(viewCatId)renumberCat(viewCatId);
     sv();bdSet.clear();bdMode=false;toast(cnt+'개 삭제됨');rCatView();
   },{danger:true});
 }
@@ -2120,7 +2183,11 @@ function editCur(){edId=curId;go('editor')}
 
 function delCur(){
   showModal('🗑','이 글을 삭제하시겠습니까?<div class="modal-sub">삭제된 글은 복구할 수 없어요</div>','삭제',function(){
+    var delP=ps.find(function(p){return p.id===curId});
+    var delCid=delP?delP.cid:null;
     ps=ps.filter(function(p){return p.id!==curId});
+    // 삭제된 글이 시리즈에 속했으면 해당 시리즈 재넘버링
+    if(delCid)renumberCat(delCid);
     sv();curId=null;toast('삭제됨');go('home');
   },{danger:true});
 }
@@ -2139,7 +2206,12 @@ function initEd(){
   if(edId){
     var p=ps.find(function(x){return x.id===edId});
     if(!p){edId=null;return}
-    $('#edH').textContent='Edit';$('#eTit').value=p.t;bod.innerHTML=p.b;$('#eDate').value=p.d;$('#eCat').value=p.cid;
+    $('#edH').textContent='Edit';
+    // 기존 제목에 넘버 prefix 있는지 확인
+    var parsed=parseNumPrefix(p.t||'');
+    eAutoNum=!!parsed;
+    $('#eTit').value=parsed?parsed.pure:(p.t||'');
+    bod.innerHTML=p.b;$('#eDate').value=p.d;$('#eCat').value=p.cid;
     eCov=p.cov||'';eIL=p.il?p.il.slice():[];eFI=p.fi?p.fi.slice():[];
     ePriv=p.priv||'';ePrivPw=p.privPw||'';
     setPriv(ePriv);$('#ePrivPw').value=ePrivPw;
@@ -2147,8 +2219,65 @@ function initEd(){
     $('#edH').textContent='New Post';$('#eTit').value='';bod.innerHTML='';$('#eDate').value=new Date().toISOString().split('T')[0];
     eCov='';eIL=[];eFI=[];edId=null;
     ePriv='';ePrivPw='';setPriv('');
+    eAutoNum=true; // 새 글은 기본 ON
+    // 시리즈 페이지에서 넘어온 경우 해당 카테고리 선택
+    if(eCatHint && cats.find(function(c){return c.id===eCatHint})){
+      $('#eCat').value=eCatHint;
+    }
+    eCatHint=null; // 힌트는 1회용
   }
+  $('#eAutoNumCb').checked=eAutoNum;
+  updateAutoNumPreview();
   rCov();rTh();rFL();rRecentColors();
+}
+
+// 자동 넘버링 prefix 미리보기 업데이트
+function updateAutoNumPreview(){
+  var preview=$('#eAutoNumPreview');
+  if(!preview)return;
+  if(!eAutoNum){
+    preview.textContent='—';
+    preview.classList.add('off');
+    return;
+  }
+  var cid=$('#eCat').value;
+  if(!cid){preview.textContent='—';preview.classList.add('off');return;}
+  var num;
+  // 수정 모드: 원래 번호 있고 시리즈 안 바뀌었으면 그 번호 표시
+  if(edId){
+    var p=ps.find(function(x){return x.id===edId});
+    var origParsed=p?parseNumPrefix(p.t||''):null;
+    if(origParsed && p.cid===cid){
+      num=origParsed.num;
+    } else {
+      num=getNextCatNum(cid, edId);
+    }
+  } else {
+    num=getNextCatNum(cid, null);
+  }
+  preview.textContent=padNum(num)+'.';
+  preview.classList.remove('off');
+}
+
+function onAutoNumToggle(){
+  eAutoNum=$('#eAutoNumCb').checked;
+  updateAutoNumPreview();
+}
+
+function onEdCatChange(){
+  updateAutoNumPreview();
+}
+
+function onEdTitleInput(){
+  // 사용자가 직접 "01. " 같은 걸 입력하면 자동 넘버링 끔
+  var v=$('#eTit').value;
+  if(parseNumPrefix(v)){
+    if(eAutoNum){
+      eAutoNum=false;
+      $('#eAutoNumCb').checked=false;
+      updateAutoNumPreview();
+    }
+  }
 }
 
 function rCov(){
@@ -2162,6 +2291,56 @@ function rCov(){
   }
 }
 function onCov(e){var f=e.target.files[0];if(!f)return;rdF(f,function(d){eCov=d;rCov()})}
+
+// 시리즈 상세 페이지에서 글쓰기 들어갈 때 해당 시리즈를 힌트로 세팅
+function edFromCatView(){
+  var curPg=document.querySelector('.page.on');
+  if(curPg && curPg.id==='pg-catview' && viewCatId){
+    eCatHint=viewCatId;
+  }
+}
+
+
+/* ── 시리즈 자동 넘버링 헬퍼 ── */
+// "01. 제목" 같은 prefix 감지 → {num, pure} 반환, 없으면 null
+function parseNumPrefix(title){
+  var m=title.match(/^(\d{1,3})\.\s*(.*)$/);
+  if(m)return {num:parseInt(m[1]),pure:m[2]};
+  return null;
+}
+// prefix 제거된 순수 제목
+function stripNumPrefix(title){
+  var p=parseNumPrefix(title);
+  return p?p.pure:title;
+}
+// 시리즈 내 다음 번호 계산 (현재 편집 중인 글 제외)
+function getNextCatNum(cid,excludeId){
+  if(!cid)return 1;
+  var list=ps.filter(function(p){return p.cid===cid&&p.id!==excludeId});
+  var max=0;
+  list.forEach(function(p){
+    var parsed=parseNumPrefix(p.t||'');
+    if(parsed&&parsed.num>max)max=parsed.num;
+  });
+  return max+1;
+}
+// "01" 형식 패딩
+function padNum(n){return String(n).padStart(2,'0');}
+// 시리즈 내 글들 재넘버링 (1부터 순차적으로, 작성일 오름차순)
+function renumberCat(cid){
+  if(!cid)return;
+  var list=ps.filter(function(p){return p.cid===cid&&parseNumPrefix(p.t||'')});
+  // 날짜+ts 오름차순 정렬
+  list.sort(function(a,b){
+    if(a.d!==b.d)return a.d<b.d?-1:1;
+    return (a.ts||0)-(b.ts||0);
+  });
+  list.forEach(function(p,i){
+    var pure=stripNumPrefix(p.t||'');
+    p.t=padNum(i+1)+'. '+pure;
+  });
+}
+
 function onIL(e){Array.from(e.target.files).forEach(function(f){rdF(f,function(d){eIL.push({name:f.name,data:d});rTh()})});e.target.value=''}
 function rTh(){$('#ilTh').innerHTML=eIL.map(function(m,i){return '<img src="'+m.data+'" onclick="insImg('+i+')">'}).join('');$('#ilH').style.display=eIL.length?'':'none'}
 function insImg(i){var img=eIL[i];if(!img)return;$('#eBod').focus();document.execCommand('insertHTML',false,'<img src="'+img.data+'" style="max-width:100%;border-radius:6px;margin:8px 0">')}
@@ -2177,13 +2356,48 @@ function saveP(){
     privPw=$('#ePrivPw').value.trim();
     if(!privPw){showAlert('','비밀번호를 입력하세요');return}
   }
+  // 사용자가 입력한 순수 제목 (입력칸엔 prefix 없이 들어있어야 맞지만 혹시 모르니)
+  var pureTitle=stripNumPrefix(t);
+  var finalTitle=pureTitle;
+
   if(edId){
+    // ── 수정 모드 ──
     var p=ps.find(function(x){return x.id===edId});
-    p.t=t;p.b=b;p.cid=cid;p.d=d;p.cov=eCov;p.il=eIL.slice();p.fi=eFI.slice();
+    var prevCid=p.cid;
+    var origParsed=parseNumPrefix(p.t||'');
+    var origNum=origParsed?origParsed.num:null;
+    var cidChanged=prevCid!==cid;
+
+    if(eAutoNum && cid){
+      if(origNum!==null && !cidChanged){
+        // 같은 시리즈 안에서 수정 - 원래 번호 유지
+        finalTitle=padNum(origNum)+'. '+pureTitle;
+      } else {
+        // 시리즈 이동 or 새로 번호 켬 - 새 번호 부여
+        finalTitle=padNum(getNextCatNum(cid, edId))+'. '+pureTitle;
+      }
+    } else {
+      // 토글 OFF - 번호 없이 저장
+      finalTitle=pureTitle;
+    }
+
+    p.t=finalTitle;p.b=b;p.cid=cid;p.d=d;p.cov=eCov;p.il=eIL.slice();p.fi=eFI.slice();
     p.priv=priv;p.privPw=privPw;
     if(!p.ts)p.ts=Date.now();
-  }else{
-    ps.push({id:Date.now(),cid:cid,t:t,b:b,d:d,cov:eCov,il:eIL.slice(),fi:eFI.slice(),ts:Date.now(),priv:priv,privPw:privPw});
+
+    // 시리즈 이동했으면 이전 시리즈 재넘버링
+    if(cidChanged && prevCid) renumberCat(prevCid);
+    // 현재 시리즈도 재넘버링 (빈 번호 메꿈)
+    if(cid) renumberCat(cid);
+  } else {
+    // ── 새 글 ──
+    if(eAutoNum && cid){
+      finalTitle=padNum(getNextCatNum(cid, null))+'. '+pureTitle;
+    } else {
+      finalTitle=pureTitle;
+    }
+    ps.push({id:Date.now(),cid:cid,t:finalTitle,b:b,d:d,cov:eCov,il:eIL.slice(),fi:eFI.slice(),ts:Date.now(),priv:priv,privPw:privPw});
+    if(cid) renumberCat(cid);
   }
   var savedId=edId?edId:ps[ps.length-1].id;
   sv();edId=null;toast('저장됨');openD(savedId);
@@ -2281,19 +2495,7 @@ function rAdmin(){
   if(fpv){if(cfg.favicon){fpv.innerHTML='<img src="'+cfg.favicon+'" style="width:100%;height:100%;object-fit:cover">';}else{fpv.textContent='없음';}}
   else bp.innerHTML='미리보기';
   $('#acBar').innerHTML=AC.map(function(c){return '<div class="cb'+((cfg.accent||'#1A1A1A').toUpperCase()===c.toUpperCase()?' on':'')+'" style="background:'+c+'" onclick="cfg.accent=\''+c+'\';applyAcc();rAdmin()"></div>'}).join('');
-  $('#cL').innerHTML=cats.map(function(c){
-    var n=ps.filter(function(p){return p.cid===c.id}).length;
-    var html='<div class="acat">';
-    html+='<div class="acat-img">';
-    if(c.thumb)html+='<img src="'+c.thumb+'">';
-    else html+='<div style="width:100%;height:100%;background:'+c.color+'20;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:'+c.color+'">■</div>';
-    html+='</div><div class="acat-info"><div class="acat-name">'+esc(c.name)+'</div>';
-    html+='<div class="acat-desc">'+(c.desc?esc(c.desc):'설명 없음')+'</div></div>';
-    html+='<span style="font-size:.68rem;color:var(--text-light)">'+n+'</span>';
-    html+='<div class="acat-acts"><button onclick="startEditCat(\''+c.id+'\')">✎</button><button onclick="delC(\''+c.id+'\')">✕</button></div></div>';
-    return html;
-  }).join('');
-  rCcBar();
+  // 시리즈 관리 섹션은 시리즈 탭으로 이전됨 (#cL, rCcBar 제거)
   rHeartLinkList();
   loadMyBannerFields();
 }
@@ -2354,6 +2556,11 @@ document.addEventListener('click',function(e){
   var btn=$('#ccAddBtn');
   if(pop&&pop.classList.contains('on')&&!pop.contains(e.target)&&e.target!==btn){
     pop.classList.remove('on');
+  }
+  var pop2=$('#catModalCcPop');
+  var btn2=$('#catModalCcAddBtn');
+  if(pop2&&pop2.classList.contains('on')&&!pop2.contains(e.target)&&e.target!==btn2){
+    pop2.classList.remove('on');
   }
 });
 
@@ -2895,6 +3102,160 @@ function onPairTagKey(e){
   }
 }
 
+/* ── 시리즈 모달 ── */
+var catModalEditId=null;
+var catModalThumb='';
+var catModalThumbOrig='';
+var catModalColor='';
+
+function openCatModal(editId){
+  if(!isAdmin)return;
+  catModalEditId=editId||null;
+  if(editId){
+    var c=cats.find(function(x){return x.id===editId});
+    if(!c)return;
+    $('#catModalTitle').textContent='시리즈 수정';
+    $('#catModalName').value=c.name||'';
+    $('#catModalDesc').value=c.desc||'';
+    catModalThumb=c.thumb||'';
+    catModalThumbOrig=c.thumbOrig||c.thumb||'';
+    catModalColor=c.color||CL[0];
+  }else{
+    $('#catModalTitle').textContent='시리즈 추가';
+    $('#catModalName').value='';
+    $('#catModalDesc').value='';
+    catModalThumb='';
+    catModalThumbOrig='';
+    catModalColor=CL[0];
+  }
+  rCatModalThumb();
+  rCatModalCcBar();
+  $('#catModalDim').classList.add('on');
+  setTimeout(function(){$('#catModalName').focus()},100);
+}
+
+function closeCatModal(){
+  $('#catModalDim').classList.remove('on');
+  catModalEditId=null;
+}
+
+function rCatModalThumb(){
+  var el=$('#catModalThumbArea');
+  if(!el)return;
+  if(catModalThumb){
+    el.innerHTML='<img src="'+catModalThumb+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px"><input type="file" id="catModalThumbIn" accept="image/*" onchange="onCatModalThumb(event)" style="display:none">';
+  } else {
+    el.innerHTML='클릭하여 업로드<input type="file" id="catModalThumbIn" accept="image/*" onchange="onCatModalThumb(event)" style="display:none">';
+  }
+}
+
+function onCatModalThumbClick(){
+  if(catModalThumb && catModalThumbOrig){
+    // 기존 이미지가 있으면 크롭 모달로
+    openCropModal(catModalThumbOrig,function(cropped){
+      catModalThumb=cropped;
+      rCatModalThumb();
+    });
+  } else {
+    $('#catModalThumbIn').click();
+  }
+}
+
+function onCatModalThumb(e){
+  var f=e.target.files[0];if(!f)return;
+  rdF(f,function(d){
+    catModalThumbOrig=d;
+    openCropModal(d,function(cropped){
+      catModalThumb=cropped;
+      rCatModalThumb();
+    });
+  });
+  e.target.value='';
+}
+
+function rCatModalCcBar(){
+  var html=CL.map(function(c){
+    return '<div class="cb'+(catModalColor===c?' on':'')+'" style="background:'+c+'" onclick="catModalColor=\''+c+'\';rCatModalCcBar()"></div>';
+  }).join('');
+  // 현재 선택이 CL에 없으면 (커스텀 색) 표시
+  var isCustom=CL.indexOf(catModalColor)===-1&&catModalColor;
+  if(isCustom){
+    html+='<div class="cb on" style="background:'+catModalColor+'" onclick=""></div>';
+  }
+  html+='<div class="cb-add" id="catModalCcAddBtn" onclick="toggleCatModalCcPop(event)">'
+    +'+'
+    +'<div class="cb-pop" id="catModalCcPop" onclick="event.stopPropagation()">'
+    +'<div class="cb-pop-preview" id="catModalCcPopPv" style="background:'+(catModalColor||'#1A1A1A')+'"></div>'
+    +'<input type="color" id="catModalCcPopColor" value="'+(catModalColor||'#1A1A1A')+'" oninput="onCatModalCcPopColor(this.value)">'
+    +'<div class="cb-pop-hex">'
+    +'<input type="text" id="catModalCcPopHex" value="'+(catModalColor||'#1A1A1A')+'" placeholder="#000000" oninput="onCatModalCcPopHex(this.value)">'
+    +'<button onclick="applyCatModalCcPop()">적용</button>'
+    +'</div>'
+    +'</div>'
+    +'</div>';
+  $('#catModalCcBar').innerHTML=html;
+}
+function toggleCatModalCcPop(e){
+  e.stopPropagation();
+  var pop=$('#catModalCcPop');
+  pop.classList.toggle('on');
+  if(pop.classList.contains('on')){
+    $('#catModalCcPopColor').value=catModalColor||'#1A1A1A';
+    $('#catModalCcPopHex').value=catModalColor||'#1A1A1A';
+    $('#catModalCcPopPv').style.background=catModalColor||'#1A1A1A';
+  }
+}
+function onCatModalCcPopColor(v){
+  $('#catModalCcPopHex').value=v;
+  $('#catModalCcPopPv').style.background=v;
+}
+function onCatModalCcPopHex(v){
+  v=v.trim();
+  if(/^#[0-9A-Fa-f]{6}$/.test(v)){
+    $('#catModalCcPopColor').value=v;
+    $('#catModalCcPopPv').style.background=v;
+  }
+}
+function applyCatModalCcPop(){
+  var v=$('#catModalCcPopHex').value.trim();
+  if(!/^#[0-9A-Fa-f]{6}$/.test(v)){
+    v=$('#catModalCcPopColor').value;
+  }
+  catModalColor=v;
+  $('#catModalCcPop').classList.remove('on');
+  rCatModalCcBar();
+}
+
+function saveCatModal(){
+  if(!isAdmin)return;
+  var name=$('#catModalName').value.trim();
+  if(!name){toast('시리즈 이름을 입력하세요');return;}
+  var desc=$('#catModalDesc').value.trim();
+  if(catModalEditId){
+    var c=cats.find(function(x){return x.id===catModalEditId});
+    if(c){
+      c.name=name;c.desc=desc;
+      c.thumb=catModalThumb;
+      c.thumbOrig=catModalThumbOrig||catModalThumb;
+      c.color=catModalColor;
+    }
+  } else {
+    cats.push({
+      id:'c'+Date.now(),
+      name:name,desc:desc,
+      thumb:catModalThumb,
+      thumbOrig:catModalThumbOrig||catModalThumb,
+      color:catModalColor
+    });
+  }
+  sv();
+  closeCatModal();
+  rSeries();
+  // 관리 페이지도 열려있으면 재렌더
+  if(document.querySelector('#pg-admin.on'))rAdmin();
+  toast(catModalEditId?'수정됨':'시리즈 추가됨');
+}
+
 function openPairModal(editId){
   editingPairId=editId||null;
   pairTags=[];
@@ -3030,6 +3391,8 @@ function setAdmin(on){
   if(fabWrap)fabWrap.style.display=on?'':'none';
   var pairAddBtn=$('#pairAddBtn');
   if(pairAddBtn)pairAddBtn.style.display=on?'':'none';
+  var seriesAddBtn=$('#seriesAddBtn');
+  if(seriesAddBtn)seriesAddBtn.style.display=on?'':'none';
   var pairDtMenu=$('#pairDtMenuWrap');
   if(pairDtMenu)pairDtMenu.style.display=on?'':'none';
   // 로그인 버튼 텍스트
@@ -3041,6 +3404,9 @@ function setAdmin(on){
   }
   // 글 상세 ... 메뉴 (수정/삭제 숨기기)
   $$('.dt-menu-drop button.admin-only').forEach(function(b){b.style.display=on?'':'none'});
+  // 시리즈 탭이 열려있으면 카드 메뉴 상태도 갱신
+  var pgSeries=document.querySelector('#pg-series.on');
+  if(pgSeries)rSeries();
 }
 
 /* ── BGM Player (Multi-Track) ── */
@@ -4067,6 +4433,36 @@ if(window._fbReady){
     <div class="pair-modal-btns">
       <button class="btn-g" onclick="closePairModal()">취소</button>
       <button class="btn-p" onclick="savePair()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 시리즈 추가/수정 모달 -->
+<div class="pair-modal-dim" id="catModalDim">
+  <div class="pair-modal" style="max-width:440px">
+    <h3 id="catModalTitle">시리즈 추가</h3>
+    <div class="ef">
+      <label>썸네일 이미지</label>
+      <div class="pair-thumb-area" id="catModalThumbArea" onclick="onCatModalThumbClick()">
+        클릭하여 업로드
+        <input type="file" id="catModalThumbIn" accept="image/*" onchange="onCatModalThumb(event)" style="display:none">
+      </div>
+    </div>
+    <div class="ef">
+      <label>시리즈 이름</label>
+      <input type="text" id="catModalName" placeholder="이름 입력">
+    </div>
+    <div class="ef">
+      <label>시리즈 소개 (선택)</label>
+      <input type="text" id="catModalDesc" placeholder="간단한 설명">
+    </div>
+    <div class="ef">
+      <label>색상</label>
+      <div class="cbar" id="catModalCcBar" style="flex:1"></div>
+    </div>
+    <div class="pair-modal-btns">
+      <button class="btn-g" onclick="closeCatModal()">취소</button>
+      <button class="btn-p" onclick="saveCatModal()">저장</button>
     </div>
   </div>
 </div>
