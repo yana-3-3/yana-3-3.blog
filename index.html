@@ -778,6 +778,54 @@ details[open] .fold-summary::before{transform:rotate(90deg)}
 .prompt-empty{text-align:center;padding:80px 20px;color:var(--text-light)}
 .prompt-empty-icon{font-size:2rem;margin-bottom:12px;opacity:.4}
 
+/* ── Memo ── */
+.memo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px}
+@media(max-width:1100px){.memo-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:860px){.memo-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.memo-grid{grid-template-columns:repeat(2,1fr)}}
+.memo-card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 14px 12px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;min-height:120px;overflow:hidden}
+.memo-card:hover{border-color:var(--border-h);box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.memo-card-title{font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.memo-card-body{font-size:.74rem;color:var(--text-sub);line-height:1.55;flex:1;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;font-weight:300}
+.memo-card-foot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.memo-card-tags{display:flex;flex-wrap:wrap;gap:3px;flex:1;min-width:0;overflow:hidden}
+.memo-card-tag{font-size:.6rem;color:var(--text-sub);background:var(--accent-soft);padding:2px 7px;border-radius:20px;white-space:nowrap}
+.memo-card-date{font-size:.6rem;color:var(--text-light);font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+
+/* 메모 필터 태그 (페이지 상단) */
+.memo-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:14px 0 14px;padding-bottom:4px}
+.memo-tag-wrap{position:relative;display:inline-flex;align-items:center}
+.memo-tag{padding:4px 11px;border-radius:20px;font-size:.72rem;color:var(--text-sub);cursor:pointer;border:1px solid var(--border);background:var(--bg);transition:all .18s;font-weight:400;white-space:nowrap;font-family:inherit}
+.memo-tag:hover{color:var(--text);border-color:var(--border-h);background:var(--accent-soft)}
+.memo-tag.on{color:var(--bg);background:var(--text);border-color:var(--text);font-weight:500}
+.memo-tag-menu-btn{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--text);color:var(--bg);font-size:.58rem;line-height:1;border:1.5px solid var(--bg);cursor:pointer;display:none;align-items:center;justify-content:center;font-family:inherit;padding:0;z-index:2}
+.memo-tag-wrap:hover .memo-tag-menu-btn{display:flex}
+.memo-tag-menu-btn:hover{opacity:.85}
+.memo-tag-add{padding:3px 10px;border-radius:20px;font-size:.7rem;color:var(--text-light);cursor:pointer;border:1px dashed var(--border-h);background:transparent;transition:all .18s;font-weight:400;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;font-family:inherit}
+.memo-tag-add:hover{color:var(--text);border-color:var(--text-sub);background:var(--bg)}
+.memo-tag-input-wrap{display:inline-flex;align-items:center;gap:4px;padding:3px 4px 3px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--text);font-size:.72rem}
+.memo-tag-input-wrap input{border:none;outline:none;background:transparent;font-size:.72rem;color:var(--text);width:80px;font-family:inherit;padding:0}
+.memo-tag-input-wrap button{background:none;border:none;cursor:pointer;color:var(--text-light);padding:0 4px;font-size:.72rem;font-family:inherit}
+.memo-tag-input-wrap button:hover{color:var(--text)}
+.memo-tag-drop{position:absolute;top:calc(100% + 6px);left:0;background:var(--card);border:1px solid var(--border-h);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;min-width:120px;z-index:50;display:none}
+.memo-tag-drop.open{display:block}
+.memo-tag-drop button{display:block;width:100%;padding:8px 14px;border:none;background:none;color:var(--text);font-size:.76rem;text-align:left;cursor:pointer;font-family:inherit;transition:background .15s;font-weight:400;white-space:nowrap}
+.memo-tag-drop button:hover{background:var(--accent-soft)}
+.memo-tag-drop button.danger{color:#D4564A}
+
+/* 메모 상세 모달 */
+.memo-detail-sub{display:inline-block;font-size:.62rem;color:var(--text-sub);background:var(--accent-soft);padding:3px 9px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase;font-weight:500;margin-bottom:8px;font-family:'IBM Plex Mono',monospace}
+.memo-detail-tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 14px}
+.memo-detail-tag{font-size:.66rem;color:var(--text-sub);background:var(--accent-soft);padding:3px 10px;border-radius:20px}
+#memoDetailBody{white-space:pre-wrap;word-break:break-word;line-height:1.7}
+
+/* 메모 에디터 모달 - 태그 선택 영역 */
+.memo-tags-edit{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.memo-tag-pick{padding:4px 11px;border-radius:20px;font-size:.72rem;cursor:pointer;border:1px solid var(--border-h);background:var(--bg);color:var(--text-sub);transition:all .15s;font-family:inherit;font-weight:400}
+.memo-tag-pick:hover{border-color:var(--text-sub);color:var(--text)}
+.memo-tag-pick.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.memo-tags-edit-empty{font-size:.72rem;color:var(--text-light);padding:2px 0;line-height:1.5}
+
 /* ── Prompt Detail Modal ── */
 .pmt-modal-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
 .pmt-modal-dim.on{display:flex}
@@ -877,6 +925,12 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
         const pData = pSnap.data();
         if (pData.prompts) window._fbPrompts = pData.prompts;
       }
+      // 메모 별도 문서
+      const mSnap = await getDoc(doc(db, 'blog', 'memos'));
+      if (mSnap.exists()) {
+        const mData = mSnap.data();
+        if (mData.memos) window._fbMemos = mData.memos;
+      }
     } catch(e) {
       console.warn('Firebase 로드 실패, 로컬 데이터 사용:', e);
     }
@@ -901,6 +955,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
     <button class="n-link" data-p="series" onclick="go('series')">시리즈</button>
     <button class="n-link" data-p="pair" onclick="go('pair')">페어</button>
     <button class="n-link" data-p="prompt" onclick="go('prompt')">프롬프트</button>
+    <button class="n-link" data-p="memo" onclick="go('memo')" id="memoTab" style="display:none">메모</button>
     <button class="n-link" data-p="admin" onclick="go('admin')" id="adminTab" style="display:none">관리</button>
   </div>
   <div class="n-r">
@@ -915,6 +970,7 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <div class="fab-menu" id="fabMenu">
         <button onclick="closeFab();edId=null;edFromCatView();go('editor')">✎ 게시글</button>
         <button onclick="closeFab();pmtEditId=null;go('pmt-editor')">✎ 프롬프트</button>
+        <button onclick="closeFab();openMemoEditor()">✎ 메모</button>
       </div>
     </div>
 
@@ -1299,6 +1355,56 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
   </div>
 </div>
 
+<!-- MEMO DETAIL MODAL -->
+<div class="pmt-modal-dim" id="memoDetailDim" onclick="if(event.target===this)closeMemoDetail()">
+  <div class="pmt-modal" style="position:relative;max-width:520px">
+    <button class="pmt-modal-close" onclick="closeMemoDetail()">✕</button>
+    <div class="pmt-modal-content">
+      <div class="memo-detail-sub" id="memoDetailSub"></div>
+      <div class="pmt-modal-title" id="memoDetailTitle"></div>
+      <div class="pmt-modal-date" id="memoDetailDate"></div>
+      <div class="memo-detail-tags" id="memoDetailTags" style="display:none"></div>
+      <div class="pmt-modal-prompt" id="memoDetailBody"></div>
+      <div class="pmt-modal-admin">
+        <button onclick="copyMemoFromDetail()">복사</button>
+        <button onclick="editMemoFromDetail()">수정</button>
+        <button class="danger" onclick="deleteMemoFromDetail()">삭제</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMO EDITOR MODAL -->
+<div class="pair-modal-dim" id="memoModalDim">
+  <div class="pair-modal" style="max-width:480px">
+    <h3 id="memoEditorTitle">새 메모</h3>
+    <div class="ef">
+      <label>분류</label>
+      <select id="memoEdSub" onchange="onMemoEdSubChange()">
+        <option value="OOC">OOC</option>
+        <option value="지침">지침</option>
+        <option value="작태">작태</option>
+      </select>
+    </div>
+    <div class="ef">
+      <label>제목</label>
+      <input type="text" id="memoEdTitle" placeholder="메모 제목">
+    </div>
+    <div class="ef">
+      <label>내용</label>
+      <textarea id="memoEdBody" placeholder="메모 내용" rows="7"></textarea>
+    </div>
+    <div class="ef">
+      <label>태그</label>
+      <div class="memo-tags-edit" id="memoEdTags"></div>
+    </div>
+    <div class="pair-modal-btns">
+      <button class="btn-g" onclick="closeMemoEditor()">취소</button>
+      <button class="btn-p" onclick="saveMemo()">저장</button>
+    </div>
+  </div>
+</div>
+
 <!-- PAIR DETAIL -->
 <div class="page" id="pg-pairdetail">
   <div class="pw">
@@ -1322,6 +1428,26 @@ footer{text-align:center;padding:32px;color:var(--text-light);font-size:.68rem;b
       <!-- 3-column layout: A | Messages | B -->
       <div class="pair-detail-layout" id="pairDetailLayout"></div>
     </div>
+  </div>
+</div>
+
+<!-- MEMO -->
+<div class="page" id="pg-memo">
+  <div class="pw">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase">Memo</span>
+        <div class="prompt-tabs">
+          <button class="prompt-tab on" data-mt="OOC" onclick="switchMemoSub('OOC')">OOC</button>
+          <button class="prompt-tab" data-mt="지침" onclick="switchMemoSub('지침')">지침</button>
+          <button class="prompt-tab" data-mt="작태" onclick="switchMemoSub('작태')">작태</button>
+        </div>
+      </div>
+      <button class="n-wr" onclick="openMemoEditor()">+ 메모</button>
+    </div>
+    <div class="memo-tags" id="memoTags"></div>
+    <div id="memoGrid" class="memo-grid"></div>
+    <div class="empty" id="memoEmpty" style="display:none"><div>📝</div><h3>메모가 없어요</h3><p>+ 메모 버튼을 눌러 첫 메모를 만들어보세요</p></div>
   </div>
 </div>
 
@@ -1598,6 +1724,23 @@ let ps=ld('e_ps')||defP();
 let curId=null,edId=null,prev='home',vm='grid',fc='all',viewCatId=null,catSortAsc=false,catPage=0;
 let pairs=ld('e_pairs')||[];
 let prompts=ld('e_prompts')||[];
+let memos=ld('e_memos')||[];
+// cfg.memoTags 보강 - 서브탭별 객체 구조 {OOC:[], 지침:[], 작태:[]}
+if(!cfg.memoTags || Array.isArray(cfg.memoTags)){
+  // 이전 평면 배열을 OOC로 마이그레이션 (또는 빈 객체)
+  var oldTags = Array.isArray(cfg.memoTags) ? cfg.memoTags : [];
+  cfg.memoTags = {OOC: oldTags, '지침': [], '작태': []};
+}
+if(!cfg.memoTags.OOC) cfg.memoTags.OOC = [];
+if(!cfg.memoTags['지침']) cfg.memoTags['지침'] = [];
+if(!cfg.memoTags['작태']) cfg.memoTags['작태'] = [];
+// 기존 메모에 sub 필드가 없으면 'OOC'로 마이그레이션
+memos.forEach(function(m){if(!m.sub)m.sub='OOC';});
+let curMemoSub='OOC'; // 현재 서브탭
+let curMemoTag=null; // 메모 필터 태그 (서브탭 안에서)
+let addingMemoTag=false; // 메모 태그 인라인 입력 모드
+let memoEditId=null; // 편집 중 메모 id
+let memoEdSelectedTags=[]; // 에디터에서 선택한 태그들
 let curPairId=null;
 let eCov='',eIL=[],eFI=[];
 let editCatId=null,catThumb='',catThumbOrig='';
@@ -1629,6 +1772,7 @@ function sv(){
     localStorage.setItem('e_ps',JSON.stringify(ps));
     localStorage.setItem('e_pairs',JSON.stringify(pairs));
     localStorage.setItem('e_prompts',JSON.stringify(prompts));
+    localStorage.setItem('e_memos',JSON.stringify(memos));
   }catch(e){
     console.warn('localStorage 저장 실패:',e);
     if(e.name==='QuotaExceededError'||e.code===22){
@@ -1645,6 +1789,10 @@ function sv(){
     setDocFn(docFn(db,'blog','prompts'),{
       prompts:prompts,updatedAt:Date.now()
     }).then(function(){console.log('Firebase 프롬프트 저장 완료')}).catch(function(e){console.warn('Firebase 프롬프트 저장 실패:',e);showAlert('⚠️','프롬프트 저장에 실패했어요.<br><span style="font-size:.78rem;color:var(--text-sub)">이미지를 ImgBB로 업로드하면 용량이 줄어요.</span>');});
+    // 메모 별도 저장
+    setDocFn(docFn(db,'blog','memos'),{
+      memos:memos,updatedAt:Date.now()
+    }).then(function(){console.log('Firebase 메모 저장 완료')}).catch(function(e){console.warn('Firebase 메모 저장 실패:',e);});
   }
 }
 
@@ -1659,7 +1807,7 @@ function applyAcc(){
 applyAcc();
 
 function go(p){
-  if(!isAdmin && (p==='admin'||p==='editor')){
+  if(!isAdmin && (p==='admin'||p==='editor'||p==='memo')){
     openLoginModal();return;
   }
   $$('.page').forEach(function(x){x.classList.remove('on')});
@@ -1677,6 +1825,7 @@ function go(p){
   if(p==='home')rHome();
   if(p==='series')rSeries();
   if(p==='admin'){rAdmin();}
+  if(p==='memo'){rMemo();}
   if(p==='editor')initEd();
   if(p==='pmt-editor')initPmtEditor();
   if(p==='catview')rCatView();
@@ -3650,6 +3799,13 @@ function setAdmin(on){
   isAdmin=on;
   var adminTab=$('#adminTab');
   if(adminTab)adminTab.style.display=on?'':'none';
+  var memoTab=$('#memoTab');
+  if(memoTab)memoTab.style.display=on?'':'none';
+  // 로그아웃 시 메모 페이지에 있으면 홈으로
+  if(!on){
+    var pgMemo=document.querySelector('#pg-memo.on');
+    if(pgMemo){go('home');return;}
+  }
   var fabWrap=$('#fabWrap');
   if(fabWrap)fabWrap.style.display=on?'':'none';
   var pairAddBtn=$('#pairAddBtn');
@@ -4637,6 +4793,398 @@ function cycleNsfw(){
   else if(pmtNsfwState===2)btn.classList.add('hide');
   rPromptGrid();
 }
+
+/* ════════════════════════════════════════════════
+   ━━━━━━━━━━━━━━━━ MEMO 시스템 ━━━━━━━━━━━━━━━━━
+   ════════════════════════════════════════════════ */
+
+// 메모 페이지 렌더
+function rMemo(){
+  if(!isAdmin)return; // 안전장치
+  // 서브탭 활성 표시
+  $$('[data-mt]').forEach(function(t){t.classList.toggle('on',t.dataset.mt===curMemoSub)});
+  rMemoTags();
+  var grid=$('#memoGrid');
+  var empty=$('#memoEmpty');
+  // 현재 서브탭의 메모만
+  var list=memos.filter(function(m){return (m.sub||'OOC')===curMemoSub});
+  if(!list.length){
+    grid.innerHTML='';
+    empty.style.display='';
+    empty.querySelector('h3').textContent='메모가 없어요';
+    empty.querySelector('p').textContent='+ 메모 버튼을 눌러 첫 메모를 만들어보세요';
+    return;
+  }
+  // 태그 필터
+  if(curMemoTag){
+    list=list.filter(function(m){return Array.isArray(m.tags)&&m.tags.indexOf(curMemoTag)!==-1});
+  }
+  // 최신순 정렬
+  list.sort(function(a,b){return(b.ts||0)-(a.ts||0)});
+  if(!list.length){
+    grid.innerHTML='';
+    empty.style.display='';
+    empty.querySelector('h3').textContent='이 태그의 메모가 없어요';
+    empty.querySelector('p').textContent='다른 태그를 선택해보세요';
+    return;
+  }
+  empty.style.display='none';
+  grid.innerHTML=list.map(function(m){
+    var tagsHtml='';
+    if(Array.isArray(m.tags)&&m.tags.length){
+      tagsHtml=m.tags.map(function(tid){
+        var name=getMemoTagName(tid,m.sub||'OOC');
+        if(!name)return '';
+        return '<span class="memo-card-tag">'+esc(name)+'</span>';
+      }).filter(Boolean).join('');
+    }
+    return '<div class="memo-card" onclick="openMemoDetail('+m.id+')" oncontextmenu="copyMemoRC(event,'+m.id+')">'
+      +'<div class="memo-card-title">'+esc(m.title||'(제목 없음)')+'</div>'
+      +'<div class="memo-card-body">'+esc(m.body||'')+'</div>'
+      +'<div class="memo-card-foot">'
+      +'<div class="memo-card-tags">'+tagsHtml+'</div>'
+      +'<span class="memo-card-date">'+fDateOnly(m.ts)+'</span>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function switchMemoSub(sub){
+  curMemoSub=sub;
+  curMemoTag=null;
+  addingMemoTag=false;
+  rMemo();
+}
+
+function fDateOnly(ts){
+  if(!ts)return '';
+  var d=new Date(ts);
+  var mm=String(d.getMonth()+1).padStart(2,'0');
+  var dd=String(d.getDate()).padStart(2,'0');
+  return mm+'.'+dd;
+}
+
+// 메모 상세 모달
+var memoDetailId=null;
+function openMemoDetail(id){
+  var m=memos.find(function(x){return x.id===id});
+  if(!m)return;
+  memoDetailId=id;
+  $('#memoDetailSub').textContent=m.sub||'OOC';
+  $('#memoDetailTitle').textContent=m.title||'(제목 없음)';
+  $('#memoDetailDate').textContent=fDT(m.ts);
+  $('#memoDetailBody').textContent=m.body||'';
+  // 태그
+  var tagsBox=$('#memoDetailTags');
+  if(Array.isArray(m.tags)&&m.tags.length){
+    var html=m.tags.map(function(tid){
+      var name=getMemoTagName(tid,m.sub||'OOC');
+      if(!name)return '';
+      return '<span class="memo-detail-tag">'+esc(name)+'</span>';
+    }).filter(Boolean).join('');
+    if(html){
+      tagsBox.innerHTML=html;
+      tagsBox.style.display='';
+    } else {
+      tagsBox.style.display='none';
+    }
+  } else {
+    tagsBox.style.display='none';
+  }
+  var dim=$('#memoDetailDim');
+  dim.classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeMemoDetail(){
+  $('#memoDetailDim').classList.remove('on');
+  document.body.style.overflow='';
+  memoDetailId=null;
+}
+function copyMemoFromDetail(){
+  if(memoDetailId)copyMemo(memoDetailId);
+}
+function editMemoFromDetail(){
+  if(!memoDetailId)return;
+  var id=memoDetailId;
+  closeMemoDetail();
+  editMemo(id);
+}
+function deleteMemoFromDetail(){
+  if(!memoDetailId)return;
+  var id=memoDetailId;
+  showModal('🗑','이 메모를 삭제할까요?<div class="modal-sub">삭제된 메모는 복구할 수 없어요</div>','삭제',function(){
+    memos=memos.filter(function(x){return x.id!==id});
+    sv();closeMemoDetail();rMemo();
+    toast('삭제됨');
+  },{danger:true});
+}
+
+// 우클릭 → 본문 복사
+function copyMemoRC(e,id){
+  e.preventDefault();
+  copyMemo(id);
+}
+
+function copyMemo(id){
+  var m=memos.find(function(x){return x.id===id});
+  if(!m)return;
+  var text=m.body||'';
+  if(!text){toast('빈 메모예요');return;}
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){
+      toast('복사됨');
+    }).catch(function(){fallbackCopy(text)});
+  }else{
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('복사됨');}catch(_){toast('복사 실패');}
+  document.body.removeChild(ta);
+}
+
+/* ── 메모 태그 관리 (서브탭별) ── */
+function rMemoTags(){
+  var bar=$('#memoTags');
+  if(!bar)return;
+  var tags=cfg.memoTags[curMemoSub]||[];
+  var html='';
+  // "전체" 칩
+  html+='<button class="memo-tag'+(curMemoTag===null?' on':'')+'" onclick="selectMemoTag(null)">전체</button>';
+  tags.forEach(function(t){
+    var isOn=curMemoTag===t.id;
+    html+='<span class="memo-tag-wrap">';
+    html+='<button class="memo-tag'+(isOn?' on':'')+'" onclick="selectMemoTag(\''+t.id+'\')">'+esc(t.name)+'</button>';
+    html+='<button class="memo-tag-menu-btn" onclick="event.stopPropagation();toggleMemoTagMenu(\''+t.id+'\',event)" title="태그 관리">⋯</button>';
+    html+='<div class="memo-tag-drop" id="memoTagDrop_'+t.id+'">';
+    html+='<button onclick="event.stopPropagation();closeAllMemoTagDrops();renameMemoTag(\''+t.id+'\')">✎ 이름 수정</button>';
+    html+='<button class="danger" onclick="event.stopPropagation();closeAllMemoTagDrops();deleteMemoTag(\''+t.id+'\')">✕ 삭제</button>';
+    html+='</div>';
+    html+='</span>';
+  });
+  if(addingMemoTag){
+    html+='<span class="memo-tag-input-wrap">';
+    html+='<input type="text" id="newMemoTagInput" placeholder="태그 이름" maxlength="20" onkeydown="onMemoTagInputKey(event)">';
+    html+='<button onclick="cancelAddMemoTag()" title="취소">✕</button>';
+    html+='</span>';
+  } else {
+    html+='<button class="memo-tag-add" onclick="startAddMemoTag()">+ 태그</button>';
+  }
+  bar.innerHTML=html;
+  if(addingMemoTag){
+    var inp=$('#newMemoTagInput');
+    if(inp)inp.focus();
+  }
+}
+
+function selectMemoTag(tagId){
+  curMemoTag=tagId;
+  closeAllMemoTagDrops();
+  rMemo();
+}
+
+function startAddMemoTag(){
+  addingMemoTag=true;
+  rMemoTags();
+}
+function cancelAddMemoTag(){
+  addingMemoTag=false;
+  rMemoTags();
+}
+function onMemoTagInputKey(e){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    confirmAddMemoTag();
+  } else if(e.key==='Escape'){
+    cancelAddMemoTag();
+  }
+}
+function confirmAddMemoTag(){
+  var inp=$('#newMemoTagInput');
+  if(!inp)return;
+  var name=inp.value.trim();
+  if(!name){cancelAddMemoTag();return;}
+  if(!cfg.memoTags[curMemoSub])cfg.memoTags[curMemoSub]=[];
+  if(cfg.memoTags[curMemoSub].find(function(x){return x.name===name})){
+    toast('같은 이름의 태그가 있어요');return;
+  }
+  var newId='mt_'+Date.now();
+  cfg.memoTags[curMemoSub].push({id:newId,name:name});
+  addingMemoTag=false;
+  curMemoTag=newId;
+  sv();rMemoTags();rMemo();
+  toast('태그 추가됨');
+}
+
+function renameMemoTag(id){
+  var tagList=cfg.memoTags[curMemoSub]||[];
+  var tag=tagList.find(function(t){return t.id===id});
+  if(!tag)return;
+  var nw=window.prompt('태그 이름 수정',tag.name);
+  if(nw===null)return;
+  nw=nw.trim();
+  if(!nw||nw===tag.name)return;
+  if(tagList.find(function(x){return x.id!==id&&x.name===nw})){
+    toast('같은 이름의 태그가 있어요');return;
+  }
+  tag.name=nw;sv();rMemoTags();rMemo();
+  toast('수정됨');
+}
+
+function deleteMemoTag(id){
+  var tagList=cfg.memoTags[curMemoSub]||[];
+  var tag=tagList.find(function(t){return t.id===id});
+  if(!tag)return;
+  showModal('📁','"'+tag.name+'" 태그를 삭제할까요?<div class="modal-sub">메모에서 이 태그가 제거돼요</div>','삭제',function(){
+    cfg.memoTags[curMemoSub]=tagList.filter(function(t){return t.id!==id});
+    // 이 서브탭의 메모에서만 해당 태그 제거
+    memos.forEach(function(m){
+      if((m.sub||'OOC')===curMemoSub && Array.isArray(m.tags)){
+        m.tags=m.tags.filter(function(t){return t!==id});
+      }
+    });
+    if(curMemoTag===id)curMemoTag=null;
+    sv();rMemoTags();rMemo();
+    toast('삭제됨');
+  },{danger:true});
+}
+
+function toggleMemoTagMenu(id,e){
+  var drop=$('#memoTagDrop_'+id);
+  if(!drop)return;
+  var wasOpen=drop.classList.contains('open');
+  closeAllMemoTagDrops();
+  if(!wasOpen){
+    drop.classList.add('open');
+    setTimeout(function(){
+      document.addEventListener('click',closeAllMemoTagDropsOutside,{once:true});
+    },0);
+  }
+}
+function closeAllMemoTagDrops(){
+  document.querySelectorAll('.memo-tag-drop.open').forEach(function(el){el.classList.remove('open')});
+}
+function closeAllMemoTagDropsOutside(e){
+  if(!e.target.closest('.memo-tag-wrap'))closeAllMemoTagDrops();
+  else setTimeout(function(){document.addEventListener('click',closeAllMemoTagDropsOutside,{once:true})},0);
+}
+
+// 특정 서브탭에서 태그 이름 조회
+function getMemoTagName(id, sub){
+  sub=sub||curMemoSub;
+  var list=cfg.memoTags[sub]||[];
+  var t=list.find(function(x){return x.id===id});
+  return t?t.name:'';
+}
+
+/* ── 메모 에디터 ── */
+function openMemoEditor(){
+  if(!isAdmin)return;
+  memoEditId=null;
+  memoEdSelectedTags=[];
+  $('#memoEditorTitle').textContent='새 메모';
+  $('#memoEdTitle').value='';
+  $('#memoEdBody').value='';
+  // 현재 메모 페이지에 있으면 그 서브탭, 아니면 OOC
+  var curPg=document.querySelector('.page.on');
+  var defSub=(curPg && curPg.id==='pg-memo') ? curMemoSub : 'OOC';
+  $('#memoEdSub').value=defSub;
+  rMemoEditorTags();
+  $('#memoModalDim').classList.add('on');
+  setTimeout(function(){$('#memoEdTitle').focus()},100);
+}
+
+function editMemo(id){
+  var m=memos.find(function(x){return x.id===id});
+  if(!m)return;
+  memoEditId=id;
+  memoEdSelectedTags=Array.isArray(m.tags)?m.tags.slice():[];
+  $('#memoEditorTitle').textContent='메모 수정';
+  $('#memoEdTitle').value=m.title||'';
+  $('#memoEdBody').value=m.body||'';
+  $('#memoEdSub').value=m.sub||'OOC';
+  rMemoEditorTags();
+  $('#memoModalDim').classList.add('on');
+  setTimeout(function(){$('#memoEdTitle').focus()},100);
+}
+
+function closeMemoEditor(){
+  $('#memoModalDim').classList.remove('on');
+  memoEditId=null;
+}
+
+// 에디터에서 서브탭 바꾸면 태그 다시 그리고 선택된 태그 초기화 (다른 서브탭의 태그라서)
+function onMemoEdSubChange(){
+  memoEdSelectedTags=[];
+  rMemoEditorTags();
+}
+
+function rMemoEditorTags(){
+  var box=$('#memoEdTags');
+  if(!box)return;
+  var sub=$('#memoEdSub').value || 'OOC';
+  var allTags=cfg.memoTags[sub]||[];
+  if(!allTags.length){
+    box.innerHTML='<div class="memo-tags-edit-empty">이 분류엔 태그가 없어요. 메모 페이지에서 + 태그로 추가하세요.</div>';
+    return;
+  }
+  box.innerHTML=allTags.map(function(t){
+    var isOn=memoEdSelectedTags.indexOf(t.id)!==-1;
+    return '<button class="memo-tag-pick'+(isOn?' on':'')+'" onclick="toggleMemoEdTag(\''+t.id+'\')">'+esc(t.name)+'</button>';
+  }).join('');
+}
+
+function toggleMemoEdTag(tagId){
+  var idx=memoEdSelectedTags.indexOf(tagId);
+  if(idx===-1)memoEdSelectedTags.push(tagId);
+  else memoEdSelectedTags.splice(idx,1);
+  rMemoEditorTags();
+}
+
+function saveMemo(){
+  var title=$('#memoEdTitle').value.trim();
+  var body=$('#memoEdBody').value.trim();
+  var sub=$('#memoEdSub').value || 'OOC';
+  if(!title&&!body){toast('제목 또는 내용을 입력하세요');return;}
+  if(memoEditId){
+    var m=memos.find(function(x){return x.id===memoEditId});
+    if(m){
+      m.title=title;m.body=body;m.tags=memoEdSelectedTags.slice();m.sub=sub;
+    }
+  }else{
+    memos.push({
+      id:Date.now(),
+      title:title,
+      body:body,
+      tags:memoEdSelectedTags.slice(),
+      sub:sub,
+      ts:Date.now()
+    });
+  }
+  sv();
+  closeMemoEditor();
+  // 저장된 서브탭으로 이동 (다른 서브탭에 저장한 경우)
+  if(curMemoSub!==sub){
+    curMemoSub=sub;
+    curMemoTag=null;
+  }
+  rMemo();
+  toast(memoEditId?'수정됨':'저장됨');
+}
+
+function deleteMemo(id){
+  var m=memos.find(function(x){return x.id===id});
+  if(!m)return;
+  showModal('🗑','이 메모를 삭제할까요?<div class="modal-sub">삭제된 메모는 복구할 수 없어요</div>','삭제',function(){
+    memos=memos.filter(function(x){return x.id!==id});
+    sv();rMemo();
+    toast('삭제됨');
+  },{danger:true});
+}
+
 function rPromptGrid(){
   $$('.prompt-tab').forEach(function(t){t.classList.toggle('on',t.dataset.pt===curPromptTab)});
   // 페르소나 탭에서는 NSFW/19 버튼 숨김
@@ -5136,6 +5684,7 @@ function startApp(){
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
   if(window._fbPrompts){prompts=window._fbPrompts;localStorage.setItem('e_prompts',JSON.stringify(prompts));}
+  if(window._fbMemos){memos=window._fbMemos;localStorage.setItem('e_memos',JSON.stringify(memos));}
   applyAcc();applyMeta();initBgm();initHeartPanel();
   var loader=document.getElementById('appLoader');
   if(loader){loader.style.opacity='0';setTimeout(function(){loader.style.display='none'},400);}
@@ -5158,7 +5707,7 @@ function startApp(){
     var fc=cats.find(function(x){return x.id===cid});
     if(fc){viewCatId=cid;go('catview');return;}
   }
-  var validPages=['home','series','pair','prompt'];
+  var validPages=['home','series','pair','prompt','memo'];
   if(hash && validPages.indexOf(hash)!==-1){go(hash);}
   else{rHome();}
 }
