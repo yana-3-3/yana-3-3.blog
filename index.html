@@ -4082,11 +4082,14 @@ function initBgm(){
   var player=$('#bgmPlayer');
   var tracks=getBgmTracks();
   if(!tracks.length){
-    player.classList.remove('on');
+    player.classList.add('on');
     if(bgmAudio){bgmAudio.pause();bgmAudio=null;}
     bgmPlaying=false;
     $('#bgmPrevBtn').style.display='none';
     $('#bgmNextBtn').style.display='none';
+    $('#bgmTitle').textContent='곡 없음';
+    $('#bgmTime').textContent='--:-- / --:--';
+    var eq=$('#bgmEq');if(eq)eq.classList.add('paused');
     return;
   }
   // 여러 곡이면 prev/next 표시
@@ -5679,7 +5682,7 @@ function renumberPrompts(type){
 }
 
 function startApp(){
-  if(window._fbCfg){cfg=window._fbCfg;localStorage.setItem('e_cfg',JSON.stringify(cfg));}
+  if(window._fbCfg){cfg=window._fbCfg;if(!cfg.memoTags||Array.isArray(cfg.memoTags)){var ot=Array.isArray(cfg.memoTags)?cfg.memoTags:[];cfg.memoTags={OOC:ot,'지침':[],'작태':[]};}if(!cfg.memoTags.OOC)cfg.memoTags.OOC=[];if(!cfg.memoTags['지침'])cfg.memoTags['지침']=[];if(!cfg.memoTags['작태'])cfg.memoTags['작태']=[];localStorage.setItem('e_cfg',JSON.stringify(cfg));}
   if(window._fbCats){cats=window._fbCats;localStorage.setItem('e_cats',JSON.stringify(cats));}
   if(window._fbPs){ps=window._fbPs;localStorage.setItem('e_ps',JSON.stringify(ps));}
   if(window._fbPairs){pairs=window._fbPairs;localStorage.setItem('e_pairs',JSON.stringify(pairs));}
